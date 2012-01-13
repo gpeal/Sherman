@@ -1,13 +1,14 @@
 #include "Uart.h"
 
-
-
-void setupUart(int uartX, int int_priotity_level_X) {
-  int pbClk, int_uXrx, int_uart_X_vector;
+int setupUart(int id, int int_priotity_level_X) {
+  unsigned int pbClk;
+  INT_SOURCE int_uXrx;
+  INT_VECTOR int_uart_X_vector;
+  UART_MODULE uartX;
   // Configure the system performance
   pbClk = SYSTEMConfigPerformance(SYS_FREQ);
 
-  switch(uartX)
+  switch(id)
   {
       case 1:
           uartX = UART1;
@@ -77,25 +78,64 @@ void setupUart(int uartX, int int_priotity_level_X) {
   INTEnable(int_uXrx, INT_ENABLED);
   INTSetVectorPriority(int_uart_X_vector, int_priotity_level_X);
   INTSetVectorSubPriority(int_uart_X_vector, INT_SUB_PRIORITY_LEVEL_0);
+  return 1;
 }
 
 // Put a character over the serial port, called by WriteString
-void PutCharacter(UART_MODULE id, const char character) {
-  while(!UARTTransmitterIsReady(id));
-  UARTSendDataByte(id, character);
-  while(!UARTTransmissionHasCompleted(id));
+int SendCharacter(int id, const char character)
+{
+    UART_MODULE uartX;
+    switch(id)
+    {
+        case 1:
+            uartX = UART1;
+            break;
+        case 2:
+            uartX = UART2;
+            break;
+        case 3:
+            uartX = UART3;
+            break;
+        case 4:
+            uartX = UART4;
+            break;
+        default:
+            uartX = UART1;
+    }
+    while(!UARTTransmitterIsReady(uartX));
+    UARTSendDataByte(uartX, character);
+    while(!UARTTransmissionHasCompleted(uartX));
 }
 
 // Write a string over the serial port
-void WriteString(UART_MODULE id, const char *string)
+int SendString(int id, const char *string)
 {
-  while(*string != '\0')
-  {
-      while(!UARTTransmitterIsReady(id));
-      UARTSendDataByte(id, (char) *string);
+    UART_MODULE uartX;
+    switch(id)
+    {
+        case 1:
+            uartX = UART1;
+            break;
+        case 2:
+            uartX = UART2;
+            break;
+        case 3:
+            uartX = UART3;
+            break;
+        case 4:
+            uartX = UART4;
+            break;
+        default:
+            uartX = UART1;
+    }
+    while(*string != '\0')
+    {
+      while(!UARTTransmitterIsReady(uartX));
+      UARTSendDataByte(uartX, (char) *string);
       string++;
-      while(!UARTTransmissionHasCompleted(id));
-  }
+      while(!UARTTransmissionHasCompleted(uartX));
+    }
+    return 1;
 }
 
 
