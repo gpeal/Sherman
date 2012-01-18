@@ -1,3 +1,4 @@
+#include "AnalogIn.h"
 #include "Initialize.h"
 #include "Uart.h"
 #include <plib.h>
@@ -8,8 +9,16 @@ void initialize()
 {
     initializePic();
     initializePorts();
+    initializePWM();
     initializeTimers();
     initializeUart();
+    initializeAnalogIn();
+}
+
+//currently set to RB2
+void initializeAnalogIn()
+{
+    setupAnalogIn();
 }
 
 void initializePic()
@@ -28,10 +37,16 @@ void initializePorts()
     AD1PCFGbits.PCFG0 = 0;
 }
 
+void initializePWM()
+{
+    setupPWM();
+}
+
 void initializeTimers()
 {
 }
 
-void initializeUart() {
+void initializeUart()
+{
     setupUart(1,2);
 }

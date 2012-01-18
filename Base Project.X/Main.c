@@ -3,13 +3,11 @@
 
 int main(void)
 {
-    int j;
+    int analogValue;
     initialize();
     while(1)
     {
-        PORTAbits.RA4 = SendString(1, "Hi!");
-        PORTAbits.RA5 = !PORTAbits.RA5;
-        for(j = 0; j < 5000000; j++) {}
+        setDutyCycle(0);
     }
 }
 
@@ -28,4 +26,9 @@ void __ISR(_UART_1_VECTOR, ipl2) IntUart1Handler(void)
     {
         INTClearFlag(INT_SOURCE_UART_TX(UART1));
     }
+}
+
+void __ISR(_TIMER_1_VECTOR, ipl1) TimerIsr(void)
+{
+    mT1ClearIntFlag();
 }

@@ -7,6 +7,8 @@
       <itemPath>Uart.h</itemPath>
       <itemPath>PWM.h</itemPath>
       <itemPath>Initialize.h</itemPath>
+      <itemPath>AnalogIn.h</itemPath>
+      <itemPath>Timer.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LibraryFiles"
                    displayName="Library Files"
@@ -26,6 +28,9 @@
       <itemPath>Uart.c</itemPath>
       <itemPath>Main.c</itemPath>
       <itemPath>Initialize.c</itemPath>
+      <itemPath>AnalogIn.c</itemPath>
+      <itemPath>Timer.c</itemPath>
+      <itemPath>PWM.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
