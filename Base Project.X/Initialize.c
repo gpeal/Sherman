@@ -18,7 +18,7 @@ void initialize()
 //currently set to RB2
 void initializeAnalogIn()
 {
-    setupAnalogIn();
+    setupAnalogIn(0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 void initializePic()
@@ -30,11 +30,11 @@ void initializePic()
 
 void initializePorts()
 {
+    //AD1PCFG = 0xFFFD;
     TRISDbits.TRISD1 = 0;
     TRISAbits.TRISA4 = 0;
     TRISAbits.TRISA5 = 0;
     TRISCbits.TRISC13 = 1;
-    AD1PCFGbits.PCFG0 = 0;
 }
 
 void initializePWM()

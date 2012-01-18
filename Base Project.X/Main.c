@@ -8,7 +8,8 @@ int main(void)
     initialize();
     while(1)
     {
-        analogValue = readAnalogIn();
+        analogValue = readAnalogIn(5);
+        //analogValue *= 4;
         sprintf(string, "Analog: %i\n", analogValue);
         SendString(1, string);
         PORTAbits.RA5 = !PORTAbits.RA5;
