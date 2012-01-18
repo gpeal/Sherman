@@ -18,7 +18,10 @@ int readAnalogIn()
 {
     int i;
     AD1CON1SET = 0x0002;  // set SAMP bit.  clears the DONE bit, starts sampling
-    for (i=0; i<10; i++); // give it enough time to settle, 200 ns or more
+    for (i=0; i<100; i++) // give it enough time to settle, 200 ns or more
+    {
+        Nop();
+    }
     // a real timing operation would be better!  this would fail if optimized!
     AD1CON1CLR = 0x0002;  // conversion starts when SAMP bit is cleared
     while (!(AD1CON1 & 0x0001));  // check the DONE bit

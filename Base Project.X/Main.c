@@ -3,12 +3,18 @@
 
 int main(void)
 {
-    int analogValue;
+    int analogValue, j;
+    char string[32];
     initialize();
     while(1)
     {
         analogValue = readAnalogIn();
+        sprintf(string, "Analog: %i\n", analogValue);
+        SendString(1, string);
+        PORTAbits.RA5 = !PORTAbits.RA5;
         setDutyCycle(analogValue);
+        for(j = 0; j < 5000000; j++)
+            Nop();
     }
 }
 
