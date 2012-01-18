@@ -7,7 +7,8 @@ int main(void)
     initialize();
     while(1)
     {
-        setDutyCycle(0);
+        analogValue = readAnalogIn();
+        setDutyCycle(analogValue);
     }
 }
 
