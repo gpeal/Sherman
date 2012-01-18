@@ -1,29 +1,23 @@
 #include "AnalogIn.h"
 #include <plib.h>
 
-void setupAnalogIn()
+void setupAnalogIn(int port0, int port1, int port2, int port3, int port4, int port5, int port6, int port7, int port8, int port9, int port10, int port11, int port12, int port13, int port14, int port15)
 {
-    AD1PCFG = 0xFFFB;     // PORTB = Digital; RB2 = analog in
-    AD1CON1 = 0x0000;     // SAMP bit = 0 ends sampling, starts converting
-    AD1CHS  = 0x00020000; // Connect RB2/AN2 as CH0 input
-    AD1CSSL = 0;          // no input scan, so don't specify inputs to scan
-    AD1CON3 = 0x0002;     // ADC clk period = 6 PB clk periods = 75 ns
-    AD1CON2 = 0;          // no input scan
+    #define PARAM1  ADC_MODULE_ON | ADC_FORMAT_INTG | ADC_CLK_AUTO | ADC_AUTO_SAMPLING_ON
+    #define PARAM2  ADC_VREF_AVDD_AVSS | ADC_OFFSET_CAL_DISABLE | ADC_SCAN_ON | ADC_SAMPLES_PER_INT_1 | ADC_ALT_BUF_OFF | ADC_ALT_INPUT_OFF
+    #define PARAM3  ADC_CONV_CLK_INTERNAL_RC | ADC_SAMPLE_TIME_15
 
-    // don't turn on the ADC until all other configuration is finished!
-    AD1CON1SET = 0x8000;  // turn ADC ON, defaults to software sampling
+    #define PARAM4  (port0) | (port1 << 1) | (port2 << 2) | (port3 << 3) | (port4 << 4) | (port5 << 5) | (port6 << 6) | (port7 << 7) | (port8 << 8) | (port9 << 9) | (port10 << 10) | (port11 << 11) | (port12 << 12) | (port13 << 13) | (port14 << 14) | (port15 << 15)
+    #define PARAM5  !(PARAM4)
+
+    SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF);
+    OpenADC10( PARAM1, PARAM2, PARAM3, PARAM4, PARAM5 );
+
+    EnableADC10();
+
 }
 
-int readAnalogIn()
+int readAnalogIn(int portId)
 {
-    int i;
-    AD1CON1SET = 0x0002;  // set SAMP bit.  clears the DONE bit, starts sampling
-    for (i=0; i<100; i++) // give it enough time to settle, 200 ns or more
-    {
-        Nop();
-    }
-    // a real timing operation would be better!  this would fail if optimized!
-    AD1CON1CLR = 0x0002;  // conversion starts when SAMP bit is cleared
-    while (!(AD1CON1 & 0x0001));  // check the DONE bit
-    return ADC1BUF0;  // when done, you can copy the value from ADC1BUF0
+    return ReadADC10(portId);
 }
