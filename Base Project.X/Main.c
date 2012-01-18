@@ -8,14 +8,17 @@ int main(void)
     initialize();
     while(1)
     {
-        analogValue = readAnalogIn(5);
-        //analogValue *= 4;
-        sprintf(string, "Analog: %i\n", analogValue);
-        SendString(1, string);
-        PORTAbits.RA5 = !PORTAbits.RA5;
-        setDutyCycle(analogValue);
-        for(j = 0; j < 5000000; j++)
-            Nop();
+        if(PORTCbits.RC13 == 0)
+        {
+            analogValue = readAnalogIn(0);
+            //analogValue *= 4;
+            sprintf(string, "Analog: %i\n", analogValue);
+            SendString(1, string);
+            PORTAbits.RA5 = !PORTAbits.RA5;
+            setDutyCycle(2, analogValue);
+            for(j = 0; j < 500000; j++)
+                Nop();
+        }
     }
 }
 

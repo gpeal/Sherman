@@ -45,7 +45,28 @@ void setupPWM(int timerX, int outputControlX)
     
 }
 
-void setDutyCycle(int dutyCycle)
+void setDutyCycle(int outputControlX, int dutyCycle)
 {
-    SetDCOC1PWM(dutyCycle);
+    switch(outputControlX)
+    {
+        case 1:
+            SetDCOC1PWM(dutyCycle);
+            break;
+        case 2:
+            SetDCOC2PWM(dutyCycle);
+            break;
+        case 3:
+            SetDCOC3PWM(dutyCycle);
+            break;
+        case 4:
+            SetDCOC4PWM(dutyCycle);
+            break;
+        case 5:
+            SetDCOC5PWM(dutyCycle);
+            break;
+        default:
+            SetDCOC1PWM(dutyCycle);
+            break;
+    }
+    
 }

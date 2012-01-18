@@ -18,7 +18,7 @@ void initialize()
 //currently set to RB2
 void initializeAnalogIn()
 {
-    setupAnalogIn(0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    setupAnalogIn(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 void initializePic()
@@ -39,7 +39,7 @@ void initializePorts()
 
 void initializePWM()
 {
-    setupPWM();
+    setupPWM(2, 2);
 }
 
 void initializeTimers()
