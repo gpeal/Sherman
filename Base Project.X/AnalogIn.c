@@ -9,8 +9,6 @@ void setupAnalogIn(int port0, int port1, int port2, int port3, int port4, int po
 
     #define PARAM4  (port0) | (port1 << 1) | (port2 << 2) | (port3 << 3) | (port4 << 4) | (port5 << 5) | (port6 << 6) | (port7 << 7) | (port8 << 8) | (port9 << 9) | (port10 << 10) | (port11 << 11) | (port12 << 12) | (port13 << 13) | (port14 << 14) | (port15 << 15)
     #define PARAM5  ~(PARAM4)
-    //#define PARAM4	ENABLE_AN5_ANA
-    //#define PARAM5 SKIP_SCAN_AN1 | SKIP_SCAN_AN2 | SKIP_SCAN_AN3 | SKIP_SCAN_AN4 | SKIP_SCAN_AN0 | SKIP_SCAN_AN6 | SKIP_SCAN_AN7 | SKIP_SCAN_AN8 | SKIP_SCAN_AN9 | SKIP_SCAN_AN10 | SKIP_SCAN_AN11 | SKIP_SCAN_AN12 | SKIP_SCAN_AN13 | SKIP_SCAN_AN14 | SKIP_SCAN_AN15
 
     SetChanADC10( ADC_CH0_NEG_SAMPLEA_NVREF);
     OpenADC10( PARAM1, PARAM2, PARAM3, PARAM4, PARAM5 );
@@ -19,7 +17,7 @@ void setupAnalogIn(int port0, int port1, int port2, int port3, int port4, int po
 
 }
 
-int readAnalogIn(int portId)
+int readAnalogIn(int portIndex)
 {
-    return ReadADC10(portId);
+    return ReadADC10(portIndex);
 }
