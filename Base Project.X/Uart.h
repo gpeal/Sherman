@@ -15,4 +15,19 @@ int SendCharacter(int id, const char character);
 // Sends a string over the desired uart module (1 will send over uart1)
 int SendString(int id, const char *string);
 
+//ISR TEMPLATE
+/*
+void __ISR(_UART_1_VECTOR, ipl2) IntUart1Handler(void)
+{
+    if(INTGetFlag(INT_SOURCE_UART_RX(UART1)))
+    {
+        INTClearFlag(INT_SOURCE_UART_RX(UART1));
+    }
+
+    if(INTGetFlag(INT_SOURCE_UART_TX(UART1)))
+    {
+        INTClearFlag(INT_SOURCE_UART_TX(UART1));
+    }
+}
+*/
 #endif

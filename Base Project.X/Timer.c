@@ -242,11 +242,3 @@ int setupTimer(int timer, int frequency, int priority)
     }
     return 1;
 }
-
-//ISR TEMPLATE
-/*
-void __ISR(_TIMER_1_VECTOR, ipl1) TimerIsr(void)
-{
-    mT1ClearIntFlag();
-}
- */
