@@ -40,11 +40,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/Uart.o.d ${OBJECTDIR}/Main.o.d ${OBJECTDIR}/Initialize.o.d ${OBJECTDIR}/AnalogIn.o.d ${OBJECTDIR}/Timer.o.d ${OBJECTDIR}/PWM.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o ${OBJECTDIR}/LCD.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/Uart.o.d ${OBJECTDIR}/Main.o.d ${OBJECTDIR}/Initialize.o.d ${OBJECTDIR}/AnalogIn.o.d ${OBJECTDIR}/Timer.o.d ${OBJECTDIR}/PWM.o.d ${OBJECTDIR}/LCD.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o
+OBJECTFILES=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o ${OBJECTDIR}/LCD.o
 
 
 CFLAGS=
@@ -125,6 +125,11 @@ ${OBJECTDIR}/PWM.o: PWM.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/PWM.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/PWM.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/PWM.o.d" -o ${OBJECTDIR}/PWM.o PWM.c  
 	
+${OBJECTDIR}/LCD.o: LCD.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/LCD.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/LCD.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/LCD.o.d" -o ${OBJECTDIR}/LCD.o LCD.c  
+	
 else
 ${OBJECTDIR}/Uart.o: Uart.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
@@ -155,6 +160,11 @@ ${OBJECTDIR}/PWM.o: PWM.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/PWM.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/PWM.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/PWM.o.d" -o ${OBJECTDIR}/PWM.o PWM.c  
+	
+${OBJECTDIR}/LCD.o: LCD.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/LCD.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/LCD.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/LCD.o.d" -o ${OBJECTDIR}/LCD.o LCD.c  
 	
 endif
 

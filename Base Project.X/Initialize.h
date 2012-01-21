@@ -10,7 +10,6 @@ void initializePorts();
 void initializePWM();
 void initializeTimers();
 void initializeUart();
-
-int setupTimer(int timer, int frequency, int priority);
+void initializeLCD();
 
 #endif

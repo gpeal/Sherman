@@ -1,5 +1,6 @@
 #include "AnalogIn.h"
 #include "Initialize.h"
+#include "LCD.h"
 #include "Uart.h"
 #include <plib.h>
 
@@ -13,6 +14,12 @@ void initialize()
     initializeTimers();
     initializeUart();
     initializeAnalogIn();
+    initializeLCD();
+}
+
+void initializeLCD()
+{
+    setupLCD();
 }
 
 //currently set to RB2
