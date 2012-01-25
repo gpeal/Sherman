@@ -46,8 +46,21 @@ void setupLCD()
     LCDcommand(0, 0,0,0,0,0,1,1,0);
     LCDcommand(0, 0,0,0,0,1,1,0,0);
     
-    LCDcommand(1, 0,1,0,0,0,0,0,1);
-    LCDcommand(1, 0,1,0,0,0,0,1,0);
+    LCDWriteString("Hello World!");
+}
+
+void LCDWriteChar(char c)
+{
+    LCDcommand(1, c>>7&1, c>>6&1, c>>5&1, c>>4&1, c>>3&1, c>>2&1, c>>1&1, c&1);
+}
+
+void LCDWriteString(char *str)
+{
+    while(*str)
+    {
+        LCDWriteChar(*str);
+        str++;
+    }
 }
 
 void LCDcommand(int command, int d7, int d6, int d5, int d4, int d3, int d2, int d1, int d0)
