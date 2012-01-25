@@ -2,6 +2,7 @@
 #define TIMER_H
 
 int setupTimer(int timer, int frequency, int priority);
+void closeTimer(int timer);
 
 //ISR TEMPLATE
 /*

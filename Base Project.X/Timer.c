@@ -242,3 +242,25 @@ int setupTimer(int timer, int frequency, int priority)
     }
     return 1;
 }
+
+void closeTimer(int timer)
+{
+    switch(timer)
+    {
+        case 1:
+            CloseTimer1();
+            break;
+
+        case 2:
+            CloseTimer2();
+            break;
+
+        case 3:
+            CloseTimer3();
+            break;
+
+        case 4:
+            CloseTimer4();
+            break;
+    }
+}
