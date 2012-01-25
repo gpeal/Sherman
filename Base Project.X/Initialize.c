@@ -9,23 +9,15 @@
 void initialize()
 {
     initializePic();
-    initializePorts();
-    initializePWM();
-    initializeTimers();
-    initializeUart();
-    initializeAnalogIn();
-    initializeLCD();
 }
 
 void initializeLCD()
 {
-    setupLCD();
 }
 
 //currently set to RB2
 void initializeAnalogIn()
 {
-    setupAnalogIn(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 void initializePic()
@@ -37,16 +29,10 @@ void initializePic()
 
 void initializePorts()
 {
-    //AD1PCFG = 0xFFFD;
-    TRISDbits.TRISD1 = 0;
-    TRISAbits.TRISA4 = 0;
-    TRISAbits.TRISA5 = 0;
-    TRISCbits.TRISC13 = 1;
 }
 
 void initializePWM()
 {
-    setupPWM(2, 2);
 }
 
 void initializeTimers()
@@ -55,5 +41,4 @@ void initializeTimers()
 
 void initializeUart()
 {
-    setupUart(1,2);
 }
