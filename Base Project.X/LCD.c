@@ -37,16 +37,23 @@ void setupLCD()
 
     EN = 0;
 
-    LCDcommand(0, 0,0,1,1,0,0,0,0);
-    LCDcommand(0, 0,0,1,1,0,0,0,0);
-    LCDcommand(0, 0,0,1,1,0,0,0,0);
-    LCDcommand(0, 0,0,1,1,1,0,0,0);
-    LCDcommand(0, 0,0,0,0,1,0,0,0);
-    LCDcommand(0, 0,0,0,0,0,0,0,1);
-    LCDcommand(0, 0,0,0,0,0,1,1,0);
-    LCDcommand(0, 0,0,0,0,1,1,0,0);
+    LCDcommand(0, 0,0,1,1,1,0,0,0); //initialize 2 lines
+
+    //LCDcommand(0, 0,0,1,1,0,0,0,0);
+    //LCDcommand(0, 0,0,1,1,0,0,0,0);
+    //LCDcommand(0, 0,0,1,1,1,0,0,0);
+    //LCDcommand(0, 0,0,0,0,1,0,0,0); //blank screen without clearing
+
+    LCDcommand(0, 0,0,0,0,0,0,0,1); //clear screen
+    LCDcommand(0, 0,0,0,0,0,1,1,0); //cursor moves right
+
+    LCDcommand(0, 0,0,0,0,1,1,0,0); //restore screen
     
-    LCDWriteString("Hello World!");
+    LCDWriteString("Hello", 1, 1);
+    LCDWriteString("World!", 2, 1);
+    LCDClear(0);
+    LCDWriteString("a", 1, 1);
+    LCDWriteString("b", 2, 1);
 }
 
 void LCDWriteChar(char c)
@@ -54,12 +61,31 @@ void LCDWriteChar(char c)
     LCDcommand(1, c>>7&1, c>>6&1, c>>5&1, c>>4&1, c>>3&1, c>>2&1, c>>1&1, c&1);
 }
 
-void LCDWriteString(char *str)
+void LCDWriteString(char *str, int row, int col)
 {
+    row--;
+    col--;
+    LCDcommand(0,1,row,0,0,col>>3&1,col>>2&1,col>>1&1,col&1);
+
     while(*str)
     {
         LCDWriteChar(*str);
         str++;
+    }
+}
+
+void LCDClear(int line)
+{
+    switch(line)
+    {
+        case 1:
+            LCDWriteString("                ", 1, 1);
+            break;
+        case 2:
+            LCDWriteString("                ", 2, 1);
+            break;
+        default:
+            LCDcommand(0,0,0,0,0,0,0,0,1);
     }
 }
 
