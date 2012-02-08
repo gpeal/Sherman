@@ -1,3 +1,5 @@
 *.o
 *.hex
 *.elf
+*.o
+Base Project.X/build/default/production/Timer.o
