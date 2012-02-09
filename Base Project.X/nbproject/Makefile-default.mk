@@ -40,11 +40,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o ${OBJECTDIR}/LCD.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/Uart.o.d ${OBJECTDIR}/Main.o.d ${OBJECTDIR}/Initialize.o.d ${OBJECTDIR}/AnalogIn.o.d ${OBJECTDIR}/Timer.o.d ${OBJECTDIR}/PWM.o.d ${OBJECTDIR}/LCD.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/Motor.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/Uart.o.d ${OBJECTDIR}/Main.o.d ${OBJECTDIR}/Initialize.o.d ${OBJECTDIR}/AnalogIn.o.d ${OBJECTDIR}/Timer.o.d ${OBJECTDIR}/PWM.o.d ${OBJECTDIR}/LCD.o.d ${OBJECTDIR}/Motor.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o ${OBJECTDIR}/LCD.o
+OBJECTFILES=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/Motor.o
 
 
 CFLAGS=
@@ -130,6 +130,11 @@ ${OBJECTDIR}/LCD.o: LCD.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/LCD.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/LCD.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/LCD.o.d" -o ${OBJECTDIR}/LCD.o LCD.c  
 	
+${OBJECTDIR}/Motor.o: Motor.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/Motor.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/Motor.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Motor.o.d" -o ${OBJECTDIR}/Motor.o Motor.c  
+	
 else
 ${OBJECTDIR}/Uart.o: Uart.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
@@ -165,6 +170,11 @@ ${OBJECTDIR}/LCD.o: LCD.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/LCD.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/LCD.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/LCD.o.d" -o ${OBJECTDIR}/LCD.o LCD.c  
+	
+${OBJECTDIR}/Motor.o: Motor.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/Motor.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/Motor.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Motor.o.d" -o ${OBJECTDIR}/Motor.o Motor.c  
 	
 endif
 

@@ -10,6 +10,7 @@
       <itemPath>AnalogIn.h</itemPath>
       <itemPath>Timer.h</itemPath>
       <itemPath>LCD.h</itemPath>
+      <itemPath>Motor.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LibraryFiles"
                    displayName="Library Files"
@@ -33,6 +34,7 @@
       <itemPath>Timer.c</itemPath>
       <itemPath>PWM.c</itemPath>
       <itemPath>LCD.c</itemPath>
+      <itemPath>Motor.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
