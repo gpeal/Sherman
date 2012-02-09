@@ -1,0 +1,6 @@
+//1 refers to OC1
+#define MOTOR_WHEEL_LEFT 1
+//OC1
+#define MOTOR_WHEEL_LEFT_PWM 1
+#define MOTOR_WHEEL_LEFT_DIR
+#define MOTOR_WHEEL_RIGHT 2
