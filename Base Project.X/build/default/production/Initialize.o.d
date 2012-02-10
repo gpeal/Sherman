@@ -1,2 +1,2 @@
-build/default/production/Initialize.o: Initialize.c AnalogIn.h \
- Initialize.h LCD.h Uart.h
+build/default/production/Initialize.o: Initialize.c Initialize.h LCD.h \
+ Components.h Uart.h AnalogIn.h

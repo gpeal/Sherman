@@ -6,7 +6,7 @@
 
 
 void setupMotor(int motor);
-void setMotor(int motor, int cycle);
+void setMotor(int motor, int dutyCycle, int direction);
 
 
 #endif
