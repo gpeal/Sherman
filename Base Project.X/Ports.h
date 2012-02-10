@@ -12,9 +12,10 @@
 */
 
 /* PORT D
- * 0-5 PWM
- * 0 = Left Servo
- *
+ * 0 = Left Motor OC/OC1
+ * 1-4 Reserved for PWM
+ * 5 = Left Motor Direction
+ * 6-9 Reserved for PWM Direction Control
 */
 
 /* PORTE
