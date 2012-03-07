@@ -1,56 +1,47 @@
 #include "Initialize.h"
 #include <plib.h>
 
-//Global Variables
-char uartInput = 0;
+unsigned int Time = 0;
+char TimeFlag500ms=0, TimeFlag1s=0, TimeFlag2s=0;
 
 int main(void)
 {
-    int motorDutyCycle = 500;
-    int motorDirection = 1;
-    char motorDutyCycleStr[16];
     initialize();
-    setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
-    SendString(1, "Hello World!");
     while(1)
     {
-        if(uartInput == 'd')
+        //check time flags
+        if(TimeFlag500ms)
         {
-            uartInput = 0;
-            motorDirection = !motorDirection;
-            setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
+            TimeFlag500ms = 0;
+            LATAbits.LATA0 = !LATAbits.LATA0;
         }
-        else if(uartInput == 'f')
+        if(TimeFlag1s)
         {
-            uartInput = 0;
-            motorDutyCycle += 100;
-            sprintf(motorDutyCycleStr, "%i\n", motorDutyCycle);
-            SendString(1, motorDutyCycleStr);
-            setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
+            TimeFlag1s = 0;
+            LATAbits.LATA1 = !LATAbits.LATA1;
         }
-        else if(uartInput == 's')
+        if(TimeFlag2s)
         {
-            uartInput = 0;
-            motorDutyCycle -= 100;
-            sprintf(motorDutyCycleStr, "%i\n", motorDutyCycle);
-            SendString(1,motorDutyCycleStr);
-            setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
+            TimeFlag2s = 0;
+            LATAbits.LATA2 = !LATAbits.LATA2;
         }
     }
 }
 
-//ISRs
-void __ISR(_UART_1_VECTOR, ipl2) IntUart1Handler(void)
+void __ISR(_TIMER_1_VECTOR, ipl1) TimerIsr(void)
 {
-    if(INTGetFlag(INT_SOURCE_UART_RX(UART1)))
+    Time++;
+    if(!(Time%5000))
     {
-        uartInput = UARTGetDataByte(UART1);
-        LATAbits.LATA5 = !LATAbits.LATA5;
-        INTClearFlag(INT_SOURCE_UART_RX(UART1));
+        TimeFlag500ms = 1;
+        if(!(Time%10000))
+        {
+            TimeFlag1s = 1;
+            if(!(Time%20000))
+            {
+                TimeFlag2s = 1;
+            }
+        }
     }
-
-    if(INTGetFlag(INT_SOURCE_UART_TX(UART1)))
-    {
-        INTClearFlag(INT_SOURCE_UART_TX(UART1));
-    }
+    mT1ClearIntFlag();
 }

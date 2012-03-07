@@ -3,7 +3,7 @@
  * 5 = L2 LED
 */
 
-/* PORTB -- PWM
+/* PORTB -- Analog In
  *
 */
 

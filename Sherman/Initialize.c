@@ -7,9 +7,10 @@ void initialize()
 {
     initializePic();
     initializePorts();
-    initializePWM();
-    initializeMotor();
-    initializeUart();
+    initializeTimers();
+    //initializePWM();
+    //initializeMotor();
+    //initializeUart();
 }
 
 void initializeLCD()
@@ -30,25 +31,27 @@ void initializePic()
 
 void initializePorts()
 {
-    TRISAbits.TRISA5 = 0;
-    TRISDbits.TRISD5 = 0;
+    TRISAbits.TRISA0 = 0;
+    PORTAbits.RA0 = 0;
+    TRISAbits.TRISA1 = 0;
+    PORTAbits.RA1 = 0;
+    TRISAbits.TRISA2 = 0;
+    PORTAbits.RA2 = 0;
 }
 
 void initializePWM()
 {
-    setupPWMTimer();
 }
 
 void initializeTimers()
 {
+    setupTimer(1, 10000, 1);
 }
 
 void initializeUart()
 {
-    setupUart(1, 2);
 }
 
 void initializeMotor()
 {
-    setupMotor(MOTOR_WHEEL_LEFT);
 }
