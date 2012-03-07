@@ -1,14 +1,15 @@
-#include "AnalogIn.h"
 #include "Initialize.h"
-#include "LCD.h"
-#include "Uart.h"
-#include <plib.h>
+
 
 #define DESIRED_BAUDRATE_NU32 115200 // Baudrate
 
 void initialize()
 {
     initializePic();
+    initializePorts();
+    initializePWM();
+    initializeMotor();
+    initializeUart();
 }
 
 void initializeLCD()
@@ -29,10 +30,13 @@ void initializePic()
 
 void initializePorts()
 {
+    TRISAbits.TRISA5 = 0;
+    TRISDbits.TRISD5 = 0;
 }
 
 void initializePWM()
 {
+    setupPWMTimer();
 }
 
 void initializeTimers()
@@ -41,4 +45,10 @@ void initializeTimers()
 
 void initializeUart()
 {
+    setupUart(1, 2);
+}
+
+void initializeMotor()
+{
+    setupMotor(MOTOR_WHEEL_LEFT);
 }
