@@ -1,6 +1,7 @@
 #ifndef LCD_H
 #define LCD_H
 
+char LCDBuffer[16];
 //Initializes the LCD
 void setupLCD();
 

@@ -6,51 +6,25 @@ char uartInput = 0;
 
 int main(void)
 {
-    int motorDutyCycle = 500;
-    int motorDirection = 1;
-    char motorDutyCycleStr[16];
+    int angle = 0;
+    int direction = 1;
+    double i;
     initialize();
-    setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
-    SendString(1, "Hello World!");
+
     while(1)
     {
-        if(uartInput == 'd')
-        {
-            uartInput = 0;
-            motorDirection = !motorDirection;
-            setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
-        }
-        else if(uartInput == 'f')
-        {
-            uartInput = 0;
-            motorDutyCycle += 100;
-            sprintf(motorDutyCycleStr, "%i\n", motorDutyCycle);
-            SendString(1, motorDutyCycleStr);
-            setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
-        }
-        else if(uartInput == 's')
-        {
-            uartInput = 0;
-            motorDutyCycle -= 100;
-            sprintf(motorDutyCycleStr, "%i\n", motorDutyCycle);
-            SendString(1,motorDutyCycleStr);
-            setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
-        }
-    }
-}
+        LCDClear(0);
+        angle += direction;
+        if (angle >= 180)
+            direction = -1;
+        else if (angle <= 0)
+            direction = 1;
 
-//ISRs
-void __ISR(_UART_1_VECTOR, ipl2) IntUart1Handler(void)
-{
-    if(INTGetFlag(INT_SOURCE_UART_RX(UART1)))
-    {
-        uartInput = UARTGetDataByte(UART1);
-        LATAbits.LATA5 = !LATAbits.LATA5;
-        INTClearFlag(INT_SOURCE_UART_RX(UART1));
+        setServoPosition(1, angle);
+        sprintf(LCDBuffer, "Angle: %d", angle);
+        LCDWriteString(LCDBuffer, 1, 1);
+        PORTAbits.RA4 = !PORTAbits.RA4;
+        for(i = 1; i < 8000; i++) {}
     }
 
-    if(INTGetFlag(INT_SOURCE_UART_TX(UART1)))
-    {
-        INTClearFlag(INT_SOURCE_UART_TX(UART1));
-    }
 }

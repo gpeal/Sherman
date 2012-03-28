@@ -4,7 +4,7 @@
 
 void setupServo();
 
-void setServo(int timer, int outputControl);
-void setServoPosition(int outputControl, int angle);
+void setServo(int timer);
+void setServoPosition(int servo, int angle);
 
 #endif

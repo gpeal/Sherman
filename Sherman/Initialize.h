@@ -19,5 +19,7 @@ void initializeTimers();
 void initializeUart();
 void initializeLCD();
 void initializeMotor();
+void initializeSPI();
+void initializeServo();
 
 #endif

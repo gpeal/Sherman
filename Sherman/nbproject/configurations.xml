@@ -13,6 +13,8 @@
       <itemPath>Motor.h</itemPath>
       <itemPath>Ports.h</itemPath>
       <itemPath>Components.h</itemPath>
+      <itemPath>SPI.h</itemPath>
+      <itemPath>Servo.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LibraryFiles"
                    displayName="Library Files"
@@ -37,6 +39,8 @@
       <itemPath>PWM.c</itemPath>
       <itemPath>LCD.c</itemPath>
       <itemPath>Motor.c</itemPath>
+      <itemPath>SPI.c</itemPath>
+      <itemPath>Servo.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

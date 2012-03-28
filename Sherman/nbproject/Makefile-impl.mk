@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Base Project.X
+PROJECTNAME=Sherman
 
 # Active Configuration
 DEFAULTCONF=default
