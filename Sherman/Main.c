@@ -16,7 +16,7 @@ int main(void)
         LCDClear(0);
         angle += direction;
         if (angle >= 180)
-            direction = -1;
+            direction = -1; 
         else if (angle <= 0)
             direction = 1;
 
