@@ -10,9 +10,8 @@ void initialize()
     initializePWM();
     initializeMotor();
     initializeUart();
-    initializeSPI();
-    initializeServo();
     initializeLCD();
+    initializeSPI();
 }
 
 void initializeLCD()
@@ -35,7 +34,9 @@ void initializePic()
 void initializePorts()
 {
     TRISAbits.TRISA4 = 0;
-    TRISDbits.TRISD0 = 0;
+    PORTAbits.RA4 = 0;
+    TRISAbits.TRISA5 = 0;
+    PORTAbits.RA5 = 0;
 }
 
 void initializePWM()
@@ -54,15 +55,9 @@ void initializeUart()
 
 void initializeMotor()
 {
-    //setupMotor(MOTOR_WHEEL_LEFT);
 }
 
 void initializeSPI()
 {
-    //setupSPIMaster();
-}
-
-void initializeServo()
-{
-    setupServo(2, 1);
+    setupSPISlave();
 }

@@ -7,6 +7,7 @@
 #include "Components.h"
 #include "Uart.h"
 #include "AnalogIn.h"
+#include "SPI.h"
 
 #define SYS_FREQ 80000000
 
@@ -20,6 +21,5 @@ void initializeUart();
 void initializeLCD();
 void initializeMotor();
 void initializeSPI();
-void initializeServo();
 
 #endif

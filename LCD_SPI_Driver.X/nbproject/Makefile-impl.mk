@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Sherman
+PROJECTNAME=LCD_SPI_Driver.X
 
 # Active Configuration
 DEFAULTCONF=default
