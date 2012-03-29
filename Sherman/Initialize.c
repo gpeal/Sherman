@@ -29,6 +29,8 @@ void initializePorts()
 {
     TRISBbits.TRISB15 = 1;
     TRISDbits.TRISD0 = 0;
+    TRISAbits.TRISA4 = 0;
+    TRISAbits.TRISA5 = 0;
 }
 
 void initializeAnalogIn()
@@ -63,15 +65,13 @@ void initializeSPI()
 
 void initializeTimers()
 {
+    setupTimer(1, 1000, 1);
 }
 
 void initializeUart()
 {
     //setupUart(1, 2);
 }
-
-
-
 
 void initializeLCD()
 {
