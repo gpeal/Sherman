@@ -3,7 +3,7 @@
 #include <plib.h>
 
 int timerTicks = 0;
-int servo1PulseWidth = 150;
+int servoPulseWidth[] = {150, 150, 150, 150, 150, 150};
 
 void setupServo()
 {
@@ -15,8 +15,7 @@ void setServoPosition(int servo, int angle)
 {
     //the /9.7 is a scalar that made the servo respond to ~0-180 degrees
     int pulseWidth = (double)angle/180*2*100/9.7+5;
-    if (servo == 1)
-        servo1PulseWidth = pulseWidth;
+    servoPulseWidth[servo] = pulseWidth;
 }
 
 
@@ -28,10 +27,12 @@ void __ISR(_TIMER_2_VECTOR, ipl3) TimerIsr(void)
     if (timerTicks > 200)
         timerTicks = 0;
 
-    if (timerTicks < servo1PulseWidth)
+    //uncomment this and set the port to any digital out porto enable the servo
+    
+    if (timerTicks < servoPulseWidth[1])
         PORTDbits.RD0 = 1;
     else
         PORTDbits.RD0 = 0;
-
+    
     mT2ClearIntFlag();
 }

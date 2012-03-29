@@ -15,16 +15,6 @@ void initialize()
     initializeLCD();
 }
 
-void initializeLCD()
-{
-    setupLCD();
-}
-
-//currently set to RB2
-void initializeAnalogIn()
-{
-}
-
 void initializePic()
 {
     SYSTEMConfig(SYS_FREQ, SYS_CFG_ALL);
@@ -34,8 +24,8 @@ void initializePic()
 
 void initializePorts()
 {
-    TRISAbits.TRISA4 = 0;
-    TRISDbits.TRISD0 = 0;
+    //TRISAbits.TRISA4 = 0;
+    //TRISDbits.TRISD0 = 0;
 }
 
 void initializePWM()
@@ -64,5 +54,15 @@ void initializeSPI()
 
 void initializeServo()
 {
-    setupServo(2, 1);
+    //setupServo(2, 1);
+}
+
+void initializeLCD()
+{
+    //setupLCD();
+}
+
+//currently set to RB2
+void initializeAnalogIn()
+{
 }
