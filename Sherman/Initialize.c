@@ -7,11 +7,14 @@ void initialize()
 {
     initializePic();
     initializePorts();
-    initializePWM();
+    initializeAnalogIn();
+    initializeLaser();
     initializeMotor();
-    initializeUart();
-    initializeSPI();
+    initializePWM();
     initializeServo();
+    initializeSPI();
+    initializeTimers();
+    initializeUart();
     initializeLCD();
 }
 
@@ -24,22 +27,20 @@ void initializePic()
 
 void initializePorts()
 {
-    //TRISAbits.TRISA4 = 0;
-    //TRISDbits.TRISD0 = 0;
+    TRISBbits.TRISB15 = 1;
+    TRISDbits.TRISD0 = 0;
+    TRISAbits.TRISA4 = 0;
+    TRISAbits.TRISA5 = 0;
 }
 
-void initializePWM()
+void initializeAnalogIn()
 {
-    //setupPWMTimer();
+    setupAnalogIn(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 }
 
-void initializeTimers()
+void initializeLaser()
 {
-}
 
-void initializeUart()
-{
-    //setupUart(1, 2);
 }
 
 void initializeMotor()
@@ -47,9 +48,9 @@ void initializeMotor()
     //setupMotor(MOTOR_WHEEL_LEFT);
 }
 
-void initializeSPI()
+void initializePWM()
 {
-    //setupSPIMaster();
+    //setupPWMTimer();
 }
 
 void initializeServo()
@@ -57,12 +58,22 @@ void initializeServo()
     //setupServo(2, 1);
 }
 
-void initializeLCD()
+void initializeSPI()
 {
-    //setupLCD();
+    //setupSPIMaster();
 }
 
-//currently set to RB2
-void initializeAnalogIn()
+void initializeTimers()
 {
+    setupTimer(1, 1000, 1);
+}
+
+void initializeUart()
+{
+    //setupUart(1, 2);
+}
+
+void initializeLCD()
+{
+    setupLCD();
 }

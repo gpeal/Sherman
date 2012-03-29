@@ -19,7 +19,7 @@ void setServoPosition(int servo, int angle)
 }
 
 
-void __ISR(_TIMER_2_VECTOR, ipl3) TimerIsr(void)
+void __ISR(_TIMER_2_VECTOR, ipl3) Timer2Isr(void)
 {
     timerTicks++;
 

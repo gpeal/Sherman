@@ -15,6 +15,7 @@
       <itemPath>Components.h</itemPath>
       <itemPath>SPI.h</itemPath>
       <itemPath>Servo.h</itemPath>
+      <itemPath>Laser.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LibraryFiles"
                    displayName="Library Files"
@@ -41,6 +42,7 @@
       <itemPath>Motor.c</itemPath>
       <itemPath>SPI.c</itemPath>
       <itemPath>Servo.c</itemPath>
+      <itemPath>Laser.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

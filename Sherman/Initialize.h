@@ -7,12 +7,14 @@
 #include "Components.h"
 #include "Uart.h"
 #include "AnalogIn.h"
+#include "Laser.h"
 
 #define SYS_FREQ 80000000
 
 void initialize();
 void initializeAnalogIn();
 void initializePic();
+void initializeLaser();
 void initializePorts();
 void initializePWM();
 void initializeTimers();
