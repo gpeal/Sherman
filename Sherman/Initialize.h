@@ -13,6 +13,7 @@
 void initialize();
 void initializeAnalogIn();
 void initializePic();
+void initializeLaser();
 void initializePorts();
 void initializePWM();
 void initializeTimers();
