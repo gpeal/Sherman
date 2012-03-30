@@ -16,6 +16,8 @@
       <itemPath>SPI.h</itemPath>
       <itemPath>Servo.h</itemPath>
       <itemPath>Laser.h</itemPath>
+      <itemPath>fftc.h</itemPath>
+      <itemPath>NU32DSP.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LibraryFiles"
                    displayName="Library Files"
@@ -43,6 +45,7 @@
       <itemPath>SPI.c</itemPath>
       <itemPath>Servo.c</itemPath>
       <itemPath>Laser.c</itemPath>
+      <itemPath>NU32DSP.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

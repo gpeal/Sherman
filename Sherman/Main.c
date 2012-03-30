@@ -1,14 +1,22 @@
 #include "Initialize.h"
 #include <plib.h>
 #include <limits.h>
+#include "NU32DSP.h"
+
 
 //Global Variables
 unsigned int time = 0;
-int timeFlag1ms = 0, timeFlag10ms = 0, timeFlag200ms = 0, timeFlag1s = 0;
+int timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag1s = 0, timeFlag5s = 0;
+double analogBuffer[1024];
+double analogFFT[1024];
+
+
 int main(void)
 {
-    int voltage;
-    unsigned int i;
+    int analogValue, i;
+    int analogBufferIndex = 0;
+    //the sum of the fft in the designated region
+    double fftSum;
     initialize();
     laserOn(1);
     sprintf(LCDBuffer, "Initializing...");
@@ -19,31 +27,58 @@ int main(void)
     while(1)
     {
 
+        if(timeFlag_1ms)
+        {
+            timeFlag_1ms = 0;
+            analogValue = readAnalogIn(0);
+            analogBuffer[analogBufferIndex] = analogValue;
+            analogBufferIndex++;
+        }
+
         if(timeFlag1ms)
         {
             timeFlag1ms = 0;
+            toggleLaser(1);
+        }
 
+        if(timeFlag2ms)
+        {
+            timeFlag2ms = 0;
         }
 
         if(timeFlag10ms)
         {
-            timeFlag10ms = 0;
-            
+            timeFlag10ms = 0; 
+        }
+
+        if(timeFlag102_4ms)
+        {
+            timeFlag102_4ms = 0;
+            //scaling = 10? what is that used for
+            NU32_FFT_1024(analogFFT, analogBuffer, 10);
+            analogBufferIndex = 0;
         }
 
         if(timeFlag200ms)
         {
             timeFlag200ms = 0;
-            voltage = readAnalogIn(0);
-            sprintf(LCDBuffer, "Voltage: %d", voltage);
-            LCDClear(0);
-            LCDWriteString(LCDBuffer, 1, 1);
+            
         }
 
         if(timeFlag1s)
         {
             timeFlag1s = 0;
-            toggleLaser(1);
+            fftSum = 0;
+            for(i = 45; i < 55; i++)
+                fftSum += analogFFT[i];
+            LCDClear(0);
+            sprintf(LCDBuffer, "%.0f", fftSum);
+            LCDWriteString(LCDBuffer, 1, 1);
+        }
+
+        if(timeFlag5s)
+        {
+            timeFlag5s = 0;
         }
     }
 }
@@ -52,12 +87,20 @@ void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
 {
     time++;
     if(time%1 < 1)
-        timeFlag1ms = 1;
+        timeFlag_1ms = 1;
     if(time%10 < 1)
+        timeFlag1ms = 1;
+    if(time%20 < 1)
+        timeFlag2ms = 1;
+    if(time%100 < 1)
         timeFlag10ms = 1;
-    if(time%200 < 1)
+    if(time%1024 < 1)
+        timeFlag102_4ms = 1;
+    if(time%2000 < 1)
         timeFlag200ms = 1;
-    if(time%1000 < 1)
+    if(time%10000 < 1)
         timeFlag1s = 1;
+    if(time%50000 < 1)
+        timeFlag5s = 1;
     mT1ClearIntFlag();
 }
