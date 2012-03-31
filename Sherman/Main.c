@@ -1,8 +1,7 @@
 #include "Initialize.h"
 #include <plib.h>
 #include <limits.h>
-#include "NU32DSP.h"
-
+#include "fft.h"
 
 //Global Variables
 unsigned int time = 0;
@@ -38,12 +37,13 @@ int main(void)
         if(timeFlag1ms)
         {
             timeFlag1ms = 0;
-            toggleLaser(1);
+            
         }
 
         if(timeFlag2ms)
         {
             timeFlag2ms = 0;
+            toggleLaser(1);
         }
 
         if(timeFlag10ms)
@@ -55,7 +55,7 @@ int main(void)
         {
             timeFlag102_4ms = 0;
             //scaling = 10? what is that used for
-            NU32_FFT_1024(analogFFT, analogBuffer, 10);
+            fft(analogFFT, analogBuffer);
             analogBufferIndex = 0;
         }
 
@@ -79,6 +79,10 @@ int main(void)
         if(timeFlag5s)
         {
             timeFlag5s = 0;
+            for(i = 0; i < 512; i++) {
+                sprintf(LCDBuffer, "%.0f;", analogFFT[i]);
+                SendString(1, LCDBuffer);
+            }
         }
     }
 }
