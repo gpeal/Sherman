@@ -27,15 +27,12 @@ void initializePic()
 
 void initializePorts()
 {
-    TRISBbits.TRISB15 = 1;
-    TRISDbits.TRISD0 = 0;
-    TRISAbits.TRISA4 = 0;
-    TRISAbits.TRISA5 = 0;
+    //TRISBbits.TRISB15 = 1;
 }
 
 void initializeAnalogIn()
 {
-    setupAnalogIn(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+    //setupAnalogIn(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 }
 
 void initializeLaser()
@@ -75,5 +72,5 @@ void initializeUart()
 
 void initializeLCD()
 {
-    setupLCD();
+    //setupLCD();
 }

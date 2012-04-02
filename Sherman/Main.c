@@ -7,14 +7,7 @@ unsigned int time = 0;
 int timeFlag1ms = 0, timeFlag10ms = 0, timeFlag200ms = 0, timeFlag1s = 0;
 int main(void)
 {
-    int voltage;
-    unsigned int i;
     initialize();
-    laserOn(1);
-    sprintf(LCDBuffer, "Initializing...");
-    LCDWriteString(LCDBuffer, 1, 1);
-    PORTAbits.RA4 = 0;
-    PORTAbits.RA5 = 0;
     
     while(1)
     {
@@ -34,16 +27,11 @@ int main(void)
         if(timeFlag200ms)
         {
             timeFlag200ms = 0;
-            voltage = readAnalogIn(0);
-            sprintf(LCDBuffer, "Voltage: %d", voltage);
-            LCDClear(0);
-            LCDWriteString(LCDBuffer, 1, 1);
         }
 
         if(timeFlag1s)
         {
             timeFlag1s = 0;
-            toggleLaser(1);
         }
     }
 }
