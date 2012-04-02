@@ -1,56 +1,51 @@
 #include "Initialize.h"
 #include <plib.h>
+#include <limits.h>
 
 //Global Variables
-char uartInput = 0;
-
+unsigned int time = 0;
+int timeFlag1ms = 0, timeFlag10ms = 0, timeFlag200ms = 0, timeFlag1s = 0;
 int main(void)
 {
-    int motorDutyCycle = 500;
-    int motorDirection = 1;
-    char motorDutyCycleStr[16];
     initialize();
-    setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
-    SendString(1, "Hello World!");
+    
     while(1)
     {
-        if(uartInput == 'd')
+
+        if(timeFlag1ms)
         {
-            uartInput = 0;
-            motorDirection = !motorDirection;
-            setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
+            timeFlag1ms = 0;
+
         }
-        else if(uartInput == 'f')
+
+        if(timeFlag10ms)
         {
-            uartInput = 0;
-            motorDutyCycle += 100;
-            sprintf(motorDutyCycleStr, "%i\n", motorDutyCycle);
-            SendString(1, motorDutyCycleStr);
-            setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
+            timeFlag10ms = 0;
+            
         }
-        else if(uartInput == 's')
+
+        if(timeFlag200ms)
         {
-            uartInput = 0;
-            motorDutyCycle -= 100;
-            sprintf(motorDutyCycleStr, "%i\n", motorDutyCycle);
-            SendString(1,motorDutyCycleStr);
-            setMotor(MOTOR_WHEEL_LEFT, motorDutyCycle, motorDirection);
+            timeFlag200ms = 0;
+        }
+
+        if(timeFlag1s)
+        {
+            timeFlag1s = 0;
         }
     }
 }
 
-//ISRs
-void __ISR(_UART_1_VECTOR, ipl2) IntUart1Handler(void)
+void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
 {
-    if(INTGetFlag(INT_SOURCE_UART_RX(UART1)))
-    {
-        uartInput = UARTGetDataByte(UART1);
-        LATAbits.LATA5 = !LATAbits.LATA5;
-        INTClearFlag(INT_SOURCE_UART_RX(UART1));
-    }
-
-    if(INTGetFlag(INT_SOURCE_UART_TX(UART1)))
-    {
-        INTClearFlag(INT_SOURCE_UART_TX(UART1));
-    }
+    time++;
+    if(time%1 < 1)
+        timeFlag1ms = 1;
+    if(time%10 < 1)
+        timeFlag10ms = 1;
+    if(time%200 < 1)
+        timeFlag200ms = 1;
+    if(time%1000 < 1)
+        timeFlag1s = 1;
+    mT1ClearIntFlag();
 }

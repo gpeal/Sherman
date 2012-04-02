@@ -16,7 +16,7 @@
 
 void setupLCD()
 {
-
+    
     //Register pins
     TRISGbits.TRISG12 = 0;
     TRISGbits.TRISG13 = 0;
@@ -31,7 +31,7 @@ void setupLCD()
     TRISEbits.TRISE5 = 0;
     TRISEbits.TRISE6 = 0;
     TRISEbits.TRISE7 = 0;
-
+    
     //WAIT 20ns
     wait();
 
@@ -48,6 +48,12 @@ void setupLCD()
     LCDcommand(0, 0,0,0,0,0,1,1,0); //cursor moves right
 
     LCDcommand(0, 0,0,0,0,1,1,0,0); //restore screen
+    
+    LCDWriteString("Hello", 1, 1);
+    LCDWriteString("World!", 2, 1);
+    LCDClear(0);
+    LCDWriteString("a", 1, 1);
+    LCDWriteString("b", 2, 1);
 }
 
 void LCDWriteChar(char c)
@@ -87,7 +93,7 @@ void LCDcommand(int command, int d7, int d6, int d5, int d4, int d3, int d2, int
 {
     //0 for command, 1 for data.
     RS = command;
-
+    
     DB0 = d0;
     DB1 = d1;
     DB2 = d2;
