@@ -40,11 +40,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/Motor.o ${OBJECTDIR}/SPI.o ${OBJECTDIR}/Servo.o ${OBJECTDIR}/Laser.o ${OBJECTDIR}/fft.h.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/Uart.o.d ${OBJECTDIR}/Main.o.d ${OBJECTDIR}/Initialize.o.d ${OBJECTDIR}/AnalogIn.o.d ${OBJECTDIR}/Timer.o.d ${OBJECTDIR}/PWM.o.d ${OBJECTDIR}/LCD.o.d ${OBJECTDIR}/Motor.o.d ${OBJECTDIR}/SPI.o.d ${OBJECTDIR}/Servo.o.d ${OBJECTDIR}/Laser.o.d ${OBJECTDIR}/fft.h.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/Motor.o ${OBJECTDIR}/SPI.o ${OBJECTDIR}/Servo.o ${OBJECTDIR}/Laser.o ${OBJECTDIR}/fft.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/Uart.o.d ${OBJECTDIR}/Main.o.d ${OBJECTDIR}/Initialize.o.d ${OBJECTDIR}/AnalogIn.o.d ${OBJECTDIR}/Timer.o.d ${OBJECTDIR}/PWM.o.d ${OBJECTDIR}/LCD.o.d ${OBJECTDIR}/Motor.o.d ${OBJECTDIR}/SPI.o.d ${OBJECTDIR}/Servo.o.d ${OBJECTDIR}/Laser.o.d ${OBJECTDIR}/fft.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/Motor.o ${OBJECTDIR}/SPI.o ${OBJECTDIR}/Servo.o ${OBJECTDIR}/Laser.o ${OBJECTDIR}/fft.h.o
+OBJECTFILES=${OBJECTDIR}/Uart.o ${OBJECTDIR}/Main.o ${OBJECTDIR}/Initialize.o ${OBJECTDIR}/AnalogIn.o ${OBJECTDIR}/Timer.o ${OBJECTDIR}/PWM.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/Motor.o ${OBJECTDIR}/SPI.o ${OBJECTDIR}/Servo.o ${OBJECTDIR}/Laser.o ${OBJECTDIR}/fft.o
 
 
 CFLAGS=
@@ -150,10 +150,10 @@ ${OBJECTDIR}/Laser.o: Laser.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/Laser.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/Laser.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Laser.o.d" -o ${OBJECTDIR}/Laser.o Laser.c  
 	
-${OBJECTDIR}/fft.h.o: fft.h.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/fft.o: fft.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/fft.h.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/fft.h.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/fft.h.o.d" -o ${OBJECTDIR}/fft.h.o fft.h.c  
+	@${RM} ${OBJECTDIR}/fft.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/fft.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/fft.o.d" -o ${OBJECTDIR}/fft.o fft.c  
 	
 else
 ${OBJECTDIR}/Uart.o: Uart.c  nbproject/Makefile-${CND_CONF}.mk
@@ -211,10 +211,10 @@ ${OBJECTDIR}/Laser.o: Laser.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/Laser.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/Laser.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Laser.o.d" -o ${OBJECTDIR}/Laser.o Laser.c  
 	
-${OBJECTDIR}/fft.h.o: fft.h.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/fft.o: fft.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/fft.h.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/fft.h.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/fft.h.o.d" -o ${OBJECTDIR}/fft.h.o fft.h.c  
+	@${RM} ${OBJECTDIR}/fft.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/fft.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/fft.o.d" -o ${OBJECTDIR}/fft.o fft.c  
 	
 endif
 

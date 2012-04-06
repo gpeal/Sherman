@@ -2,6 +2,13 @@
 #define SERVO_H
 #include "Timer.h"
 
+/*
+ * WIRING
+ * brown -> ground
+ * red -> vcc
+ * orange -> pwm
+ */
+
 void setupServo();
 
 void setServo(int timer);

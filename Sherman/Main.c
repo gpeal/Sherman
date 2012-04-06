@@ -2,6 +2,7 @@
 #include <plib.h>
 #include <limits.h>
 #include "fft.h"
+#include "Motor.h"
 
 //Global Variables
 unsigned int time = 0;
@@ -12,29 +13,29 @@ double analogFFT[1024];
 
 int main(void)
 {
-    initialize();
+    int directionState = 0;
     
+    initialize();
+
+    setMotor(MOTOR_WHEEL_RIGHT, 1000, 0);
+    setMotor(MOTOR_WHEEL_LEFT, 1000, 0);
+
     while(1)
     {
 
         if(timeFlag_1ms)
         {
             timeFlag_1ms = 0;
-            analogValue = readAnalogIn(0);
-            analogBuffer[analogBufferIndex] = analogValue;
-            analogBufferIndex++;
         }
 
         if(timeFlag1ms)
         {
             timeFlag1ms = 0;
-            
         }
 
         if(timeFlag2ms)
         {
             timeFlag2ms = 0;
-            toggleLaser(1);
         }
 
         if(timeFlag10ms)
@@ -45,9 +46,6 @@ int main(void)
         if(timeFlag102_4ms)
         {
             timeFlag102_4ms = 0;
-            //scaling = 10? what is that used for
-            fft(analogFFT, analogBuffer);
-            analogBufferIndex = 0;
         }
 
         if(timeFlag200ms)
@@ -58,21 +56,42 @@ int main(void)
         if(timeFlag1s)
         {
             timeFlag1s = 0;
-            fftSum = 0;
-            for(i = 45; i < 55; i++)
-                fftSum += analogFFT[i];
-            LCDClear(0);
-            sprintf(LCDBuffer, "%.0f", fftSum);
-            LCDWriteString(LCDBuffer, 1, 1);
+            LATAbits.LATA4 = !LATAbits.LATA4;
         }
 
         if(timeFlag5s)
         {
             timeFlag5s = 0;
-            for(i = 0; i < 512; i++) {
-                sprintf(LCDBuffer, "%.0f;", analogFFT[i]);
-                SendString(1, LCDBuffer);
+            /*LATAbits.LATA4 = !LATAbits.LATA4;
+            switch(directionState) {
+                case 0:
+                    setMotor(MOTOR_WHEEL_RIGHT, 1000, 1);
+                    setMotor(MOTOR_WHEEL_LEFT, 1000, 1);
+                    break;
+                case 1:
+                    setMotor(MOTOR_WHEEL_RIGHT, 1000, 0);
+                    setMotor(MOTOR_WHEEL_LEFT, 1000, 0);
+                    break;
+                case 2:
+                    setMotor(MOTOR_WHEEL_RIGHT, 0, 1);
+                    setMotor(MOTOR_WHEEL_LEFT, 1000, 1);
+                    break;
+                case 3:
+                    setMotor(MOTOR_WHEEL_RIGHT, 0, 1);
+                    setMotor(MOTOR_WHEEL_LEFT, 1000, 0);
+                    break;
+                case 4:
+                    setMotor(MOTOR_WHEEL_RIGHT, 1000, 1);
+                    setMotor(MOTOR_WHEEL_LEFT, 0, 1);
+                    break;
+                case 5:
+                    setMotor(MOTOR_WHEEL_RIGHT, 1000, 0);
+                    setMotor(MOTOR_WHEEL_LEFT, 0, 1);
+                    break;
             }
+            directionState++;
+            if (directionState > 5)
+                directionState = 0;*/
         }
     }
 }

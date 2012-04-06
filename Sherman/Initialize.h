@@ -8,6 +8,7 @@
 #include "Uart.h"
 #include "AnalogIn.h"
 #include "Laser.h"
+#include "Motor.h"
 
 #define SYS_FREQ 80000000
 
