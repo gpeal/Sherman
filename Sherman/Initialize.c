@@ -62,12 +62,12 @@ void initializeSPI()
 
 void initializeTimers()
 {
-    setupTimer(1, 1000, 1);
+    setupTimer(1, 10000, 1);
 }
 
 void initializeUart()
 {
-    //setupUart(1, 2);
+    setupUart(1, 2);
 }
 
 void initializeLCD()
