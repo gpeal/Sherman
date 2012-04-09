@@ -51,6 +51,7 @@ void initializeMotor()
 
 void initializePWM()
 {
+    //needed for motors
     setupPWMTimer();
 }
 
@@ -67,7 +68,7 @@ void initializeSPI()
 void initializeTimers()
 {
     //global time timer
-    setupTimer(1, 10000, 1);
+    setupTimer(1, 10000, 3);
 }
 
 void initializeUart()
@@ -77,5 +78,5 @@ void initializeUart()
 
 void initializeLCD()
 {
-    //setupLCD();
+    setupLCD();
 }
