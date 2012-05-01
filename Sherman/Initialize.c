@@ -62,11 +62,13 @@ void initializeSPI()
 
 void initializeTimers()
 {
+    //used for time
     setupTimer(1, 10000, 1);
 }
 
 void initializeUart()
 {
+    //used for debug
     setupUart(1, 2);
 }
 
