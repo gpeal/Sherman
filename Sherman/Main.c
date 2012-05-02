@@ -2,6 +2,7 @@
 #include <plib.h>
 #include <limits.h>
 #include "fft.h"
+#include "I2C.h"
 
 //Global Variables
 unsigned int time = 0;
@@ -9,6 +10,7 @@ int timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFl
 
 int main(void)
 {
+    unsigned char dacVoltage = 0;
     initialize();
     
     while(1)
@@ -22,13 +24,11 @@ int main(void)
         if(timeFlag1ms)
         {
             timeFlag1ms = 0;
-            
         }
 
         if(timeFlag2ms)
         {
             timeFlag2ms = 0;
-            toggleLaser(1);
         }
 
         if(timeFlag10ms)
@@ -49,8 +49,13 @@ int main(void)
         if(timeFlag1s)
         {
             timeFlag1s = 0;
-        }
+            LATAbits.LATA4 = !LATAbits.LATA4;
+            sprintf(LCDBuffer, "Data bit: %i", dacVoltage);
+            LCDWriteString(LCDBuffer, 1, 1);
 
+            I2CWrite(DAC, dacVoltage);
+            dacVoltage = dacVoltage == 0 ? 255 : 0;
+        }
         if(timeFlag5s)
         {
             timeFlag5s = 0;

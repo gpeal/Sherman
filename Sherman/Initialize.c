@@ -15,6 +15,7 @@ void initialize()
     initializeSPI();
     initializeTimers();
     initializeUart();
+    initializeI2C();
     initializeLCD();
 }
 
@@ -27,7 +28,7 @@ void initializePic()
 
 void initializePorts()
 {
-    //TRISBbits.TRISB15 = 1;
+    TRISBbits.TRISB4 = 0;
 }
 
 void initializeAnalogIn()
@@ -72,7 +73,12 @@ void initializeUart()
     setupUart(1, 2);
 }
 
+void initializeI2C()
+{
+    setupI2C();
+}
+
 void initializeLCD()
 {
-    //setupLCD();
+    setupLCD();
 }

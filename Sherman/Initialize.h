@@ -8,6 +8,7 @@
 #include "Uart.h"
 #include "AnalogIn.h"
 #include "Laser.h"
+#include "I2C.h"
 
 #define SYS_FREQ 80000000
 
@@ -19,6 +20,7 @@ void initializePorts();
 void initializePWM();
 void initializeTimers();
 void initializeUart();
+void initializeI2C();
 void initializeLCD();
 void initializeMotor();
 void initializeSPI();
