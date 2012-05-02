@@ -1,11 +1,1 @@
-/AnalogIn.o.d
-/Initialize.o.d
-/LCD.o.d
-/Laser.o.d
-/Main.o.d
-/Motor.o.d
-/PWM.o.d
-/SPI.o.d
-/Servo.o.d
-/Timer.o.d
-/Uart.o.d
+/*.o.d

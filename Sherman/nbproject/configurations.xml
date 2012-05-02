@@ -45,7 +45,7 @@
       <itemPath>SPI.c</itemPath>
       <itemPath>Servo.c</itemPath>
       <itemPath>Laser.c</itemPath>
-      <itemPath>fft.h.c</itemPath>
+      <itemPath>fft.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

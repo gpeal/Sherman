@@ -6,12 +6,12 @@
 //Global Variables
 unsigned int time = 0;
 int timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag1s = 0, timeFlag5s = 0;
-double analogBuffer[1024];
-double analogFFT[1024];
 
 
 int main(void)
 {
+    int analogSum = 0;
+    double voltage = 0, distance = 0, analogValue = 0;
     initialize();
     
     while(1)
@@ -20,21 +20,17 @@ int main(void)
         if(timeFlag_1ms)
         {
             timeFlag_1ms = 0;
-            analogValue = readAnalogIn(0);
-            analogBuffer[analogBufferIndex] = analogValue;
-            analogBufferIndex++;
         }
 
         if(timeFlag1ms)
         {
             timeFlag1ms = 0;
-            
+            analogSum += readAnalogIn(0);
         }
 
         if(timeFlag2ms)
         {
             timeFlag2ms = 0;
-            toggleLaser(1);
         }
 
         if(timeFlag10ms)
@@ -45,9 +41,6 @@ int main(void)
         if(timeFlag102_4ms)
         {
             timeFlag102_4ms = 0;
-            //scaling = 10? what is that used for
-            fft(analogFFT, analogBuffer);
-            analogBufferIndex = 0;
         }
 
         if(timeFlag200ms)
@@ -58,21 +51,20 @@ int main(void)
         if(timeFlag1s)
         {
             timeFlag1s = 0;
-            fftSum = 0;
-            for(i = 45; i < 55; i++)
-                fftSum += analogFFT[i];
+            analogValue = analogSum/1000;
+            analogSum = 0;
+            voltage = ((double)analogValue/1024)*3.3;
+            distance = voltage/.0064;
+            sprintf(LCDBuffer, "Analog: %f", analogValue);
             LCDClear(0);
-            sprintf(LCDBuffer, "%.0f", fftSum);
             LCDWriteString(LCDBuffer, 1, 1);
+            sprintf(LCDBuffer, "Distance: %f", distance);
+            LCDWriteString(LCDBuffer, 2, 1);
         }
 
         if(timeFlag5s)
         {
             timeFlag5s = 0;
-            for(i = 0; i < 512; i++) {
-                sprintf(LCDBuffer, "%.0f;", analogFFT[i]);
-                SendString(1, LCDBuffer);
-            }
         }
     }
 }
