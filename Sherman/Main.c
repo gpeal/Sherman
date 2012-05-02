@@ -24,6 +24,9 @@ int main(void)
         if(timeFlag1ms)
         {
             timeFlag1ms = 0;
+            I2CWrite(DAC, DAC_CMD_CHANGE, dacVoltage++);
+            if(dacVoltage >= 255)
+                dacVoltage = 0;
         }
 
         if(timeFlag2ms)
@@ -51,10 +54,8 @@ int main(void)
             timeFlag1s = 0;
             LATAbits.LATA4 = !LATAbits.LATA4;
             sprintf(LCDBuffer, "Data bit: %i", dacVoltage);
+            LCDClear(0);
             LCDWriteString(LCDBuffer, 1, 1);
-
-            I2CWrite(DAC, dacVoltage);
-            dacVoltage = dacVoltage == 0 ? 255 : 0;
         }
         if(timeFlag5s)
         {

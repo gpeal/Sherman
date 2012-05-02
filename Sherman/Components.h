@@ -16,5 +16,6 @@
 //I2C components
 #define DAC 1
 #define DAC_ADDRESS 0b0101100
+#define DAC_CMD_CHANGE 0
 
 #endif
