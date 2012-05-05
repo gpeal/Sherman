@@ -2,6 +2,13 @@
 #include <plib.h>
 #include <limits.h>
 
+//Set configuration bits
+#pragma config FWDTEN = OFF //Disable WDT timer
+#pragma config ICESEL = ICS_PGx2
+#pragma config FPLLMUL = MUL_20, FPLLIDIV = DIV_2, FPLLODIV = DIV_1
+#pragma config FPBDIV = DIV_1
+#pragma config POSCMOD = XT, FNOSC = PRIPLL
+
 //Global Variables
 unsigned int time = 0;
 int timeFlag1ms = 0, timeFlag10ms = 0, timeFlag200ms = 0, timeFlag1s = 0;
