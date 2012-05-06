@@ -19,6 +19,7 @@
       <itemPath>fft.h</itemPath>
       <itemPath>fftc.h</itemPath>
       <itemPath>I2C.h</itemPath>
+      <itemPath>Compass.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LibraryFiles"
                    displayName="Library Files"
@@ -48,6 +49,7 @@
       <itemPath>Laser.c</itemPath>
       <itemPath>I2C.c</itemPath>
       <itemPath>fft.c</itemPath>
+      <itemPath>Compass.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

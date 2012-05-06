@@ -9,6 +9,7 @@ void setupI2C() {
     TRISAbits.TRISA15 = 0;
 }
 
+//send a -1 if you don't need the second data byte
 void I2CWrite(int component, unsigned char cmd, unsigned char data)
 {
     unsigned char address;
@@ -16,6 +17,9 @@ void I2CWrite(int component, unsigned char cmd, unsigned char data)
     {
         case DAC:
             address = DAC_ADDRESS;
+            break;
+        case COMPASS:
+            address = COMPASS_ADDRESS;
             break;
     }
     // start the I2C communication
@@ -32,12 +36,38 @@ void I2CWrite(int component, unsigned char cmd, unsigned char data)
     IdleI2C1();
     while( !I2C1STATbits.ACKSTAT==0 ){}
 
-    // wite the value to put on the output
-    MasterWriteI2C1(data); // output
-    IdleI2C1();
-    while( !I2C1STATbits.ACKSTAT==0 ){}
+    if(data != -1)
+    {
+        // wite the value to put on the output
+        MasterWriteI2C1(data); // output
+        IdleI2C1();
+        while( !I2C1STATbits.ACKSTAT==0 ){}
+    }
 
     // end the I2C communication
     StopI2C1(); // end of data send
     IdleI2C1(); // Wait to complete
+}
+
+unsigned char I2CRead(int component)
+{
+    unsigned char address, receivedData;
+    switch(component)
+    {
+        case DAC:
+            address = DAC_ADDRESS;
+            break;
+        case COMPASS:
+            address = COMPASS_ADDRESS;
+            break;
+    }
+
+    StartI2C1();				//Send line start condition
+    IdleI2C1();                                //Wait to complete
+    MasterWriteI2C1((address << 1) | 1);	//Write out slave address OR 1 (read command)
+    IdleI2C1();                                 //Wait to complete
+    receivedData = MasterReadI2C1();		//Read in a value
+    StopI2C1();                                 //Send line stop condition
+    IdleI2C1();                                 //Wait co complete
+    return receivedData;			//Return read value
 }
