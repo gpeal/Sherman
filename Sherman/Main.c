@@ -3,6 +3,7 @@
 #include <limits.h>
 #include "fft.h"
 #include "I2C.h"
+#include "Compass.h"
 
 //Global Variables
 unsigned int time = 0;
@@ -10,7 +11,7 @@ int timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFl
 
 int main(void)
 {
-    unsigned char dacVoltage = 0;
+    struct Orientation orientation;
     initialize();
     
     while(1)
@@ -24,9 +25,6 @@ int main(void)
         if(timeFlag1ms)
         {
             timeFlag1ms = 0;
-            I2CWrite(DAC, DAC_CMD_CHANGE, dacVoltage++);
-            if(dacVoltage >= 255)
-                dacVoltage = 0;
         }
 
         if(timeFlag2ms)
@@ -53,7 +51,8 @@ int main(void)
         {
             timeFlag1s = 0;
             LATAbits.LATA4 = !LATAbits.LATA4;
-            sprintf(LCDBuffer, "Data bit: %i", dacVoltage);
+            orientation = readCompass();
+            sprintf(LCDBuffer, "%.2f, .2f, .2f", orientation.X, orientation.Y, orientation.Z);
             LCDClear(0);
             LCDWriteString(LCDBuffer, 1, 1);
         }

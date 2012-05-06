@@ -16,6 +16,8 @@ void initialize()
     initializeTimers();
     initializeUart();
     initializeI2C();
+    //must be after initializeI2C
+    initializeCompass();
     initializeLCD();
 }
 
@@ -76,6 +78,11 @@ void initializeUart()
 void initializeI2C()
 {
     setupI2C();
+}
+
+void initializeCompass()
+{
+    setupCompass();
 }
 
 void initializeLCD()
