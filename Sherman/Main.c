@@ -5,6 +5,13 @@
 #include "I2C.h"
 #include "Compass.h"
 
+//Set configuration bits
+#pragma config FWDTEN = OFF //Disable WDT timer
+#pragma config ICESEL = ICS_PGx2
+#pragma config FPLLMUL = MUL_20, FPLLIDIV = DIV_2, FPLLODIV = DIV_1
+#pragma config FPBDIV = DIV_1
+#pragma config POSCMOD = XT, FNOSC = PRIPLL
+
 //Global Variables
 unsigned int time = 0;
 int timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag1s = 0, timeFlag5s = 0;
