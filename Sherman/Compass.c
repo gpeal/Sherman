@@ -16,13 +16,14 @@ struct Orientation readCompass()
     StartI2C1(); // Send the Start Bit (begin of data send)
     IdleI2C1(); // Wait to complete
     
-    MasterWriteI2C1 (0x3D); // address
+    MasterWriteI2C1 ((0x1E << 1) | 1); // address
     IdleI2C1();
     while( !I2C1STATbits.ACKSTAT==0 ){}
 
-    MasterWriteI2C1 (0x06); // command line
+    MasterWriteI2C1 (0x03); // command line
     IdleI2C1();
     while( !I2C1STATbits.ACKSTAT==0 ){}                                //Wait to complete
+
 
     DXRA = MasterReadI2C1();		//Read in a value
     DXRB = MasterReadI2C1();		//Read in a value
@@ -33,19 +34,7 @@ struct Orientation readCompass()
     StopI2C1();                                 //Send line stop condition
     IdleI2C1();
 
-    StartI2C1(); // Send the Start Bit (begin of data send)
-    IdleI2C1(); // Wait to complete
-    
-    MasterWriteI2C1 (0x3C); // address
-    IdleI2C1();
-    while( !I2C1STATbits.ACKSTAT==0 ){}
-
-    MasterWriteI2C1 (0x03); // command line
-    IdleI2C1();
-    while( !I2C1STATbits.ACKSTAT==0 ){}
-
-    StopI2C1();                                 //Send line stop condition
-    IdleI2C1();                                 //Wait co complete
+    //Wait co complete
     orientation.X = (DXRA << 8) | DXRB;
     orientation.Y = (DYRA << 8) | DYRB;
     orientation.Z = (DZRA << 8) | DZRB;

@@ -20,6 +20,6 @@
 #define DAC_ADDRESS 0b0101100
 #define DAC_CMD_CHANGE 0
 #define COMPASS 2
-#define COMPASS_ADDRESS 0b11110
+#define COMPASS_ADDRESS 0x1E
 
 #endif

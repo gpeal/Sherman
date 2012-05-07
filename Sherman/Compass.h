@@ -2,9 +2,9 @@
 #define COMPASS_H
 
 struct Orientation {
-    short int X;
-    short int Y;
-    short int Z;
+    short X;
+    short Y;
+    short Z;
 };
 
 void setupCompass();
