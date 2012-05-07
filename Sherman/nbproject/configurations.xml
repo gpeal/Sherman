@@ -45,7 +45,7 @@
       <itemPath>SPI.c</itemPath>
       <itemPath>Servo.c</itemPath>
       <itemPath>Laser.c</itemPath>
-      <itemPath>fft.h.c</itemPath>
+      <itemPath>fft.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -60,7 +60,7 @@
         <developmentServer>localhost</developmentServer>
         <targetDevice>PIC32MX795F512L</targetDevice>
         <targetHeader></targetHeader>
-        <platformTool>ICD3PlatformTool</platformTool>
+        <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>C32</languageToolchain>
         <languageToolchainVersion>2.02</languageToolchainVersion>
         <platform>3</platform>
@@ -88,8 +88,8 @@
       </C32-LD>
       <C32Global>
       </C32Global>
-      <ICD3PlatformTool>
-      </ICD3PlatformTool>
+      <PICkit3PlatformTool>
+      </PICkit3PlatformTool>
     </conf>
   </confs>
 </configurationDescriptor>

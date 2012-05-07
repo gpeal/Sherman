@@ -27,7 +27,10 @@ void initializePic()
 
 void initializePorts()
 {
-    //TRISBbits.TRISB15 = 1;
+    TRISDbits.TRISD5 = 0;
+    TRISDbits.TRISD6 = 0;
+    TRISDbits.TRISD0 = 0;
+    TRISDbits.TRISD1 = 0;
 }
 
 void initializeAnalogIn()
@@ -42,12 +45,14 @@ void initializeLaser()
 
 void initializeMotor()
 {
-    //setupMotor(MOTOR_WHEEL_LEFT);
+    setupMotor(MOTOR_WHEEL_LEFT);
+    setupMotor(MOTOR_WHEEL_RIGHT);
 }
 
 void initializePWM()
 {
-    //setupPWMTimer();
+    //needed for motor
+    setupPWMTimer();
 }
 
 void initializeServo()
