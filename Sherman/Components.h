@@ -14,6 +14,8 @@
 #define MOTOR_WHEEL_RIGHT_DIRECTION LATDbits.LATD6
 
 //I2C components
+#define I2C_WRITE 0
+#define I2C_READ 1
 #define DAC 1
 #define DAC_ADDRESS 0b0101100
 #define DAC_CMD_CHANGE 0

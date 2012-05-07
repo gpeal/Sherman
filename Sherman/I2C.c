@@ -49,7 +49,7 @@ void I2CWrite(int component, unsigned char cmd, unsigned char data)
     IdleI2C1(); // Wait to complete
 }
 
-unsigned char I2CRead(int component)
+unsigned char I2CRead(int component, int cmd)
 {
     unsigned char address, receivedData;
     switch(component)
@@ -62,11 +62,16 @@ unsigned char I2CRead(int component)
             break;
     }
 
-    StartI2C1();				//Send line start condition
-    IdleI2C1();                                //Wait to complete
-    MasterWriteI2C1((address << 1) | 1);	//Write out slave address OR 1 (read command)
-    IdleI2C1();                                 //Wait to complete
+    MasterWriteI2C1 ((address << 1) | 1); // address
+    IdleI2C1();
+    while( !I2C1STATbits.ACKSTAT==0 ){}
+
+    MasterWriteI2C1 (cmd); // command line
+    IdleI2C1();
+    while( !I2C1STATbits.ACKSTAT==0 ){}                                //Wait to complete
+    
     receivedData = MasterReadI2C1();		//Read in a value
+
     StopI2C1();                                 //Send line stop condition
     IdleI2C1();                                 //Wait co complete
     return receivedData;			//Return read value

@@ -4,6 +4,7 @@
 #include "fft.h"
 #include "I2C.h"
 #include "Compass.h"
+#include "Components.h"
 
 //Set configuration bits
 #pragma config FWDTEN = OFF //Disable WDT timer
@@ -59,9 +60,11 @@ int main(void)
             timeFlag1s = 0;
             LATAbits.LATA4 = !LATAbits.LATA4;
             orientation = readCompass();
-            sprintf(LCDBuffer, "%.2f, .2f, .2f", orientation.X, orientation.Y, orientation.Z);
+            sprintf(LCDBuffer, "%i, %i", orientation.X, orientation.Y);
             LCDClear(0);
             LCDWriteString(LCDBuffer, 1, 1);
+            sprintf(LCDBuffer, "%i", orientation.Z);
+            LCDWriteString(LCDBuffer, 2, 1);
         }
         if(timeFlag5s)
         {

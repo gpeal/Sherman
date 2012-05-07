@@ -30,7 +30,7 @@ void initializePic()
 
 void initializePorts()
 {
-    TRISBbits.TRISB4 = 0;
+    TRISAbits.TRISA4 = 0;
 }
 
 void initializeAnalogIn()
