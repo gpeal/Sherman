@@ -1,47 +1,107 @@
 #include "Initialize.h"
 #include <plib.h>
+#include <limits.h>
+#include "fft.h"
 
-unsigned int Time = 0;
-char TimeFlag500ms=0, TimeFlag1s=0, TimeFlag2s=0;
+//Set configuration bits
+#pragma config FWDTEN = OFF //Disable WDT timer
+#pragma config ICESEL = ICS_PGx2
+#pragma config FPLLMUL = MUL_20, FPLLIDIV = DIV_2, FPLLODIV = DIV_1
+#pragma config FPBDIV = DIV_1
+#pragma config POSCMOD = XT, FNOSC = PRIPLL
+
+//Global Variables
+unsigned int time = 0;
+int timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag1s = 0, timeFlag5s = 0;
+double analogBuffer[1024];
+double analogFFT[1024];
+
 
 int main(void)
 {
     initialize();
+    
     while(1)
     {
-        //check time flags
-        if(TimeFlag500ms)
+
+        if(timeFlag_1ms)
         {
-            TimeFlag500ms = 0;
-            LATAbits.LATA0 = !LATAbits.LATA0;
+            timeFlag_1ms = 0;
+            analogValue = readAnalogIn(0);
+            analogBuffer[analogBufferIndex] = analogValue;
+            analogBufferIndex++;
         }
-        if(TimeFlag1s)
+
+        if(timeFlag1ms)
         {
-            TimeFlag1s = 0;
-            LATAbits.LATA1 = !LATAbits.LATA1;
+            timeFlag1ms = 0;
+            
         }
-        if(TimeFlag2s)
+
+        if(timeFlag2ms)
         {
-            TimeFlag2s = 0;
-            LATAbits.LATA2 = !LATAbits.LATA2;
+            timeFlag2ms = 0;
+            toggleLaser(1);
+        }
+
+        if(timeFlag10ms)
+        {
+            timeFlag10ms = 0; 
+        }
+
+        if(timeFlag102_4ms)
+        {
+            timeFlag102_4ms = 0;
+            //scaling = 10? what is that used for
+            fft(analogFFT, analogBuffer);
+            analogBufferIndex = 0;
+        }
+
+        if(timeFlag200ms)
+        {
+            timeFlag200ms = 0;
+        }
+
+        if(timeFlag1s)
+        {
+            timeFlag1s = 0;
+            fftSum = 0;
+            for(i = 45; i < 55; i++)
+                fftSum += analogFFT[i];
+            LCDClear(0);
+            sprintf(LCDBuffer, "%.0f", fftSum);
+            LCDWriteString(LCDBuffer, 1, 1);
+        }
+
+        if(timeFlag5s)
+        {
+            timeFlag5s = 0;
+            for(i = 0; i < 512; i++) {
+                sprintf(LCDBuffer, "%.0f;", analogFFT[i]);
+                SendString(1, LCDBuffer);
+            }
         }
     }
 }
 
-void __ISR(_TIMER_1_VECTOR, ipl1) TimerIsr(void)
+void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
 {
-    Time++;
-    if(!(Time%5000))
-    {
-        TimeFlag500ms = 1;
-        if(!(Time%10000))
-        {
-            TimeFlag1s = 1;
-            if(!(Time%20000))
-            {
-                TimeFlag2s = 1;
-            }
-        }
-    }
+    time++;
+    if(time%1 < 1)
+        timeFlag_1ms = 1;
+    if(time%10 < 1)
+        timeFlag1ms = 1;
+    if(time%20 < 1)
+        timeFlag2ms = 1;
+    if(time%100 < 1)
+        timeFlag10ms = 1;
+    if(time%1024 < 1)
+        timeFlag102_4ms = 1;
+    if(time%2000 < 1)
+        timeFlag200ms = 1;
+    if(time%10000 < 1)
+        timeFlag1s = 1;
+    if(time%50000 < 1)
+        timeFlag5s = 1;
     mT1ClearIntFlag();
 }

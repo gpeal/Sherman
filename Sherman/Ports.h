@@ -1,3 +1,8 @@
+/* Timers
+ * 1 = PWM
+ * 2 = Servos
+*/
+
 /* PORTA
  * 4 = L1 LED
  * 5 = L2 LED
