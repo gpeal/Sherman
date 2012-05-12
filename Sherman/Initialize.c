@@ -7,15 +7,15 @@ void initialize()
 {
     initializePic();
     initializePorts();
-    initializeAnalogIn();
-    initializeLaser();
-    initializeMotor();
-    initializePWM();
-    initializeServo();
-    initializeSPI();
-    initializeTimers();
-    initializeUart();
-    initializeLCD();
+    //initializeAnalogIn();
+    //initializeLaser();
+    //initializeMotor();
+    //initializePWM();
+    //initializeServo();
+    //initializeSPI();
+    //initializeTimers();
+    //initializeUart();
+    //initializeLCD();
 }
 
 void initializePic()
@@ -23,11 +23,14 @@ void initializePic()
     SYSTEMConfig(SYS_FREQ, SYS_CFG_ALL);
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     INTEnableSystemMultiVectoredInt();
+    // disable JTAG to get A4 and A5 back
+    DDPCONbits.JTAGEN = 0;
 }
 
 void initializePorts()
 {
-    //TRISBbits.TRISB15 = 1;
+    TRISAbits.TRISA4 = 0;
+    TRISAbits.TRISA5 = 0;
 }
 
 void initializeAnalogIn()
