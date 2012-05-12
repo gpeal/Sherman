@@ -13,9 +13,9 @@ void initialize()
     //initializePWM();
     //initializeServo();
     //initializeSPI();
-    //initializeTimers();
-    //initializeUart();
-    //initializeLCD();
+    initializeTimers();
+    initializeUart();
+    initializeLCD();
 }
 
 void initializePic()
@@ -24,7 +24,7 @@ void initializePic()
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     INTEnableSystemMultiVectoredInt();
     // disable JTAG to get A4 and A5 back
-    DDPCONbits.JTAGEN = 0;
+    //DDPCONbits.JTAGEN = 0;
 }
 
 void initializePorts()
@@ -75,5 +75,5 @@ void initializeUart()
 
 void initializeLCD()
 {
-    //setupLCD();
+    setupLCD();
 }
