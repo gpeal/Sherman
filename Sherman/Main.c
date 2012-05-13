@@ -15,7 +15,7 @@
 
 //Global Variables
 unsigned int time = 0;
-int timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag0_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
+int timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag0_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
 
 int main(void)
 {
@@ -45,7 +45,11 @@ int main(void)
         if(timeFlag102_4ms)
         {
             timeFlag102_4ms = 0;
-            LATAbits.LATA5 = !LATAbits.LATA5;
+        }
+
+        if(timeFlag100ms)
+        {
+            timeFlag100ms = 0;
         }
 
         if(timeFlag200ms)
@@ -56,7 +60,6 @@ int main(void)
         if(timeFlag0_5s)
         {
             timeFlag0_5s = 0;
-            LATAbits.LATA4 = !LATAbits.LATA4;
         }
         if(timeFlag1s)
         {
@@ -83,10 +86,15 @@ void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
         timeFlag10ms = 1;
     if(time%1024 < 1)
         timeFlag102_4ms = 1;
+    if(time%1000 < 1)
+        timeFlag100ms = 1;
     if(time%2000 < 1)
         timeFlag200ms = 1;
     if(time%5000 < 1)
+    {
+        LATAbits.LATA4 = !LATAbits.LATA4;
         timeFlag0_5s = 1;
+    }
     if(time%10000 < 1)
         timeFlag1s = 1;
     if(time%50000 < 1)

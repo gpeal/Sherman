@@ -33,6 +33,7 @@ void initializePorts()
 {
     // set Debug LEDs to output.
     TRISAbits.TRISA4 = 0;
+    LATAbits.LATA4 = 0;
     TRISAbits.TRISA5 = 0;
 }
 
