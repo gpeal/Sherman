@@ -4,9 +4,9 @@
 #include "Components.h"
 #include "PWM.h"
 
-#define MOTOR_DIRECTION_LEFT 0
-#define MOTOR_DIRECTION_RIGHT 1
-#define MOTOR_DIRECTION_BRAKE -1
+#define MOTOR_DIRECTION_LEFT 1
+#define MOTOR_DIRECTION_RIGHT 2
+#define MOTOR_DIRECTION_BRAKE 0
 
 
 void setupMotor(int motor);

@@ -1,6 +1,7 @@
 /* Timers
  * 1 = PWM
  * 2 = Servos
+ * 3 = Rangefinder
 */
 
 /* PORTA
@@ -17,9 +18,11 @@
 */
 
 /* PORT D
- * 0 = Left Motor OC/OC1
- * 1 = Right Motor OC/OC1
- * 2-4 Reserved for PWM
+ * 0 = Left Motor OC1
+ * 1 = Left Motor OC2
+ * 2 = Right Motor OC3
+ * 3 = Right Motor OC4
+ * 5 Reserved for PWM
  * 5 = Left Motor Direction
  * 6-9 Reserved for PWM Direction Control
 */
@@ -27,6 +30,11 @@
 /* PORTE
  * 0-7 = LCD
 */
+
+/*
+ * 0 Rangefinder 1 Trigger
+ * 1 Rangefiner 1 Echo
+ */
 
 /* PORTG
  * 12 = LCD

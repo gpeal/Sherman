@@ -5,6 +5,8 @@
 
 #define DESIRED_BAUDRATE_NU32 115200 // Baudrate
 
+char UARTBuffer[16];
+
 // Opens the uart module assigned to uartX (1 will open uart1)
 // Assigns that uart module an interrupt with priority int_priotity_level_X
 int setupUart(int uartX, int int_priotity_level_X);

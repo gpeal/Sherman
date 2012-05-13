@@ -2,6 +2,7 @@
 #include <plib.h>
 #include <limits.h>
 #include "fft.h"
+#include "Uart.h"
 
 // Configuring the Device Configuration Registers
 // 80Mhz Core/Periph, Pri Osc w/PLL, Write protect Boot Flash
@@ -12,9 +13,13 @@
 #pragma config ICESEL = ICS_PGx2, BWP = OFF
 #pragma config FSOSCEN = OFF // to make C13 an IO pin, for the USER switch
 
+#define DEBUG
+
 
 //Global Variables
 unsigned int time = 0;
+char movementDirection = 0;
+int movementSpeed = 500;
 char timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag0_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
 
 int main(void)
@@ -60,10 +65,50 @@ int main(void)
         if(timeFlag0_5s)
         {
             timeFlag0_5s = 0;
+#ifdef DEBUG
+            //optional send motor over uart
+            switch(movementDirection)
+            {
+                case 0:
+                    sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 2, movementSpeed, 2, movementSpeed);
+                    SendString(1, UARTBuffer);
+                case 1:
+                    sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 2, movementSpeed, 1, movementSpeed);
+                    SendString(1, UARTBuffer);
+                case 2:
+                    sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 1, movementSpeed, 2, movementSpeed);
+                    SendString(1, UARTBuffer);
+                case 3:
+                    sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 1, movementSpeed, 1, movementSpeed);
+                    SendString(1, UARTBuffer);
+                case 4:
+                    sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 0, movementSpeed, 0, movementSpeed);
+                    SendString(1, UARTBuffer);
+            }
+#endif
         }
         if(timeFlag1s)
         {
             timeFlag1s = 0;
+            switch(movementDirection)
+            {
+                case 0:
+                    movementForward(movementSpeed);
+                    break;
+                case 1:
+                    movementLeft(movementSpeed);
+                    break;
+                case 2:
+                    movementRight(movementSpeed);
+                    break;
+                case 3:
+                    movementBackward(movementSpeed);
+                    break;
+                case 4:
+                    movementBrake();
+                    break;
+            }
+            movementDirection = (movementDirection+1)%5;
         }
 
         if(timeFlag5s)
