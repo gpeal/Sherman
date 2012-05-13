@@ -36,7 +36,7 @@ struct Position targetPositions[] = { {45, 50},
 int targetPositionsIndex = 0;
 double rangefinderData[4];
 char movementDirection = 0;
-int movementSpeed = 500;
+int movementSpeed = 1024;
 
 //Other global variables
 int State = 0;
