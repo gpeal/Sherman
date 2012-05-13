@@ -104,25 +104,21 @@ int main(void)
             {
                 case 0:
                     sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 2, movementSpeed, 2, movementSpeed);
-                    SendString(1, UARTBuffer);
                     break;
                 case 1:
                     sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 2, movementSpeed, 1, movementSpeed);
-                    SendString(1, UARTBuffer);
                     break;
                 case 2:
                     sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 1, movementSpeed, 2, movementSpeed);
-                    SendString(1, UARTBuffer);
                     break;
                 case 3:
                     sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 1, movementSpeed, 1, movementSpeed);
-                    SendString(1, UARTBuffer);
                     break;
                 case 4:
                     sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 0, movementSpeed, 0, movementSpeed);
-                    SendString(1, UARTBuffer);
                     break;
             }
+            SendString(1, UARTBuffer);
 #endif
         }
 
