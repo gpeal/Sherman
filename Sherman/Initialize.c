@@ -33,13 +33,12 @@ void initializePorts()
 {
     // set Debug LEDs to output.
     TRISAbits.TRISA4 = 0;
-    LATAbits.LATA4 = 0;
     TRISAbits.TRISA5 = 0;
 }
 
 void initializeAnalogIn()
 {
-    //setupAnalogIn(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+    setupAnalogIn(1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 void initializeLaser()
@@ -49,12 +48,14 @@ void initializeLaser()
 
 void initializeMotor()
 {
-    //setupMotor(MOTOR_WHEEL_LEFT);
+    //don't forget to start PWM timer
+    setupMotor(MOTOR_WHEEL_RIGHT);
+    setupMotor(MOTOR_WHEEL_LEFT);
 }
 
 void initializePWM()
 {
-    //setupPWMTimer();
+    setupPWMTimer();
 }
 
 void initializeServo()
@@ -70,11 +71,12 @@ void initializeSPI()
 void initializeTimers()
 {
     setupTimer(1, 10000, 1);
+    //setupTimer(3, 1000000, 1);
 }
 
 void initializeUart()
 {
-    //setupUart(1, 2);
+    setupUart(1, 2);
 }
 
 void initializeLCD()
