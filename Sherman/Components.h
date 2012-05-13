@@ -13,4 +13,12 @@
 #define MOTOR_WHEEL_RIGHT_OC 2
 #define MOTOR_WHEEL_RIGHT_DIRECTION LATDbits.LATD6
 
+//Map
+#define MAP_EMPTY   0
+#define MAP_ROBOT   1
+#define MAP_CUBE    2
+#define MAP_LINE    3
+#define MAP_TARGET  4
+
+
 #endif
