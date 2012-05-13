@@ -38,7 +38,7 @@ void initializePorts()
 
 void initializeAnalogIn()
 {
-    //setupAnalogIn(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+    setupAnalogIn(1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 void initializeLaser()

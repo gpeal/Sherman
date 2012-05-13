@@ -3,6 +3,7 @@
 #include <limits.h>
 #include "fft.h"
 #include "Uart.h"
+#include "StateMachine.h"
 
 // Configuring the Device Configuration Registers
 // 80Mhz Core/Periph, Pri Osc w/PLL, Write protect Boot Flash
@@ -18,15 +19,40 @@
 
 //Global Variables
 unsigned int time = 0;
+char timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag170ms = 0, timeFlag0_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
+
+//position variables
+struct Position {
+    double X;
+    double Y;
+};
+struct Position currentPosition, targetPosition;
+struct Position targetPositions[] = { {45, 50},
+                                      {23, 37},
+                                      {23, 15},
+                                      {15, 31},
+                                      {32, 45},
+                                      {45, 36}};
+int targetPositionsIndex = 0;
+double rangefinderData[4];
 char movementDirection = 0;
 int movementSpeed = 500;
-char timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag0_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
+
+//Other global variables
+int State = 0;
+int currentNumberOfCubes = 0;
 
 int main(void)
 {
+    int analogValue = 0;
     initialize();
+
+    //rangefinder trigger
+    LATBbits.LATB1 = 1;
+
     while(1)
     {
+        delegateState(State);
         if(timeFlag_1ms)
         {
             timeFlag_1ms = 0;
@@ -57,14 +83,19 @@ int main(void)
             timeFlag100ms = 0;
         }
 
+        if(timeFlag170ms)
+        {
+            timeFlag170ms = 0;
+            //rangefinder data from arduino
+            rangefinderData[0] = readAnalogIn(0);
+            rangefinderData[1] = readAnalogIn(1);
+            rangefinderData[2] = readAnalogIn(2);
+            rangefinderData[3] = readAnalogIn(3);
+        }
+
         if(timeFlag200ms)
         {
             timeFlag200ms = 0;
-        }
-
-        if(timeFlag0_5s)
-        {
-            timeFlag0_5s = 0;
 #ifdef DEBUG
             //optional send motor over uart
             switch(movementDirection)
@@ -72,24 +103,35 @@ int main(void)
                 case 0:
                     sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 2, movementSpeed, 2, movementSpeed);
                     SendString(1, UARTBuffer);
+                    break;
                 case 1:
                     sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 2, movementSpeed, 1, movementSpeed);
                     SendString(1, UARTBuffer);
+                    break;
                 case 2:
                     sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 1, movementSpeed, 2, movementSpeed);
                     SendString(1, UARTBuffer);
+                    break;
                 case 3:
                     sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 1, movementSpeed, 1, movementSpeed);
                     SendString(1, UARTBuffer);
+                    break;
                 case 4:
                     sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 0, movementSpeed, 0, movementSpeed);
                     SendString(1, UARTBuffer);
+                    break;
             }
 #endif
+        }
+
+        if(timeFlag0_5s)
+        {
+            timeFlag0_5s = 0;
         }
         if(timeFlag1s)
         {
             timeFlag1s = 0;
+            movementDirection = (movementDirection+1)%5;
             switch(movementDirection)
             {
                 case 0:
@@ -107,8 +149,7 @@ int main(void)
                 case 4:
                     movementBrake();
                     break;
-            }
-            movementDirection = (movementDirection+1)%5;
+            }   
         }
 
         if(timeFlag5s)
@@ -131,6 +172,8 @@ void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
         timeFlag10ms = 1;
     if(time%1024 < 1)
         timeFlag102_4ms = 1;
+    if(time%1700 < 1)
+        timeFlag170ms = 1;
     if(time%1000 < 1)
         timeFlag100ms = 1;
     if(time%2000 < 1)

@@ -1,7 +1,6 @@
 /* Timers
  * 1 = PWM
  * 2 = Servos
- * 3 = Rangefinder
 */
 
 /* PORTA
@@ -9,8 +8,7 @@
  * 5 = L2 LED
 */
 
-/* PORTB -- PWM
- *
+/* PORTB -- Analog In
 */
 
 /* PORT C
