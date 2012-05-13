@@ -1,3 +1,7 @@
 *.o
 *.hex
 *.elf
+*.d
+*.mk
+*.xml
+*.properties
