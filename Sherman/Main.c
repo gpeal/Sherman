@@ -15,7 +15,7 @@
 
 //Global Variables
 unsigned int time = 0;
-int timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag0_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
+char timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag0_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
 
 int main(void)
 {
