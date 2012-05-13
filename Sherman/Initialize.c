@@ -1,18 +1,20 @@
 #include "Initialize.h"
 
+#define start_pause()  do{int _a; for(_a = 0; _a < 200; ++_a);}while(0)
 
 #define DESIRED_BAUDRATE_NU32 115200 // Baudrate
 
 void initialize()
 {
+    start_pause();
     initializePic();
     initializePorts();
-    //initializeAnalogIn();
-    //initializeLaser();
-    //initializeMotor();
-    //initializePWM();
-    //initializeServo();
-    //initializeSPI();
+    initializeAnalogIn();
+    initializeLaser();
+    initializeMotor();
+    initializePWM();
+    initializeServo();
+    initializeSPI();
     initializeTimers();
     initializeUart();
     initializeLCD();
@@ -24,11 +26,12 @@ void initializePic()
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     INTEnableSystemMultiVectoredInt();
     // disable JTAG to get A4 and A5 back
-    //DDPCONbits.JTAGEN = 0;
+    DDPCONbits.JTAGEN = 0;
 }
 
 void initializePorts()
 {
+    // set Debug LEDs to output.
     TRISAbits.TRISA4 = 0;
     TRISAbits.TRISA5 = 0;
 }
@@ -70,10 +73,10 @@ void initializeTimers()
 
 void initializeUart()
 {
-    setupUart(1, 2);
+    //setupUart(1, 2);
 }
 
 void initializeLCD()
 {
-    setupLCD();
+    //setupLCD();
 }
