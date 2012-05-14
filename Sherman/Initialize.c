@@ -80,5 +80,5 @@ void initializeUart()
 
 void initializeLCD()
 {
-    //setupLCD();
+    setupLCD();
 }
