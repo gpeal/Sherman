@@ -15,7 +15,8 @@ void pinMode(int pin, char mode)
         case A7:TRISAbits.TRISA7   = mode;break;
         case A9:TRISAbits.TRISA9   = mode;break;
         case A10:TRISAbits.TRISA10 = mode;break;
-        case A15:TRISAbits.TRISA14 = mode;break;
+        case A14:TRISAbits.TRISA14 = mode;break;
+        case A15:TRISAbits.TRISA15 = mode;break;
 
         case B0:TRISBbits.TRISB0   = mode;break;
         case B1:TRISBbits.TRISB1   = mode;break;
@@ -29,18 +30,19 @@ void pinMode(int pin, char mode)
         case B9:TRISBbits.TRISB9   = mode;break;
         case B10:TRISBbits.TRISB10 = mode;break;
         case B11:TRISBbits.TRISB11 = mode;break;
-        case B12:TRISBbits.TRISB11 = mode;break;
-        case B13:TRISBbits.TRISB12 = mode;break;
-        case B14:TRISBbits.TRISB13 = mode;break;
-        case B15:TRISBbits.TRISB14 = mode;break;
+        case B12:TRISBbits.TRISB12 = mode;break;
+        case B13:TRISBbits.TRISB13 = mode;break;
+        case B14:TRISBbits.TRISB14 = mode;break;
+        case B15:TRISBbits.TRISB15 = mode;break;
 
         case C1:TRISCbits.TRISC1   = mode;break;
         case C2:TRISCbits.TRISC2   = mode;break;
         case C3:TRISCbits.TRISC3   = mode;break;
         case C4:TRISCbits.TRISC4   = mode;break;
-        case C13:TRISCbits.TRISC12 = mode;break;
-        case C14:TRISCbits.TRISC13 = mode;break;
-        case C15:TRISCbits.TRISC14 = mode;break;
+        case C12:TRISCbits.TRISC12 = mode;break;
+        case C13:TRISCbits.TRISC13 = mode;break;
+        case C14:TRISCbits.TRISC14 = mode;break;
+        case C15:TRISCbits.TRISC15 = mode;break;
 
         case D0:TRISDbits.TRISD0   = mode;break;
         case D1:TRISDbits.TRISD1   = mode;break;
@@ -54,10 +56,10 @@ void pinMode(int pin, char mode)
         case D9:TRISDbits.TRISD9   = mode;break;
         case D10:TRISDbits.TRISD10 = mode;break;
         case D11:TRISDbits.TRISD11 = mode;break;
-        case D12:TRISDbits.TRISD11 = mode;break;
-        case D13:TRISDbits.TRISD12 = mode;break;
-        case D14:TRISDbits.TRISD13 = mode;break;
-        case D15:TRISDbits.TRISD14 = mode;break;
+        case D12:TRISDbits.TRISD12 = mode;break;
+        case D13:TRISDbits.TRISD13 = mode;break;
+        case D14:TRISDbits.TRISD14 = mode;break;
+        case D15:TRISDbits.TRISD15 = mode;break;
 
         case E0:TRISEbits.TRISE0   = mode;break;
         case E1:TRISEbits.TRISE1   = mode;break;
@@ -77,8 +79,22 @@ void pinMode(int pin, char mode)
         case F4:TRISFbits.TRISF4   = mode;break;
         case F5:TRISFbits.TRISF5   = mode;break;
         case F8:TRISFbits.TRISF8   = mode;break;
-        case F13:TRISFbits.TRISF12 = mode;break;
-        case F14:TRISFbits.TRISF13 = mode;break;
+        case F12:TRISFbits.TRISF12 = mode;break;
+        case F13:TRISFbits.TRISF13 = mode;break;
+
+        case G0:TRISGbits.TRISG0   = mode;break;
+        case G1:TRISGbits.TRISG1   = mode;break;
+        case G2:TRISGbits.TRISG2   = mode;break;
+        case G3:TRISGbits.TRISG3   = mode;break;
+        case G6:TRISGbits.TRISG6   = mode;break;
+        case G7:TRISGbits.TRISG7   = mode;break;
+        case G8:TRISGbits.TRISG8   = mode;break;
+        case G9:TRISGbits.TRISG9   = mode;break;
+        case G12:TRISGbits.TRISG12 = mode;break;
+        case G13:TRISGbits.TRISG13 = mode;break;
+        case G14:TRISGbits.TRISG14 = mode;break;
+        case G15:TRISGbits.TRISG15 = mode;break;
+
     }
 }
 
@@ -96,7 +112,8 @@ void digitalWrite(int pin, char value)
         case A7:LATAbits.LATA7   = value;break;
         case A9:LATAbits.LATA9   = value;break;
         case A10:LATAbits.LATA10 = value;break;
-        case A15:LATAbits.LATA14 = value;break;
+        case A14:LATAbits.LATA14 = value;break;
+        case A15:LATAbits.LATA15 = value;break;
 
         case B0:LATBbits.LATB0   = value;break;
         case B1:LATBbits.LATB1   = value;break;
@@ -110,18 +127,19 @@ void digitalWrite(int pin, char value)
         case B9:LATBbits.LATB9   = value;break;
         case B10:LATBbits.LATB10 = value;break;
         case B11:LATBbits.LATB11 = value;break;
-        case B12:LATBbits.LATB11 = value;break;
-        case B13:LATBbits.LATB12 = value;break;
-        case B14:LATBbits.LATB13 = value;break;
-        case B15:LATBbits.LATB14 = value;break;
+        case B12:LATBbits.LATB12 = value;break;
+        case B13:LATBbits.LATB13 = value;break;
+        case B14:LATBbits.LATB14 = value;break;
+        case B15:LATBbits.LATB15 = value;break;
 
         case C1:LATCbits.LATC1   = value;break;
         case C2:LATCbits.LATC2   = value;break;
         case C3:LATCbits.LATC3   = value;break;
         case C4:LATCbits.LATC4   = value;break;
-        case C13:LATCbits.LATC12 = value;break;
-        case C14:LATCbits.LATC13 = value;break;
-        case C15:LATCbits.LATC14 = value;break;
+        case C12:LATCbits.LATC12 = value;break;
+        case C13:LATCbits.LATC13 = value;break;
+        case C14:LATCbits.LATC14 = value;break;
+        case C15:LATCbits.LATC15 = value;break;
 
         case D0:LATDbits.LATD0   = value;break;
         case D1:LATDbits.LATD1   = value;break;
@@ -135,10 +153,10 @@ void digitalWrite(int pin, char value)
         case D9:LATDbits.LATD9   = value;break;
         case D10:LATDbits.LATD10 = value;break;
         case D11:LATDbits.LATD11 = value;break;
-        case D12:LATDbits.LATD11 = value;break;
-        case D13:LATDbits.LATD12 = value;break;
-        case D14:LATDbits.LATD13 = value;break;
-        case D15:LATDbits.LATD14 = value;break;
+        case D12:LATDbits.LATD12 = value;break;
+        case D13:LATDbits.LATD13 = value;break;
+        case D14:LATDbits.LATD14 = value;break;
+        case D15:LATDbits.LATD15 = value;break;
 
         case E0:LATEbits.LATE0   = value;break;
         case E1:LATEbits.LATE1   = value;break;
@@ -158,8 +176,21 @@ void digitalWrite(int pin, char value)
         case F4:LATFbits.LATF4   = value;break;
         case F5:LATFbits.LATF5   = value;break;
         case F8:LATFbits.LATF8   = value;break;
-        case F13:LATFbits.LATF12 = value;break;
-        case F14:LATFbits.LATF13 = value;break;
+        case F12:LATFbits.LATF12 = value;break;
+        case F13:LATFbits.LATF13 = value;break;
+
+        case G0:LATGbits.LATG0   = value;break;
+        case G1:LATGbits.LATG1   = value;break;
+        case G2:LATGbits.LATG2   = value;break;
+        case G3:LATGbits.LATG3   = value;break;
+        case G6:LATGbits.LATG6   = value;break;
+        case G7:LATGbits.LATG7   = value;break;
+        case G8:LATGbits.LATG8   = value;break;
+        case G9:LATGbits.LATG9   = value;break;
+        case G12:LATGbits.LATG12 = value;break;
+        case G13:LATGbits.LATG13 = value;break;
+        case G14:LATGbits.LATG14 = value;break;
+        case G15:LATGbits.LATG15 = value;break;
     }
 }
 
@@ -167,80 +198,95 @@ int digitalRead(int pin)
 {
     switch(pin)
     {
-        case A0:return PORTAbits.RA0;
-        case A1:return PORTAbits.RA1;
-        case A2:return PORTAbits.RA2;
-        case A3:return PORTAbits.RA3;
-        case A4:return PORTAbits.RA4;
-        case A5:return PORTAbits.RA5;
-        case A6:return PORTAbits.RA6;
-        case A7:return PORTAbits.RA7;
-        case A9:return PORTAbits.RA9;
-        case A10:return PORTAbits.RA10;
-        case A15:return PORTAbits.RA14;
+        case A0:PORTAbits.RA0;break;
+        case A1:PORTAbits.RA1;break;
+        case A2:PORTAbits.RA2;break;
+        case A3:PORTAbits.RA3;break;
+        case A4:PORTAbits.RA4;break;
+        case A5:PORTAbits.RA5;break;
+        case A6:PORTAbits.RA6;break;
+        case A7:PORTAbits.RA7;break;
+        case A9:PORTAbits.RA9;break;
+        case A10:PORTAbits.RA10;break;
+        case A14:PORTAbits.RA14;break;
+        case A15:PORTAbits.RA15;break;
 
-        case B0:return PORTBbits.RB0;
-        case B1:return PORTBbits.RB1;
-        case B2:return PORTBbits.RB2;
-        case B3:return PORTBbits.RB3;
-        case B4:return PORTBbits.RB4;
-        case B5:return PORTBbits.RB5;
-        case B6:return PORTBbits.RB6;
-        case B7:return PORTBbits.RB7;
-        case B8:return PORTBbits.RB8;
-        case B9:return PORTBbits.RB9;
-        case B10:return PORTBbits.RB10;
-        case B11:return PORTBbits.RB11;
-        case B12:return PORTBbits.RB11;
-        case B13:return PORTBbits.RB12;
-        case B14:return PORTBbits.RB13;
-        case B15:return PORTBbits.RB14;
+        case B0:PORTBbits.RB0;break;
+        case B1:PORTBbits.RB1;break;
+        case B2:PORTBbits.RB2;break;
+        case B3:PORTBbits.RB3;break;
+        case B4:PORTBbits.RB4;break;
+        case B5:PORTBbits.RB5;break;
+        case B6:PORTBbits.RB6;break;
+        case B7:PORTBbits.RB7;break;
+        case B8:PORTBbits.RB8;break;
+        case B9:PORTBbits.RB9;break;
+        case B10:PORTBbits.RB10;break;
+        case B11:PORTBbits.RB11;break;
+        case B12:PORTBbits.RB12;break;
+        case B13:PORTBbits.RB13;break;
+        case B14:PORTBbits.RB14;break;
+        case B15:PORTBbits.RB15;break;
 
-        case C1:return PORTCbits.RC1;
-        case C2:return PORTCbits.RC2;
-        case C3:return PORTCbits.RC3;
-        case C4:return PORTCbits.RC4;
-        case C13:return PORTCbits.RC12;
-        case C14:return PORTCbits.RC13;
-        case C15:return PORTCbits.RC14;
+        case C1:PORTCbits.RC1;break;
+        case C2:PORTCbits.RC2;break;
+        case C3:PORTCbits.RC3;break;
+        case C4:PORTCbits.RC4;break;
+        case C12:PORTCbits.RC12;break;
+        case C13:PORTCbits.RC13;break;
+        case C14:PORTCbits.RC14;break;
+        case C15:PORTCbits.RC15;break;
 
-        case D0:return PORTDbits.RD0;
-        case D1:return PORTDbits.RD1;
-        case D2:return PORTDbits.RD2;
-        case D3:return PORTDbits.RD3;
-        case D4:return PORTDbits.RD4;
-        case D5:return PORTDbits.RD5;
-        case D6:return PORTDbits.RD6;
-        case D7:return PORTDbits.RD7;
-        case D8:return PORTDbits.RD8;
-        case D9:return PORTDbits.RD9;
-        case D10:return PORTDbits.RD10;
-        case D11:return PORTDbits.RD11;
-        case D12:return PORTDbits.RD11;
-        case D13:return PORTDbits.RD12;
-        case D14:return PORTDbits.RD13;
-        case D15:return PORTDbits.RD14;
+        case D0:PORTDbits.RD0;break;
+        case D1:PORTDbits.RD1;break;
+        case D2:PORTDbits.RD2;break;
+        case D3:PORTDbits.RD3;break;
+        case D4:PORTDbits.RD4;break;
+        case D5:PORTDbits.RD5;break;
+        case D6:PORTDbits.RD6;break;
+        case D7:PORTDbits.RD7;break;
+        case D8:PORTDbits.RD8;break;
+        case D9:PORTDbits.RD9;break;
+        case D10:PORTDbits.RD10;break;
+        case D11:PORTDbits.RD11;break;
+        case D12:PORTDbits.RD12;break;
+        case D13:PORTDbits.RD13;break;
+        case D14:PORTDbits.RD14;break;
+        case D15:PORTDbits.RD15;break;
 
-        case E0:return PORTEbits.RE0;
-        case E1:return PORTEbits.RE1;
-        case E2:return PORTEbits.RE2;
-        case E3:return PORTEbits.RE3;
-        case E4:return PORTEbits.RE4;
-        case E5:return PORTEbits.RE5;
-        case E6:return PORTEbits.RE6;
-        case E7:return PORTEbits.RE7;
-        case E8:return PORTEbits.RE8;
-        case E9:return PORTEbits.RE9;
+        case E0:PORTEbits.RE0;break;
+        case E1:PORTEbits.RE1;break;
+        case E2:PORTEbits.RE2;break;
+        case E3:PORTEbits.RE3;break;
+        case E4:PORTEbits.RE4;break;
+        case E5:PORTEbits.RE5;break;
+        case E6:PORTEbits.RE6;break;
+        case E7:PORTEbits.RE7;break;
+        case E8:PORTEbits.RE8;break;
+        case E9:PORTEbits.RE9;break;
 
-        case F0:return PORTFbits.RF0;
-        case F1:return PORTFbits.RF1;
-        case F2:return PORTFbits.RF2;
-        case F3:return PORTFbits.RF3;
-        case F4:return PORTFbits.RF4;
-        case F5:return PORTFbits.RF5;
-        case F8:return PORTFbits.RF8;
-        case F13:return PORTFbits.RF12;
-        case F14:return PORTFbits.RF13;
+        case F0:PORTFbits.RF0;break;
+        case F1:PORTFbits.RF1;break;
+        case F2:PORTFbits.RF2;break;
+        case F3:PORTFbits.RF3;break;
+        case F4:PORTFbits.RF4;break;
+        case F5:PORTFbits.RF5;break;
+        case F8:PORTFbits.RF8;break;
+        case F12:PORTFbits.RF12;break;
+        case F13:PORTFbits.RF13;break;
+
+        case G0:PORTGbits.RG0;break;
+        case G1:PORTGbits.RG1;break;
+        case G2:PORTGbits.RG2;break;
+        case G3:PORTGbits.RG3;break;
+        case G6:PORTGbits.RG6;break;
+        case G7:PORTGbits.RG7;break;
+        case G8:PORTGbits.RG8;break;
+        case G9:PORTGbits.RG9;break;
+        case G12:PORTGbits.RG12;break;
+        case G13:PORTGbits.RG13;break;
+        case G14:PORTGbits.RG14;break;
+        case G15:PORTGbits.RG15;break;
     }
 }
 

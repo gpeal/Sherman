@@ -97,6 +97,22 @@
 #define F13 513
 #define F14 514
 #define F15 515
+#define G0  600
+#define G1  601
+#define G2  602
+#define G3  603
+#define G4  604
+#define G5  605
+#define G6  606
+#define G7  607
+#define G8  608
+#define G9  609
+#define G10 610
+#define G11 611
+#define G12 612
+#define G13 613
+#define G14 614
+#define G15 615
 
 #define INPUT 1
 #define OUTPUT 0

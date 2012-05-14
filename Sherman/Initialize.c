@@ -32,8 +32,7 @@ void initializePic()
 void initializePorts()
 {
     // set Debug LEDs to output.
-    TRISAbits.TRISA4 = 0;
-    TRISAbits.TRISA5 = 0;
+    pinMode(A4, OUTPUT);
 }
 
 void initializeAnalogIn()
