@@ -132,8 +132,8 @@
         <property key="TIMER3" value="true"/>
         <property key="TIMER2" value="true"/>
         <property key="TIMER1" value="true"/>
-        <property key="I2C5" value="true"/>
         <property key="programmertogo.imagename" value=""/>
+        <property key="I2C5" value="true"/>
         <property key="I2C4" value="true"/>
         <property key="I2C3" value="true"/>
         <property key="I2C2" value="true"/>
@@ -144,9 +144,9 @@
         <property key="UART4" value="true"/>
         <property key="UART3" value="true"/>
         <property key="UART2" value="true"/>
-        <property key="programoptions.preserveprogramrange.end" value="0x1d0001ff"/>
-        <property key="UART1" value="true"/>
         <property key="Freeze All Other Peripherals" value="true"/>
+        <property key="UART1" value="true"/>
+        <property key="programoptions.preserveprogramrange.end" value="0x1d0001ff"/>
       </PICkit3PlatformTool>
     </conf>
   </confs>
