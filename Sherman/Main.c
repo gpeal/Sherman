@@ -51,9 +51,6 @@ int main(void)
 {
     initialize();
 
-    //rangefinder trigger
-    LATBbits.LATB1 = 1;
-
     while(1)
     {
         delegateState(State);
@@ -248,8 +245,7 @@ void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
         timeFlag200ms = 1;
     if(time%5000 < 1)
     {
-        digitalWrite(A4, !digitalRead(A4));
-        LATAbits.LATA5 = !LATAbits.LATA5;
+        togglePin(A4);
         timeFlag_5s = 1;
     }
     if(time%10000 < 1)

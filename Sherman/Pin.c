@@ -194,6 +194,11 @@ void digitalWrite(int pin, char value)
     }
 }
 
+void togglePin(int pin)
+{
+    digitalWrite(pin, !digitalRead(pin));
+}
+
 int digitalRead(int pin)
 {
     switch(pin)
