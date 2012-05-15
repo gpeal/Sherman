@@ -51,7 +51,6 @@ void PeriodicFunctions();
 int main(void)
 {
     initialize();
-    //EnqueueMotorAction(MOTOR_ACTION_BACKWARD);
     while(1)
     {
         delegateState(State);
@@ -135,8 +134,6 @@ void RunEvery1s()
 void RunEvery5s()
 {
     togglePin(A5);
-    EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
-    EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT_90);
 }
 
 void PeriodicFunctions()

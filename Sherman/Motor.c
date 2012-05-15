@@ -94,9 +94,10 @@ void UpdateMotors()
 
 void EnqueueMotorAction(char action)
 {
+    int i;
     struct MotorAction newAction;
     newAction.action = action;
-    newAction.speed = 700;
+    newAction.speed = 1024;
     switch(action)
     {
         case MOTOR_ACTION_FORWARD:
@@ -122,11 +123,12 @@ void EnqueueMotorAction(char action)
             break;
     }
     //dequeue any actions that have unlimited duration
-    while(CurrentMotorDuration == -1)
+    for(i = MotorActionQueueHeadIndex; i != MotorActionQueueTailIndex; i++)
     {
-        //purposefully didn't call DequeueMotorAction because I don't want to add a stop
-        IncrementMotorActionQueueHeadIndex();
-        CurrentMotorActionEndTime = ReadCoreTimer() + CurrentMotorDuration;
+        if(i >= MOTOR_ACTION_QUEUE_SIZE)
+            i = 0;
+        if(MotorActionQueue[i].duration == -1)
+            MotorActionQueue[i].duration = 0;
     }
 
     MotorActionQueue[MotorActionQueueTailIndex] = newAction;
