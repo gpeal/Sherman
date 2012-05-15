@@ -3,7 +3,7 @@
 
 int SubState = 0, SubStateStartTime = 0;
 extern int time;
-int State = STATE_INITIALIZATION;
+int State = STATE_NORMAL;
 
 void ChangeState(int state)
 {

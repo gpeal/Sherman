@@ -2,8 +2,6 @@
 
 #define start_pause()  do{int _a; for(_a = 0; _a < 200; ++_a);}while(0)
 
-#define DESIRED_BAUDRATE_NU32 115200 // Baudrate
-
 void initialize()
 {
     start_pause();

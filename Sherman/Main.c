@@ -15,12 +15,16 @@
 #pragma config ICESEL = ICS_PGx2, BWP = OFF
 #pragma config FSOSCEN = OFF // to make C13 an IO pin, for the USER switch
 
-#define DEBUG
+//#define DEBUG
+#define RANGEFINDER_FRONT 0
+#define RANGEFINDER_BACK 1
+#define RANGEFINDER_LEFT 2
+#define RANGEFINDER_RIGHT 3
 
 
 //Global Variables
 unsigned int time = 0;
-char timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag170ms = 0, timeFlag_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
+char timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
 
 //position variables
 struct Position {
@@ -35,7 +39,9 @@ struct Position targetPositions[] = { {45, 50},
                                       {32, 45},
                                       {45, 36}};
 int targetPositionsIndex = 0;
-double rangefinderData[4];
+double RangefinderData[4];
+double RangefinderDataBuffer[10];
+int RangefinderDataBufferIndex = 0;
 char movementDirection = 0;
 int movementSpeed = 1024;
 
@@ -95,17 +101,25 @@ void RunEvery102_4ms()
 
 }
 
-void RunEvery170ms()
-{
-    //rangefinder data from arduino
-    rangefinderData[0] = readAnalogIn(0);
-    rangefinderData[1] = readAnalogIn(1);
-    rangefinderData[2] = readAnalogIn(2);
-    rangefinderData[3] = readAnalogIn(3);
-}
-
 void RunEvery200ms()
 {
+    int i, sum;
+    double average;
+    //rangefinder data from arduino
+    RangefinderData[RANGEFINDER_FRONT] = readAnalogIn(0);
+    RangefinderDataBuffer[RangefinderDataBufferIndex++] = RangefinderData[RANGEFINDER_FRONT];
+    if(RangefinderDataBufferIndex == 4)
+        RangefinderDataBufferIndex = 0;
+    sum = 0;
+    for(i = 0; i < 4; i++)
+        sum += RangefinderDataBuffer[i];
+    average = sum/4;
+    RangefinderData[RANGEFINDER_BACK] = readAnalogIn(1);
+    RangefinderData[RANGEFINDER_LEFT] = readAnalogIn(2);
+    RangefinderData[RANGEFINDER_RIGHT] = readAnalogIn(3);
+    sprintf(UARTBuffer, "%4.0f\n", average);
+    SendString(1, UARTBuffer);
+
 #ifdef DEBUG
         //optional send motor over uart
         switch(movementDirection)
@@ -181,12 +195,6 @@ void PeriodicFunctions()
         RunEvery100ms();
     }
 
-    if(timeFlag170ms)
-    {
-        timeFlag170ms = 0;
-        RunEvery170ms();
-    }
-
     if(timeFlag200ms)
     {
         timeFlag200ms = 0;
@@ -226,8 +234,6 @@ void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
         timeFlag100ms = 1;
     if(time%1024 < 1)
         timeFlag102_4ms = 1;
-    if(time%1700 < 1)
-        timeFlag170ms = 1;
     if(time%2000 < 1)
         timeFlag200ms = 1;
     if(time%5000 < 1)
