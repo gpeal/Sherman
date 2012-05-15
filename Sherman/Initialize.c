@@ -33,6 +33,8 @@ void initializePorts()
 {
     // set Debug LEDs to output.
     pinMode(A4, OUTPUT);
+    digitalWrite(A4, 1);
+    pinMode(A5, OUTPUT);
 }
 
 void initializeAnalogIn()
