@@ -3,5 +3,7 @@
 *.elf
 *.d
 *.mk
-*.xml
 *.properties
+Makefile-default.mk
+makefile-genesis.properties
+Makefile-impl.mk
