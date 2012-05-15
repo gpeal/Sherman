@@ -33,6 +33,8 @@ void initializePorts()
 {
     // set Debug LEDs to output.
     pinMode(A4, OUTPUT);
+    digitalWrite(A4, 1);
+    pinMode(A5, OUTPUT);
 }
 
 void initializeAnalogIn()
@@ -50,6 +52,11 @@ void initializeMotor()
     //don't forget to start PWM timer
     setupMotor(MOTOR_WHEEL_RIGHT);
     setupMotor(MOTOR_WHEEL_LEFT);
+    //the default action of the motor
+    EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT_90);
+    EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
+    EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT);
+    EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT);
 }
 
 void initializePWM()

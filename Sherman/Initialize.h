@@ -9,6 +9,7 @@
 #include "AnalogIn.h"
 #include "Laser.h"
 #include "Pin.h"
+#include "Motor.h"
 
 #define SYS_FREQ 80000000
 

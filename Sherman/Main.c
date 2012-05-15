@@ -4,6 +4,7 @@
 #include "fft.h"
 #include "Uart.h"
 #include "StateMachine.h"
+#include "Motor.h"
 
 // Configuring the Device Configuration Registers
 // 80Mhz Core/Periph, Pri Osc w/PLL, Write protect Boot Flash
@@ -50,7 +51,7 @@ void PeriodicFunctions();
 int main(void)
 {
     initialize();
-
+    //EnqueueMotorAction(MOTOR_ACTION_BACKWARD);
     while(1)
     {
         delegateState(State);
@@ -65,7 +66,7 @@ void RunEvery_1ms()
 
 void RunEvery1ms()
 {
-
+    UpdateMotors();
 }
 
 void RunEvery2ms()
@@ -80,7 +81,6 @@ void RunEvery10ms()
 
 void RunEvery100ms()
 {
-
 }
 
 void RunEvery102_4ms()
@@ -130,30 +130,13 @@ void RunEvery_5s()
 
 void RunEvery1s()
 {
-    movementDirection = (movementDirection+1)%5;
-    switch(movementDirection)
-    {
-        case 0:
-            movementForward(movementSpeed);
-            break;
-        case 1:
-            movementLeft(movementSpeed);
-            break;
-        case 2:
-            movementRight(movementSpeed);
-            break;
-        case 3:
-            movementBackward(movementSpeed);
-            break;
-        case 4:
-            movementBrake();
-            break;
-    }
 }
 
 void RunEvery5s()
 {
-
+    togglePin(A5);
+    EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
+    EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT_90);
 }
 
 void PeriodicFunctions()
