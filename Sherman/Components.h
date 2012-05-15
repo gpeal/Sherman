@@ -19,5 +19,9 @@
 #define MAP_LINE    3
 #define MAP_TARGET  4
 
+//I2C
+#define ARDUINO 0
+#define ARDUINO_ADDRESS 0x4
+
 
 #endif
