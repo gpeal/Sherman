@@ -5,6 +5,7 @@
 #include "Uart.h"
 #include "StateMachine.h"
 #include "Motor.h"
+#include "Pin.h"
 
 // Configuring the Device Configuration Registers
 // 80Mhz Core/Periph, Pri Osc w/PLL, Write protect Boot Flash
@@ -45,6 +46,8 @@ int RangefinderDataBufferIndex = 0;
 char movementDirection = 0;
 int movementSpeed = 1024;
 
+char data = -1;
+
 //Other global variables
 extern int State;
 int currentNumberOfCubes = 0;
@@ -57,11 +60,17 @@ void delay_ms(int ms);
 
 int main(void)
 {
+    char data;
     initialize();
+    SendCharacter(1, '1');
+    digitalWrite(A5, 1);
     while(1)
     {
-        delegateState(State);
-        PeriodicFunctions();
+        if(data != -1)
+        {
+            SendCharacter(1, data);
+            data = -1;
+        }
     }
 }
 
@@ -151,6 +160,7 @@ void RunEvery_5s()
 
 void RunEvery1s()
 {
+    SendString(2, "Hello from PIC!");
 }
 
 void RunEvery5s()
@@ -238,12 +248,34 @@ void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
         timeFlag200ms = 1;
     if(time%5000 < 1)
     {
-        togglePin(A4);
         timeFlag_5s = 1;
+        togglePin(A4);
     }
     if(time%10000 < 1)
         timeFlag1s = 1;
     if(time%50000 < 1)
         timeFlag5s = 1;
     mT1ClearIntFlag();
+}
+
+
+// UART 2 interrupt handler
+// it is set at priority level 2
+void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
+{
+    // Is this an RX interrupt?
+    if(mU2RXGetIntFlag())
+    {
+        // Clear the RX interrupt Flag
+        mU2RXClearIntFlag();
+        data = (char)ReadUART2();
+        while(BusyUART2()); /* Wait till the UART transmitter is free. */
+        SendCharacter(1, data);
+    }
+
+    // We don't care about TX interrupt
+    if ( mU2TXGetIntFlag() )
+    {
+            mU2TXClearIntFlag();
+    }
 }

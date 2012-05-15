@@ -77,6 +77,10 @@ void initializeTimers()
 void initializeUart()
 {
     setupUart(1, 2);
+    //uart
+    pinMode(UART_ARDUINO_RX, INPUT);
+    pinMode(UART_ARDUINO_TX, OUTPUT);
+    setupUart(2, 2);
 }
 
 void initializeLCD()

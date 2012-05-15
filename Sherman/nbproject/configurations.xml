@@ -20,6 +20,7 @@
       <itemPath>fftc.h</itemPath>
       <itemPath>StateMachine.h</itemPath>
       <itemPath>Pin.h</itemPath>
+      <itemPath>I2C.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LibraryFiles"
                    displayName="Library Files"
@@ -50,6 +51,7 @@
       <itemPath>fft.c</itemPath>
       <itemPath>StateMachine.c</itemPath>
       <itemPath>Pin.c</itemPath>
+      <itemPath>I2C.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

@@ -2,6 +2,7 @@
 #define COMPONENTS_H
 
 #include <plib.h>
+#include "Pin.h"
 
 #define MOTOR_WHEEL_LEFT 1
 //OC1
@@ -22,6 +23,9 @@
 //I2C
 #define ARDUINO 0
 #define ARDUINO_ADDRESS 0x4
+
+#define UART_ARDUINO_RX F4
+#define UART_ARDUINO_TX F5
 
 
 #endif

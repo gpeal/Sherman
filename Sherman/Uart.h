@@ -3,7 +3,7 @@
 #include <plib.h>
 #include "Initialize.h"
 
-#define DESIRED_BAUDRATE_NU32 115200 // Baudrate
+#define DESIRED_BAUDRATE_NU32 9600 // Baudrate
 
 char UARTBuffer[16];
 
