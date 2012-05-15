@@ -2,11 +2,7 @@
 
 void delegateState(int state)
 {
-    switch(state)
+    /*switch(state)
     {
-        case 1:
-            break;
-    }
+    }*/
 }
-
-void state1();
