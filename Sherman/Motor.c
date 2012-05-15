@@ -122,8 +122,12 @@ void EnqueueMotorAction(char action)
             break;
     }
     //dequeue any actions that have unlimited duration
-    while(CurrentMotorDuration == -1 && MotorActionQueue > 0)
-        DequeueMotorAction();
+    while(CurrentMotorDuration == -1)
+    {
+        //purposefully didn't call DequeueMotorAction because I don't want to add a stop
+        IncrementMotorActionQueueHeadIndex();
+        CurrentMotorActionEndTime = ReadCoreTimer() + CurrentMotorDuration;
+    }
 
     MotorActionQueue[MotorActionQueueTailIndex] = newAction;
     MotorActionQueueTailIndex++;
@@ -143,7 +147,7 @@ void DequeueMotorAction()
 
 int MotorActionQueueSize()
 {
-    int size = MotorActionQueueTailIndex - MotorActionQueueTailIndex;
+    int size = MotorActionQueueTailIndex - MotorActionQueueHeadIndex;
     //if the tail has looped around, account for that
     if(size < 0)
         size = size + MOTOR_ACTION_QUEUE_SIZE;

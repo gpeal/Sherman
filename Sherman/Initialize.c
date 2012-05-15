@@ -52,7 +52,6 @@ void initializeMotor()
     //don't forget to start PWM timer
     setupMotor(MOTOR_WHEEL_RIGHT);
     setupMotor(MOTOR_WHEEL_LEFT);
-    //the default action of the motor
     EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT_90);
     EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
     EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT);
