@@ -12,5 +12,12 @@
 void setupMotor(int motor);
 void setMotor(int motor, int dutyCycle, int direction);
 
+// Higher level Commands
+void movementForward(int speed);
+void movementLeft(int speed);
+void movementRight(int speed);
+void movementBackward(int speed);
+void movementBrake();
+
 
 #endif
