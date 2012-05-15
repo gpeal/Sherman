@@ -52,6 +52,7 @@ void initializeMotor()
     //don't forget to start PWM timer
     setupMotor(MOTOR_WHEEL_RIGHT);
     setupMotor(MOTOR_WHEEL_LEFT);
+    EnqueueMotorAction(MOTOR_ACTION_STOP);
 }
 
 void initializePWM()

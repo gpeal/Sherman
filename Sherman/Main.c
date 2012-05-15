@@ -40,13 +40,14 @@ char movementDirection = 0;
 int movementSpeed = 1024;
 
 //Other global variables
-int State = 0;
+extern int State;
 int currentNumberOfCubes = 0;
 
 char map[240][120];
 
 //function prototypes
 void PeriodicFunctions();
+void delay_ms(int ms);
 
 int main(void)
 {
@@ -58,6 +59,12 @@ int main(void)
     }
 }
 
+void delay_ms(int ms)
+{
+    int startTime = time;
+    while(time < startTime + ms*10);
+}
+
 void RunEvery_1ms()
 {
 
@@ -65,7 +72,8 @@ void RunEvery_1ms()
 
 void RunEvery1ms()
 {
-    UpdateMotors();
+    if(State != STATE_INITIALIZATION)
+        UpdateMotors();
 }
 
 void RunEvery2ms()
@@ -133,7 +141,6 @@ void RunEvery1s()
 
 void RunEvery5s()
 {
-    togglePin(A5);
 }
 
 void PeriodicFunctions()
