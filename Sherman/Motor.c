@@ -73,7 +73,7 @@ void EnqueueMotorAction(char action)
     int i;
     struct MotorAction newAction;
     newAction.action = action;
-    newAction.speed = 1024;
+    newAction.speed = 800;
     switch(action)
     {
         case MOTOR_ACTION_TURN_LEFT_90:
@@ -133,7 +133,7 @@ void IncrementMotorActionQueueHeadIndex()
 
 void movementForward(int speed)
 {
-    setMotor(MOTOR_WHEEL_LEFT, speed, 2);
+    setMotor(MOTOR_WHEEL_LEFT, speed - 20, 2);
     setMotor(MOTOR_WHEEL_RIGHT, speed, 2);
 }
 
