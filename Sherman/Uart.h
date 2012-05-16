@@ -4,10 +4,10 @@
 #include "Initialize.h"
 
 #define DESIRED_BAUDRATE_NU32 9600 // Baudrate
-
-#define UART_READ_BUFFER_SIZE 128
-char UARTWriteBuffer[UART_READ_BUFFER_SIZE];
-char UARTReadBuffer[UART_READ_BUFFER_SIZE];
+#define UART_WRITE_BUFFER_SIZE 36
+#define ARDUINO_BUFFER_SIZE 6
+char UARTWriteBuffer[UART_WRITE_BUFFER_SIZE];
+char UARTReadBuffer[ARDUINO_BUFFER_SIZE];
 
 // Opens the uart module assigned to uartX (1 will open uart1)
 // Assigns that uart module an interrupt with priority int_priotity_level_X

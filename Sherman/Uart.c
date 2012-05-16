@@ -158,7 +158,7 @@ char ReadCharacter(int id)
 void ReadString(int id)
 {
     int i = 0;
-    memset(UARTReadBuffer, 0, UART_READ_BUFFER_SIZE);
+    memset(UARTReadBuffer, 0, ARDUINO_BUFFER_SIZE);
     switch(id)
     {
         case 1:
