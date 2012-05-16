@@ -1,12 +1,5 @@
 #include "Motor.h"
 #include "Uart.h"
-
-struct MotorAction
-{
-    char action;
-    int duration;
-    int speed;
-};
 struct MotorAction MotorActionQueue[MOTOR_ACTION_QUEUE_SIZE];
 int MotorActionQueueHeadIndex = 0, MotorActionQueueTailIndex = 0;
 unsigned int CurrentMotorActionEndTime = 0;

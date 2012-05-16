@@ -39,5 +39,12 @@ void movementStop();
 void movementLeft(int speed);
 void movementRight(int speed);
 
+struct MotorAction
+{
+    char action;
+    int duration;
+    int speed;
+};
+
 
 #endif

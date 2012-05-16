@@ -16,7 +16,7 @@
 #pragma config ICESEL = ICS_PGx2, BWP = OFF
 #pragma config FSOSCEN = OFF // to make C13 an IO pin, for the USER switch
 
-//#define DEBUG
+#define DEBUG
 #define RANGEFINDER_FRONT 0
 #define RANGEFINDER_BACK 1
 #define RANGEFINDER_LEFT 2
@@ -60,11 +60,11 @@ extern int Direction;
 struct RangefinderReading
 {
     int value;
-    char valid = 1;
+    char valid;
 };
 
 #define RANGEFINDER_DATA_BUFFER_SIZE 5
-double RangefinderData[4][RANGEFINDER_DATA_BUFFER_SIZE];
+struct RangefinderReading RangefinderData[4][RANGEFINDER_DATA_BUFFER_SIZE];
 double RangefinderDataDelta[4];
 char movementDirection = 0;
 int movementSpeed = 1024;
@@ -154,11 +154,17 @@ void InitialRoutine()
 void ReadRangefinders()
 {
     int i, length, width;
+    //used if there is no valid data and we have to interpolate it
+    int interpolationDirection, interpolationIndex;
     struct RangefinderReading rawData[4];
-    rawData[0].value = UARTReadBuffer[0];
-    rawData[1].value = UARTReadBuffer[1];
-    rawData[2].value = UARTReadBuffer[2];
-    rawData[3].value = UARTReadBuffer[3];
+    rawData[0].value = UARTReadBuffer[0] & 0xFF;
+    rawData[0].valid = 1;
+    rawData[1].value = UARTReadBuffer[1] & 0xFF;
+    rawData[1].valid = 1;
+    rawData[2].value = UARTReadBuffer[2] & 0xFF;
+    rawData[2].valid = 1;
+    rawData[3].value = UARTReadBuffer[3] & 0xFF;
+    rawData[3].valid = 1;
     for(i = 0; i < 4; i++)
     {
         if(rawData[i].value >= 200)
@@ -172,7 +178,7 @@ void ReadRangefinders()
         {
             if(rawData[RANGEFINDER_FRONT].valid && rawData[RANGEFINDER_BACK].valid)
             {
-                length = rawData[RANGEFINDER_FRONT] + rawData[RANGEFINDER_BACK] + 12;
+                length = rawData[RANGEFINDER_FRONT].value + rawData[RANGEFINDER_BACK].value + 12;
                 if(abs(length-ARENA_LENGTH_0) > 10 && abs(length-ARENA_LENGTH_1) > 10 && abs(length-ARENA_LENGTH_2) > 10)
                 {
                     //TODO: check if one of the values might be valid
@@ -180,37 +186,77 @@ void ReadRangefinders()
             }
         }
     }
-    RangefinderData[0] = RangefinderData[1];
-    RangefinderData[1] = RangefinderData[2];
-    RangefinderData[2] = RangefinderData[3];
-    RangefinderData[3] = RangefinderData[4];
+    for(i = 0; i < 4; i++)
+    {
+        RangefinderData[i][0] = RangefinderData[i][1];
+        RangefinderData[i][1] = RangefinderData[i][2];
+        RangefinderData[i][2] = RangefinderData[i][3];
+        RangefinderData[i][3] = RangefinderData[i][4];
+    }
     for(i = 0; i < 4; i++)
     {
         if(rawData[i].valid)
             RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[i];
+    }
+    
+    if(!rawData[0].valid)
+    {
+        //the back ragefinder was valid, add the opposite of the rear rangefinder delta
+        if(rawData[2].valid)
+        {
+            rawData[0].value = RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-2].value
+                    - ( RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-2].value -  RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-3].value );
+            RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[0];
+        }
         else
+        {
+            if(CurrentMotorAction == MOTOR_ACTION_FORWARD)
+            {
+                rawData[0].value -= 5/5;
+                RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[0];
+            }
+            else if(CurrentMotorAction == MOTOR_ACTION_BACKWARD)
+            {
+                rawData[0].value += 5/5;
+                RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[0];
+            }5;
+        }
 
     }
 
+    if(!rawData[1].valid)
+        RangefinderData[1][RANGEFINDER_DATA_BUFFER_SIZE-1] = RangefinderData[1][RANGEFINDER_DATA_BUFFER_SIZE-2];
+
+    if(!rawData[2].valid)
+    {
+        //the front ragefinder was valid, add the opposite of the front rangefinder delta
+        if(rawData[0].valid)
+        {
+            rawData[2].value = RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-2].value
+                    - ( RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-2].value -  RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-3].value );
+            RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[2];
+        }
+        else
+        {
+            if(CurrentMotorAction == MOTOR_ACTION_FORWARD)
+            {
+                rawData[2].value += 5/5;
+                RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[2];
+            }
+            else if(CurrentMotorAction == MOTOR_ACTION_BACKWARD)
+            {
+                rawData[2].value -= 5/5;
+                RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[2];
+            }
+        }
+    }
+    if(!rawData[3].valid)
+        RangefinderData[3][RANGEFINDER_DATA_BUFFER_SIZE-1] = RangefinderData[3][RANGEFINDER_DATA_BUFFER_SIZE-2];
 }
 
 void UpdatePosition()
 {
     
-    
-
-
-    RangefinderDataDelta[RANGEFINDER_FRONT] = UARTReadBuffer[0] - RangefinderData[RANGEFINDER_FRONT];
-    RangefinderDataDelta[RANGEFINDER_RIGHT] = UARTReadBuffer[1] - RangefinderData[RANGEFINDER_RIGHT];
-    RangefinderDataDelta[RANGEFINDER_BACK] = UARTReadBuffer[2] - RangefinderData[RANGEFINDER_BACK];
-    RangefinderDataDelta[RANGEFINDER_LEFT] = UARTReadBuffer[3] - RangefinderData[RANGEFINDER_LEFT];
-    RangefinderData[RANGEFINDER_FRONT] = UARTReadBuffer[0];
-    RangefinderData[RANGEFINDER_RIGHT] = UARTReadBuffer[1];
-    RangefinderData[RANGEFINDER_BACK] = UARTReadBuffer[2];
-    RangefinderData[RANGEFINDER_LEFT] = UARTReadBuffer[3];
-    //update position
-    int forwardDistance, rightDistance, backDistance, leftDistance;
-    forwardDistance = RangefinderData[Direction];
 }
 
 void NavigateToTarget()
@@ -281,25 +327,9 @@ void RunEvery200ms()
 
 #ifdef DEBUG
         //optional send motor over uart
-        switch(movementDirection)
-        {
-            case 0:
-                sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 2, movementSpeed, 2, movementSpeed);
-                break;
-            case 1:
-                sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 2, movementSpeed, 1, movementSpeed);
-                break;
-            case 2:
-                sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 1, movementSpeed, 2, movementSpeed);
-                break;
-            case 3:
-                sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 1, movementSpeed, 1, movementSpeed);
-                break;
-            case 4:
-                sprintf(UARTBuffer,"%1i%04i%1i%04i\n", 0, movementSpeed, 0, movementSpeed);
-                break;
-        }
-        SendString(1, UARTBuffer);
+        sprintf(UARTWriteBuffer, "R%03i %03i %03i %03i\n", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
+        sprintf(UARTWriteBuffer, "U%03i %03i %03i %03i\n", UARTWriteBuffer[0]&0xFF, UARTWriteBuffer[1]&0xFF, UARTWriteBuffer[2]&0xFF, UARTWriteBuffer[3]&0xFF);
+        SendString(1, UARTWriteBuffer);
 #endif
 }
 
