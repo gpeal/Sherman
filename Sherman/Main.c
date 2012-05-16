@@ -3,7 +3,6 @@
 #include <limits.h>
 #include "fft.h"
 #include "Uart.h"
-#include "StateMachine.h"
 #include "Motor.h"
 #include "Pin.h"
 
@@ -22,6 +21,13 @@
 #define RANGEFINDER_LEFT 2
 #define RANGEFINDER_RIGHT 3
 
+#define STATE_TARGET_LOCATION 0
+void state_target_location();
+#define STATE_INITIALIZATION_ROUTINE 1
+void state_initialization_routine();
+#define STATE_GOTO_SCORING_ZONE 2
+void state_goto_scoring_zone();
+
 
 //Global Variables
 unsigned int time = 0;
@@ -31,18 +37,21 @@ char ReadArduino = 0;
 struct Position {
     double X;
     double Y;
-};
-struct Position currentPosition, targetPosition;
-struct Position targetPositions[] = { {45, 50},
+} RobotPosition;
+struct Position TargetPositions[] = { {45, 50},
                                       {23, 37},
                                       {23, 15},
                                       {15, 31},
                                       {32, 45},
                                       {45, 36}};
-int targetPositionsIndex = 0;
+int TargetPositionsIndex = 0;
+#define TargetPosition TargetPositions[TargetPositionsIndex]
+//the current coordinate value we are trying to reach
+//0 for X 1 for Y
+int TargetPositionAxis = 0;
+//the direction we are facing
+extern int Direction;
 double RangefinderData[4];
-double RangefinderDataBuffer[10];
-int RangefinderDataBufferIndex = 0;
 char movementDirection = 0;
 int movementSpeed = 1024;
 
@@ -51,8 +60,10 @@ int UARTReadBufferIndex = 0;
 char data;
 
 //Other global variables
-extern int State;
+int State = STATE_TARGET_LOCATION;
+int SubState = 0, SubStateStartTime = 0;
 int currentNumberOfCubes = 0;
+int Cubes = 0;
 
 char map[240][120];
 
@@ -66,17 +77,97 @@ int main(void)
     char data;
     initialize();
     digitalWrite(A5, 1);
+
     while(1)
     {
         PeriodicFunctions();
-        DelegateState(State);
+        switch(State)
+        {
+            case STATE_INITIALIZATION_ROUTINE:
+                state_initialization_routine();
+                break;
+            case STATE_TARGET_LOCATION:
+                state_target_location();
+                break;
+        }
     }
 }
 
-void delay_ms(int ms)
+void ChangeState(int state)
 {
-    int startTime = time;
-    while(time < startTime + ms*10);
+    State = state;
+    SubState = 0;
+    SubStateStartTime = 0;
+}
+
+void state_initialization_routine()
+{
+    switch(SubState)
+    {
+        case 0:
+            setMotor(MOTOR_WHEEL_LEFT, 1000, 2);
+            setMotor(MOTOR_WHEEL_RIGHT, 1000, 2);
+            if(time - SubStateStartTime > 20000) {
+                SubState++;
+                SubStateStartTime = time;
+            }
+            break;
+        case 1:
+            setMotor(MOTOR_WHEEL_LEFT, 1000, 2);
+            setMotor(MOTOR_WHEEL_RIGHT, 1000, 1);
+            if(time - SubStateStartTime > 20000) {
+                SubState++;
+                SubStateStartTime = time;
+            }
+            break;
+        case 2:
+            setMotor(MOTOR_WHEEL_LEFT, 1000, 1);
+            setMotor(MOTOR_WHEEL_RIGHT, 1000, 2);
+            if(time - SubStateStartTime > 20000) {
+                SubState++;
+                SubStateStartTime = time;
+            }
+            break;
+        case 3:
+            setMotor(MOTOR_WHEEL_LEFT, 1000, 1);
+            setMotor(MOTOR_WHEEL_RIGHT, 1000, 1);
+            if(time - SubStateStartTime > 20000) {
+                SubState++;
+                SubStateStartTime = time;
+            }
+            break;
+        case 4:
+            setMotor(MOTOR_WHEEL_LEFT, 1000, 0);
+            setMotor(MOTOR_WHEEL_RIGHT, 1000, 0);
+            if(time - SubStateStartTime > 20000) {
+                ChangeState(STATE_TARGET_LOCATION);
+            }
+            break;
+    }
+}
+
+void state_target_location()
+{
+    double robotPositionOnTargetAxis, targetPositionOnTargetAxis, deltaPositionOnTargetAxis;
+    double robotPositionOnOtherAxis, targetPositionOnOtherAxis, deltaPositionOnOtherAxis;
+    robotPositionOnTargetAxis = TargetPositionAxis == 0 ? RobotPosition.X : RobotPosition.Y;
+    targetPositionOnTargetAxis = TargetPositionAxis == 0 ? TargetPosition.X : TargetPosition.Y;
+    deltaPositionOnTargetAxis = targetPositionOnTargetAxis - robotPositionOnTargetAxis;
+    //reached goal on current axis
+    if(deltaPositionOnTargetAxis < 5)
+    {
+        robotPositionOnOtherAxis = TargetPositionAxis == 0 ? RobotPosition.Y : RobotPosition.X;
+        targetPositionOnOtherAxis = TargetPositionAxis == 0 ? TargetPosition.Y : TargetPosition.X;
+        deltaPositionOnOtherAxis = targetPositionOnTargetAxis - robotPositionOnTargetAxis;
+        //reached goal on both axis
+        if(deltaPositionOnOtherAxis < 5)
+        {
+            if(Cubes >= 4)
+                ChangeState(STATE_GOTO_SCORING_ZONE);
+            else
+                TargetPositionsIndex++;
+        }
+    }
 }
 
 void RunEvery_1ms()
@@ -86,7 +177,7 @@ void RunEvery_1ms()
 
 void RunEvery1ms()
 {
-    if(State != STATE_INITIALIZATION)
+    if(State != STATE_INITIALIZATION_ROUTINE)
         UpdateMotors();
 }
 
@@ -111,6 +202,10 @@ void RunEvery102_4ms()
 
 void RunEvery200ms()
 {
+    //update position
+    int forwardDistance, rightDistance, backDistance, leftDistance;
+    forwardDistance = RangefinderData[Direction];
+
 
 #ifdef DEBUG
         //optional send motor over uart
@@ -280,4 +375,10 @@ void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
     {
             mU2TXClearIntFlag();
     }
+}
+
+void delay_ms(int ms)
+{
+    int startTime = time;
+    while(time < startTime + ms*10);
 }

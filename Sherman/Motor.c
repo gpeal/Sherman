@@ -14,6 +14,8 @@ struct MotorAction
 struct MotorAction MotorActionQueue[MOTOR_ACTION_QUEUE_SIZE];
 int MotorActionQueueHeadIndex = 0, MotorActionQueueTailIndex = 0;
 unsigned int CurrentMotorActionEndTime = 0;
+//direction the robot is currently driving in
+int Direction = 0;
 
 void setupMotor(int motor)
 {
@@ -30,40 +32,6 @@ void setupMotor(int motor)
     }
 }
 
-void setMotor(int motor, int speed, int direction)
-{
-    int motorOc1, motorOc2;
-
-    switch(motor)
-    {
-        case MOTOR_WHEEL_LEFT:
-            motorOc1 = MOTOR_WHEEL_LEFT_OC1;
-            motorOc2 = MOTOR_WHEEL_LEFT_OC2;
-            break;
-        case MOTOR_WHEEL_RIGHT:
-            motorOc1 = MOTOR_WHEEL_RIGHT_OC1;
-            motorOc2 = MOTOR_WHEEL_RIGHT_OC2;
-            break;
-        default:
-            return;
-    }
-
-    switch(direction)
-    {
-        case MOTOR_DIRECTION_LEFT:
-            setDutyCycle(motorOc1, 0);
-            setDutyCycle(motorOc2, speed);
-            break;
-        case MOTOR_DIRECTION_RIGHT:
-            setDutyCycle(motorOc1, speed);
-            setDutyCycle(motorOc2, 0);
-            break;
-        case MOTOR_DIRECTION_BRAKE:
-            setDutyCycle(motorOc1, 1024);
-            setDutyCycle(motorOc2, 1024);
-            break;
-    }
-}
 
 void UpdateMotors()
 {
@@ -89,6 +57,14 @@ void UpdateMotors()
         case MOTOR_ACTION_STOP:
             movementStop();
             break;
+        case MOTOR_ACTION_SLIGHT_LEFT:
+            setMotor(MOTOR_WHEEL_LEFT, CurrentMotorSpeed - 15, 2);
+            setMotor(MOTOR_WHEEL_RIGHT, CurrentMotorSpeed, 1);
+            break;
+        case MOTOR_ACTION_SLIGHT_RIGHT:
+            setMotor(MOTOR_WHEEL_LEFT, CurrentMotorSpeed, 2);
+            setMotor(MOTOR_WHEEL_RIGHT, CurrentMotorSpeed - 15, 1);
+            break;
     }
 }
 
@@ -100,26 +76,14 @@ void EnqueueMotorAction(char action)
     newAction.speed = 1024;
     switch(action)
     {
-        case MOTOR_ACTION_FORWARD:
-            newAction.duration = -1;
-            break;
-        case MOTOR_ACTION_BACKWARD:
-            newAction.duration = -1;
-            break;
-        case MOTOR_ACTION_STOP:
-            newAction.duration = -1;
-            break;
-        case MOTOR_ACTION_TURN_RIGHT:
-            newAction.duration = -1;
-            break;
-        case MOTOR_ACTION_TURN_LEFT:
-            newAction.duration = -1;
-            break;
         case MOTOR_ACTION_TURN_LEFT_90:
-            newAction.duration = 11000000;
+            newAction.duration = 81000000;
             break;
         case MOTOR_ACTION_TURN_RIGHT_90:
-            newAction.duration = 11000000;
+            newAction.duration = 81000000;
+            break;
+        default:
+            newAction.duration = -1;
             break;
     }
     //dequeue any actions that have unlimited duration
@@ -145,6 +109,10 @@ void DequeueMotorAction()
     if(MotorActionQueueSize() == 0)
             EnqueueMotorAction(MOTOR_ACTION_STOP);
     CurrentMotorActionEndTime = ReadCoreTimer() + CurrentMotorDuration;
+    if(CurrentMotorAction == MOTOR_ACTION_TURN_LEFT_90)
+        Direction = (Direction-1)%4;
+    if(CurrentMotorAction == MOTOR_ACTION_TURN_RIGHT_90)
+        Direction = (Direction+1)%4;
 }
 
 int MotorActionQueueSize()
@@ -191,4 +159,38 @@ void movementStop()
 {
     setMotor(MOTOR_WHEEL_LEFT, 500, 0);
     setMotor(MOTOR_WHEEL_RIGHT, 500, 0);
+}
+void setMotor(int motor, int speed, int direction)
+{
+    int motorOc1, motorOc2;
+
+    switch(motor)
+    {
+        case MOTOR_WHEEL_LEFT:
+            motorOc1 = MOTOR_WHEEL_LEFT_OC1;
+            motorOc2 = MOTOR_WHEEL_LEFT_OC2;
+            break;
+        case MOTOR_WHEEL_RIGHT:
+            motorOc1 = MOTOR_WHEEL_RIGHT_OC1;
+            motorOc2 = MOTOR_WHEEL_RIGHT_OC2;
+            break;
+        default:
+            return;
+    }
+
+    switch(direction)
+    {
+        case MOTOR_DIRECTION_LEFT:
+            setDutyCycle(motorOc1, 0);
+            setDutyCycle(motorOc2, speed);
+            break;
+        case MOTOR_DIRECTION_RIGHT:
+            setDutyCycle(motorOc1, speed);
+            setDutyCycle(motorOc2, 0);
+            break;
+        case MOTOR_DIRECTION_BRAKE:
+            setDutyCycle(motorOc1, 1024);
+            setDutyCycle(motorOc2, 1024);
+            break;
+    }
 }

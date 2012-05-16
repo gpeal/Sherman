@@ -18,7 +18,6 @@
       <itemPath>Laser.h</itemPath>
       <itemPath>fft.h</itemPath>
       <itemPath>fftc.h</itemPath>
-      <itemPath>StateMachine.h</itemPath>
       <itemPath>Pin.h</itemPath>
       <itemPath>I2C.h</itemPath>
     </logicalFolder>
@@ -49,7 +48,6 @@
       <itemPath>Servo.c</itemPath>
       <itemPath>Laser.c</itemPath>
       <itemPath>fft.c</itemPath>
-      <itemPath>StateMachine.c</itemPath>
       <itemPath>Pin.c</itemPath>
       <itemPath>I2C.c</itemPath>
     </logicalFolder>
