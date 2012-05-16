@@ -67,11 +67,10 @@ int main(void)
     {
         PeriodicFunctions();
 
-        while(DataRdyUART2())
+        if(DataRdyUART2())
         {
-            data = (char)ReadUART2();
-            while(BusyUART2()) {}
-            SendCharacter(1, data);
+            ReadString(2);
+            SendString(1, UARTReadBuffer);
         }
 
     }

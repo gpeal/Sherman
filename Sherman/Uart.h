@@ -5,7 +5,8 @@
 
 #define DESIRED_BAUDRATE_NU32 9600 // Baudrate
 
-char UARTBuffer[16];
+char UARTWriteBuffer[16];
+char UARTReadBuffer[16];
 
 // Opens the uart module assigned to uartX (1 will open uart1)
 // Assigns that uart module an interrupt with priority int_priotity_level_X

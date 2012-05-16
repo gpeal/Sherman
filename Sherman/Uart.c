@@ -141,7 +141,45 @@ int SendString(int id, const char *string)
     return 1;
 }
 
+char ReadCharacter(int id)
+{
+    char data;
+    switch(id)
+    {
+        case 1:
+            data = (char)ReadUART1();
+            while(BusyUART1()) {}
+            break;
+        case 2:
+            data = (char)ReadUART2();
+            while(BusyUART2()) {}
+            break;
+    }
+    return data;
+}
 
+void ReadString(int id)
+{
+    int i = 0;
+    switch(id)
+    {
+        case 1:
+            while(DataRdyUART1())
+            {
+                UARTReadBuffer[i++] = (char)ReadCharacter(id);
+                if(i >= 255)
+                    return;
+            }
+        case 2:
+            while(DataRdyUART2())
+            {
+                UARTReadBuffer[i++] = (char)ReadCharacter(id);
+                i++;
+                if(i >= 255)
+                    return;
+            }
+    }
+}
 
 
 
