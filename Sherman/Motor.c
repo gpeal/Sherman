@@ -1,10 +1,6 @@
 #include "Motor.h"
 #include "Uart.h"
 
-#define CurrentMotorSpeed MotorActionQueue[MotorActionQueueHeadIndex].speed
-#define CurrentMotorAction MotorActionQueue[MotorActionQueueHeadIndex].action
-#define CurrentMotorDuration MotorActionQueue[MotorActionQueueHeadIndex].duration
-
 struct MotorAction
 {
     char action;
@@ -58,12 +54,12 @@ void UpdateMotors()
             movementStop();
             break;
         case MOTOR_ACTION_SLIGHT_LEFT:
-            setMotor(MOTOR_WHEEL_LEFT, CurrentMotorSpeed - 15, 2);
+            setMotor(MOTOR_WHEEL_LEFT, CurrentMotorSpeed * 0.8, 2);
             setMotor(MOTOR_WHEEL_RIGHT, CurrentMotorSpeed, 1);
             break;
         case MOTOR_ACTION_SLIGHT_RIGHT:
             setMotor(MOTOR_WHEEL_LEFT, CurrentMotorSpeed, 2);
-            setMotor(MOTOR_WHEEL_RIGHT, CurrentMotorSpeed - 15, 1);
+            setMotor(MOTOR_WHEEL_RIGHT, CurrentMotorSpeed * 0.8, 1);
             break;
     }
 }
@@ -110,9 +106,13 @@ void DequeueMotorAction()
             EnqueueMotorAction(MOTOR_ACTION_STOP);
     CurrentMotorActionEndTime = ReadCoreTimer() + CurrentMotorDuration;
     if(CurrentMotorAction == MOTOR_ACTION_TURN_LEFT_90)
-        Direction = (Direction-1)%4;
+        Direction = (Direction-1);
     if(CurrentMotorAction == MOTOR_ACTION_TURN_RIGHT_90)
-        Direction = (Direction+1)%4;
+        Direction = (Direction+1);
+    if(Direction < 0)
+        Direction = 3;
+    if(Direction > 3)
+        Direction = 0;
 }
 
 int MotorActionQueueSize()

@@ -20,6 +20,10 @@
 
 #define MOTOR_ACTION_QUEUE_SIZE 128
 
+#define CurrentMotorSpeed MotorActionQueue[MotorActionQueueHeadIndex].speed
+#define CurrentMotorAction MotorActionQueue[MotorActionQueueHeadIndex].action
+#define CurrentMotorDuration MotorActionQueue[MotorActionQueueHeadIndex].duration
+
 void setupMotor(int motor);
 void setMotor(int motor, int dutyCycle, int direction);
 

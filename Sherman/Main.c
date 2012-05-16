@@ -1,6 +1,7 @@
 #include "Initialize.h"
 #include <plib.h>
 #include <limits.h>
+//#include <math.h>
 #include "fft.h"
 #include "Uart.h"
 #include "Motor.h"
@@ -20,11 +21,16 @@
 #define RANGEFINDER_BACK 1
 #define RANGEFINDER_LEFT 2
 #define RANGEFINDER_RIGHT 3
+#define RANGEFINDER_ERROR_THRESHOLD 2
+#define ARENA_WIDTH 72
+#define ARENA_LENGTH_0 144
+#define ARENA_LENGTH_1 162
+#define ARENA_LENGTH_2 180
 
-#define STATE_TARGET_LOCATION 0
-void state_target_location();
+#define STATE_FIND_CUBES 0
+void NavigateToTarget();
 #define STATE_INITIALIZATION_ROUTINE 1
-void state_initialization_routine();
+void InitialRoutine();
 #define STATE_GOTO_SCORING_ZONE 2
 void state_goto_scoring_zone();
 
@@ -38,7 +44,7 @@ struct Position {
     double X;
     double Y;
 } RobotPosition;
-struct Position TargetPositions[] = { {45, 50},
+struct Position TargetPositions[] = { {12, 0},
                                       {23, 37},
                                       {23, 15},
                                       {15, 31},
@@ -51,7 +57,15 @@ int TargetPositionsIndex = 0;
 int TargetPositionAxis = 0;
 //the direction we are facing
 extern int Direction;
-double RangefinderData[4];
+struct RangefinderReading
+{
+    int value;
+    char valid = 1;
+};
+
+#define RANGEFINDER_DATA_BUFFER_SIZE 5
+double RangefinderData[4][RANGEFINDER_DATA_BUFFER_SIZE];
+double RangefinderDataDelta[4];
 char movementDirection = 0;
 int movementSpeed = 1024;
 
@@ -60,10 +74,11 @@ int UARTReadBufferIndex = 0;
 char data;
 
 //Other global variables
-int State = STATE_TARGET_LOCATION;
+int State = STATE_FIND_CUBES;
 int SubState = 0, SubStateStartTime = 0;
-int currentNumberOfCubes = 0;
 int Cubes = 0;
+extern struct MotorAction MotorActionQueue[];
+extern int MotorActionQueueHeadIndex;
 
 char map[240][120];
 
@@ -71,24 +86,15 @@ char map[240][120];
 void PeriodicFunctions();
 void delay_ms(int ms);
 void ParseUartData();
+void ReadRangefinders();
+void UpdatePosition();
 
 int main(void)
 {
     initialize();
-    digitalWrite(A5, 1);
-    EnqueueMotorAction(MOTOR_ACTION_FORWARD);
     while(1)
     {
         PeriodicFunctions();
-        switch(State)
-        {
-            case STATE_INITIALIZATION_ROUTINE:
-                state_initialization_routine();
-                break;
-            case STATE_TARGET_LOCATION:
-                state_target_location();
-                break;
-        }
     }
 }
 
@@ -99,7 +105,7 @@ void ChangeState(int state)
     SubStateStartTime = 0;
 }
 
-void state_initialization_routine()
+void InitialRoutine()
 {
     switch(SubState)
     {
@@ -111,7 +117,7 @@ void state_initialization_routine()
                 SubStateStartTime = time;
             }
             break;
-        case 1:
+        /*case 1:
             setMotor(MOTOR_WHEEL_LEFT, 1000, 2);
             setMotor(MOTOR_WHEEL_RIGHT, 1000, 1);
             if(time - SubStateStartTime > 20000) {
@@ -134,18 +140,80 @@ void state_initialization_routine()
                 SubState++;
                 SubStateStartTime = time;
             }
-            break;
-        case 4:
+            break;*/
+        default:
             setMotor(MOTOR_WHEEL_LEFT, 1000, 0);
             setMotor(MOTOR_WHEEL_RIGHT, 1000, 0);
             if(time - SubStateStartTime > 20000) {
-                ChangeState(STATE_TARGET_LOCATION);
+                ChangeState(STATE_FIND_CUBES);
             }
             break;
     }
 }
 
-void state_target_location()
+void ReadRangefinders()
+{
+    int i, length, width;
+    struct RangefinderReading rawData[4];
+    rawData[0].value = UARTReadBuffer[0];
+    rawData[1].value = UARTReadBuffer[1];
+    rawData[2].value = UARTReadBuffer[2];
+    rawData[3].value = UARTReadBuffer[3];
+    for(i = 0; i < 4; i++)
+    {
+        if(rawData[i].value >= 200)
+            rawData[i].valid = 0;
+        //TODO: mark large deltas invalid
+        //if(abs(RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] - rawData[i]) >= 5 && RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] != 0) {}
+
+        //TODO: uncomment width and height checks
+        //move lengthwise
+        if(Direction == 0 || Direction == 2)
+        {
+            if(rawData[RANGEFINDER_FRONT].valid && rawData[RANGEFINDER_BACK].valid)
+            {
+                length = rawData[RANGEFINDER_FRONT] + rawData[RANGEFINDER_BACK] + 12;
+                if(abs(length-ARENA_LENGTH_0) > 10 && abs(length-ARENA_LENGTH_1) > 10 && abs(length-ARENA_LENGTH_2) > 10)
+                {
+                    //TODO: check if one of the values might be valid
+                }
+            }
+        }
+    }
+    RangefinderData[0] = RangefinderData[1];
+    RangefinderData[1] = RangefinderData[2];
+    RangefinderData[2] = RangefinderData[3];
+    RangefinderData[3] = RangefinderData[4];
+    for(i = 0; i < 4; i++)
+    {
+        if(rawData[i].valid)
+            RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[i];
+        else
+
+    }
+
+}
+
+void UpdatePosition()
+{
+    
+    
+
+
+    RangefinderDataDelta[RANGEFINDER_FRONT] = UARTReadBuffer[0] - RangefinderData[RANGEFINDER_FRONT];
+    RangefinderDataDelta[RANGEFINDER_RIGHT] = UARTReadBuffer[1] - RangefinderData[RANGEFINDER_RIGHT];
+    RangefinderDataDelta[RANGEFINDER_BACK] = UARTReadBuffer[2] - RangefinderData[RANGEFINDER_BACK];
+    RangefinderDataDelta[RANGEFINDER_LEFT] = UARTReadBuffer[3] - RangefinderData[RANGEFINDER_LEFT];
+    RangefinderData[RANGEFINDER_FRONT] = UARTReadBuffer[0];
+    RangefinderData[RANGEFINDER_RIGHT] = UARTReadBuffer[1];
+    RangefinderData[RANGEFINDER_BACK] = UARTReadBuffer[2];
+    RangefinderData[RANGEFINDER_LEFT] = UARTReadBuffer[3];
+    //update position
+    int forwardDistance, rightDistance, backDistance, leftDistance;
+    forwardDistance = RangefinderData[Direction];
+}
+
+void NavigateToTarget()
 {
     double robotPositionOnTargetAxis, targetPositionOnTargetAxis, deltaPositionOnTargetAxis;
     double robotPositionOnOtherAxis, targetPositionOnOtherAxis, deltaPositionOnOtherAxis;
@@ -171,7 +239,14 @@ void state_target_location()
 
 void RunEvery_1ms()
 {
-
+    switch(State)
+    {
+        case STATE_INITIALIZATION_ROUTINE:
+            InitialRoutine();
+            break;
+        case STATE_FIND_CUBES:
+            break;
+    }
 }
 
 void RunEvery1ms()
@@ -201,10 +276,8 @@ void RunEvery102_4ms()
 
 void RunEvery200ms()
 {
-    //update position
-    int forwardDistance, rightDistance, backDistance, leftDistance;
-    forwardDistance = RangefinderData[Direction];
-
+    ReadRangefinders();
+    UpdatePosition();
 
 #ifdef DEBUG
         //optional send motor over uart
@@ -232,19 +305,16 @@ void RunEvery200ms()
 
 void RunEvery_5s()
 {
-
+    switch(State)
+    {
+        case STATE_FIND_CUBES:
+            NavigateToTarget();
+            break;
+    }
 }
 
 void RunEvery1s()
 {
-    char front, right, back, left;
-    front = UARTReadBuffer[0];
-    right = UARTReadBuffer[1];
-    back = UARTReadBuffer[2];
-    left = UARTReadBuffer[3];
-    sprintf(UARTWriteBuffer, "%04u %04u %04u %04u\n", front & 0xFF, right & 0xFF, back & 0xFF, left & 0xFF);
-    //sprintf(UARTWriteBuffer, "%s\n", UARTReadBuffer);
-    SendString(1, UARTWriteBuffer);
 }
 
 void RunEvery5s()
