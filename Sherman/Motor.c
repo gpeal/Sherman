@@ -4,7 +4,7 @@ struct MotorAction MotorActionQueue[MOTOR_ACTION_QUEUE_SIZE];
 int MotorActionQueueHeadIndex = 0, MotorActionQueueTailIndex = 0;
 unsigned int CurrentMotorActionEndTime = 0;
 //direction the robot is currently driving in
-int Direction = 0;
+int Direction = 2;
 
 void setupMotor(int motor)
 {

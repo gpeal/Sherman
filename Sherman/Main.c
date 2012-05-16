@@ -41,9 +41,10 @@ char timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeF
 char ReadArduino = 0;
 //position variables
 struct Position {
-    double X;
-    double Y;
-} RobotPosition;
+    int X;
+    int Y;
+};
+struct Position RobotPosition;
 struct Position TargetPositions[] = { {12, 0},
                                       {23, 37},
                                       {23, 15},
@@ -66,7 +67,6 @@ struct RangefinderReading
 #define RANGEFINDER_DATA_BUFFER_SIZE 5
 struct RangefinderReading RangefinderData[4][RANGEFINDER_DATA_BUFFER_SIZE];
 double RangefinderDataDelta[4];
-char movementDirection = 0;
 int movementSpeed = 1024;
 
 //UART
@@ -256,7 +256,79 @@ void ReadRangefinders()
 
 void UpdatePosition()
 {
+    int rangefinderPlusY, rangefinderMinusY, rangefinderPlusX, rangefinderMinusX;
+    //offset used to offset the position to the front center of the robot
+    int plusXOffset, minusXOffset, plusYOffset, minusYOffset;
+    switch(Direction)
+    {
+        case 0:
+            rangefinderPlusY = RANGEFINDER_FRONT;
+            rangefinderMinusY = RANGEFINDER_BACK;
+            rangefinderPlusX = RANGEFINDER_RIGHT;
+            rangefinderMinusX = RANGEFINDER_LEFT;
+            plusXOffset = -6;
+            minusXOffset = 6;
+            plusYOffset = 0;
+            minusYOffset = 12;
+            break;
+        case 1:
+            rangefinderPlusY = RANGEFINDER_LEFT;
+            rangefinderMinusY = RANGEFINDER_RIGHT;
+            rangefinderPlusX = RANGEFINDER_FRONT;
+            rangefinderMinusX = RANGEFINDER_BACK;
+            plusXOffset = 0;
+            minusXOffset = 12;
+            plusYOffset = -6;
+            minusYOffset = 6;
+            break;
+        case 2:
+            rangefinderPlusY = RANGEFINDER_BACK;
+            rangefinderMinusY = RANGEFINDER_FRONT;
+            rangefinderPlusX = RANGEFINDER_LEFT;
+            rangefinderMinusX = RANGEFINDER_RIGHT;
+            plusXOffset = -6;
+            minusXOffset = 6;
+            plusYOffset = -12;
+            minusYOffset = 0;
+            break;
+        case 3:
+            rangefinderPlusY = RANGEFINDER_RIGHT;
+            rangefinderMinusY = RANGEFINDER_LEFT;
+            rangefinderPlusX = RANGEFINDER_BACK;
+            rangefinderMinusX = RANGEFINDER_FRONT;
+            plusXOffset = -12;
+            minusXOffset = 0;
+            plusYOffset = -6;
+            minusYOffset = 6;
+            break;
+    }
+    //TODO: take into account the farther value
+    if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid && RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+    {
+        //offeset the reading to the center of the robot
+        if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value < RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE - 1].value)
+            RobotPosition.Y = RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusYOffset;
+        else
+            RobotPosition.Y = ARENA_LENGTH_0 - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusYOffset;
+    }
+    else if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+        RobotPosition.Y = RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusYOffset;
+    else if(RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+        RobotPosition.Y = ARENA_LENGTH_0 - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusYOffset;
     
+    if(RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid && RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+    {
+        //offeset the reading to the center of the robot
+        if(RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value < RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE - 1].value)
+            RobotPosition.X = RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusXOffset;
+        else
+            RobotPosition.X = ARENA_WIDTH - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusXOffset;
+    }
+    else if(RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+        RobotPosition.X = RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusXOffset;
+    else if(RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+        RobotPosition.X = ARENA_WIDTH - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusXOffset;
+
 }
 
 void NavigateToTarget()
@@ -328,8 +400,11 @@ void RunEvery200ms()
 #ifdef DEBUG
         //optional send motor over uart
         sprintf(UARTWriteBuffer, "R%03i %03i %03i %03i\n", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
-        sprintf(UARTWriteBuffer, "U%03i %03i %03i %03i\n", UARTWriteBuffer[0]&0xFF, UARTWriteBuffer[1]&0xFF, UARTWriteBuffer[2]&0xFF, UARTWriteBuffer[3]&0xFF);
         SendString(1, UARTWriteBuffer);
+        sprintf(UARTWriteBuffer, "P%03i %03i\n", RobotPosition.X, RobotPosition.Y);
+        SendString(1, UARTWriteBuffer);
+        //sprintf(UARTWriteBuffer, "U%03i %03i %03i %03i\n", UARTReadBuffer[0]&0xFF, UARTReadBuffer[1]&0xFF, UARTReadBuffer[2]&0xFF, UARTReadBuffer[3]&0xFF);
+        //SendString(1, UARTWriteBuffer);
 #endif
 }
 
