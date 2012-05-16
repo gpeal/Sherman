@@ -1,6 +1,6 @@
 #include "Uart.h"
 
-int setupUart(int id, int int_priotity_level_X) {
+int setupUart(int id, int int_priority_level_X) {
   unsigned int pbClk;
   INT_SOURCE int_uXrx;
   INT_VECTOR int_uart_X_vector;
@@ -37,34 +37,34 @@ int setupUart(int id, int int_priotity_level_X) {
           break;
   }
 
-  switch(int_priotity_level_X)
+  switch(int_priority_level_X)
   {
       case 0:
-        int_priotity_level_X = INT_PRIORITY_DISABLED;
+        int_priority_level_X = INT_PRIORITY_DISABLED;
         break;
       case 1:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_1;
+          int_priority_level_X = INT_PRIORITY_LEVEL_1;
           break;
       case 2:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_2;
+          int_priority_level_X = INT_PRIORITY_LEVEL_2;
           break;
       case 3:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_3;
+          int_priority_level_X = INT_PRIORITY_LEVEL_3;
           break;
       case 4:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_4;
+          int_priority_level_X = INT_PRIORITY_LEVEL_4;
           break;
       case 5:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_5;
+          int_priority_level_X = INT_PRIORITY_LEVEL_5;
           break;
       case 6:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_6;
+          int_priority_level_X = INT_PRIORITY_LEVEL_6;
           break;
       case 7:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_6;
+          int_priority_level_X = INT_PRIORITY_LEVEL_6;
           break;
       default:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_1;
+          int_priority_level_X = INT_PRIORITY_LEVEL_1;
           break;
   }
 
@@ -75,9 +75,12 @@ int setupUart(int id, int int_priotity_level_X) {
   UARTEnable(uartX, UART_ENABLE_FLAGS(UART_PERIPHERAL | UART_RX | UART_TX));
 
   // Configure UART1 RX Interrupt
-  INTEnable(int_uXrx, INT_ENABLED);
-  INTSetVectorPriority(int_uart_X_vector, int_priotity_level_X);
-  INTSetVectorSubPriority(int_uart_X_vector, INT_SUB_PRIORITY_LEVEL_0);
+  /*if(int_priority_level_X != -1)
+  {
+      INTEnable(int_uXrx, INT_ENABLED);
+      INTSetVectorPriority(int_uart_X_vector, int_priority_level_X);
+      INTSetVectorSubPriority(int_uart_X_vector, INT_SUB_PRIORITY_LEVEL_0);
+  }*/
   return 1;
 }
 

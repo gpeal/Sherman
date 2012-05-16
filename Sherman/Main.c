@@ -62,15 +62,18 @@ int main(void)
 {
     char data;
     initialize();
-    SendCharacter(1, '1');
     digitalWrite(A5, 1);
     while(1)
     {
-        if(data != -1)
+        PeriodicFunctions();
+
+        while(DataRdyUART2())
         {
+            data = (char)ReadUART2();
+            while(BusyUART2()) {}
             SendCharacter(1, data);
-            data = -1;
         }
+
     }
 }
 
@@ -112,22 +115,6 @@ void RunEvery102_4ms()
 
 void RunEvery200ms()
 {
-    int i, sum;
-    double average;
-    //rangefinder data from arduino
-    RangefinderData[RANGEFINDER_FRONT] = readAnalogIn(0);
-    RangefinderDataBuffer[RangefinderDataBufferIndex++] = RangefinderData[RANGEFINDER_FRONT];
-    if(RangefinderDataBufferIndex == 4)
-        RangefinderDataBufferIndex = 0;
-    sum = 0;
-    for(i = 0; i < 4; i++)
-        sum += RangefinderDataBuffer[i];
-    average = sum/4;
-    RangefinderData[RANGEFINDER_BACK] = readAnalogIn(1);
-    RangefinderData[RANGEFINDER_LEFT] = readAnalogIn(2);
-    RangefinderData[RANGEFINDER_RIGHT] = readAnalogIn(3);
-    sprintf(UARTBuffer, "%4.0f\n", average);
-    SendString(1, UARTBuffer);
 
 #ifdef DEBUG
         //optional send motor over uart
@@ -160,7 +147,7 @@ void RunEvery_5s()
 
 void RunEvery1s()
 {
-    SendString(2, "Hello from PIC!");
+    SendString(2, "Hello from PIC!\n");
 }
 
 void RunEvery5s()
@@ -261,7 +248,7 @@ void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
 
 // UART 2 interrupt handler
 // it is set at priority level 2
-void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
+/*void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
 {
     // Is this an RX interrupt?
     if(mU2RXGetIntFlag())
@@ -269,8 +256,8 @@ void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
         // Clear the RX interrupt Flag
         mU2RXClearIntFlag();
         data = (char)ReadUART2();
-        while(BusyUART2()); /* Wait till the UART transmitter is free. */
-        SendCharacter(1, data);
+        while(BusyUART2());*/ /* Wait till the UART transmitter is free. */
+        /*SendCharacter(1, data);
     }
 
     // We don't care about TX interrupt
@@ -278,4 +265,4 @@ void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
     {
             mU2TXClearIntFlag();
     }
-}
+}*/
