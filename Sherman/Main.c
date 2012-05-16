@@ -74,7 +74,6 @@ void ParseUartData();
 
 int main(void)
 {
-    char data;
     initialize();
     digitalWrite(A5, 1);
 
@@ -238,13 +237,13 @@ void RunEvery_5s()
 
 void RunEvery1s()
 {
-    /*int front, right, back, left;
-    front = (UARTReadBuffer[0] << 0) | (UARTReadBuffer[1] << 1) | (UARTReadBuffer[2] << 2) | (UARTReadBuffer[3] << 3);
-    right = (UARTReadBuffer[4] << 0) | (UARTReadBuffer[5] << 1) | (UARTReadBuffer[6] << 2) | (UARTReadBuffer[7] << 3);
-    back = (UARTReadBuffer[8] << 0) | (UARTReadBuffer[9] << 1) | (UARTReadBuffer[10] << 2) | (UARTReadBuffer[11] << 3);
-    left = (UARTReadBuffer[12] << 0) | (UARTReadBuffer[13] << 1) | (UARTReadBuffer[14] << 2) | (UARTReadBuffer[15] << 3);
-    sprintf(UARTWriteBuffer, "%04i %04i %04i %04i\n", front, right, back, left);*/
-    sprintf(UARTWriteBuffer, "%s\n", UARTReadBuffer);
+    char front, right, back, left;
+    front = UARTReadBuffer[0];
+    right = UARTReadBuffer[1];
+    back = UARTReadBuffer[2];
+    left = UARTReadBuffer[3];
+    sprintf(UARTWriteBuffer, "%04u %04u %04u %04u\n", front & 0xFF, right & 0xFF, back & 0xFF, left & 0xFF);
+    //sprintf(UARTWriteBuffer, "%s\n", UARTReadBuffer);
     SendString(1, UARTWriteBuffer);
 }
 
@@ -351,8 +350,6 @@ void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
     // Is this an RX interrupt?
     if(mU2RXGetIntFlag())
     {
-        // Clear the RX interrupt Flag
-        mU2RXClearIntFlag();
         data = ReadCharacter(2);
         if(data == '\n')
         {
@@ -361,13 +358,16 @@ void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
         }
         else if(ReadArduino == 1)
         {
-            UARTReadBuffer[UARTReadBufferIndex++] = data;
-            if(UARTReadBufferIndex >= UART_READ_BUFFER_SIZE)
+            UARTReadBuffer[UARTReadBufferIndex] = data;
+            UARTReadBufferIndex++;
+            if(UARTReadBufferIndex >= (ARDUINO_BUFFER_SIZE - 1))
             {
                 ReadArduino = 0;
                 UARTReadBufferIndex = 0;
             }
         }
+        // Clear the RX interrupt Flag
+        mU2RXClearIntFlag();
     }
 
     // We don't care about TX interrupt
