@@ -75,12 +75,9 @@ int setupUart(int id, int int_priority_level_X) {
   UARTEnable(uartX, UART_ENABLE_FLAGS(UART_PERIPHERAL | UART_RX | UART_TX));
 
   // Configure UART1 RX Interrupt
-  /*if(int_priority_level_X != -1)
-  {
-      INTEnable(int_uXrx, INT_ENABLED);
-      INTSetVectorPriority(int_uart_X_vector, int_priority_level_X);
-      INTSetVectorSubPriority(int_uart_X_vector, INT_SUB_PRIORITY_LEVEL_0);
-  }*/
+  INTEnable(int_uXrx, INT_ENABLED);
+  INTSetVectorPriority(int_uart_X_vector, int_priority_level_X);
+  INTSetVectorSubPriority(int_uart_X_vector, INT_SUB_PRIORITY_LEVEL_0);
   return 1;
 }
 
@@ -161,6 +158,7 @@ char ReadCharacter(int id)
 void ReadString(int id)
 {
     int i = 0;
+    memset(UARTReadBuffer, 0, UART_READ_BUFFER_SIZE);
     switch(id)
     {
         case 1:

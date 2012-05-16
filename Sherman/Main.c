@@ -26,7 +26,7 @@
 //Global Variables
 unsigned int time = 0;
 char timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
-
+char ReadArduino = 0;
 //position variables
 struct Position {
     double X;
@@ -46,7 +46,9 @@ int RangefinderDataBufferIndex = 0;
 char movementDirection = 0;
 int movementSpeed = 1024;
 
-char data = -1;
+//UART
+int UARTReadBufferIndex = 0;
+char data;
 
 //Other global variables
 extern int State;
@@ -57,6 +59,7 @@ char map[240][120];
 //function prototypes
 void PeriodicFunctions();
 void delay_ms(int ms);
+void ParseUartData();
 
 int main(void)
 {
@@ -66,13 +69,7 @@ int main(void)
     while(1)
     {
         PeriodicFunctions();
-
-        if(DataRdyUART2())
-        {
-            ReadString(2);
-            SendString(1, UARTReadBuffer);
-        }
-
+        DelegateState(State);
     }
 }
 
@@ -146,7 +143,14 @@ void RunEvery_5s()
 
 void RunEvery1s()
 {
-    SendString(2, "Hello from PIC!\n");
+    /*int front, right, back, left;
+    front = (UARTReadBuffer[0] << 0) | (UARTReadBuffer[1] << 1) | (UARTReadBuffer[2] << 2) | (UARTReadBuffer[3] << 3);
+    right = (UARTReadBuffer[4] << 0) | (UARTReadBuffer[5] << 1) | (UARTReadBuffer[6] << 2) | (UARTReadBuffer[7] << 3);
+    back = (UARTReadBuffer[8] << 0) | (UARTReadBuffer[9] << 1) | (UARTReadBuffer[10] << 2) | (UARTReadBuffer[11] << 3);
+    left = (UARTReadBuffer[12] << 0) | (UARTReadBuffer[13] << 1) | (UARTReadBuffer[14] << 2) | (UARTReadBuffer[15] << 3);
+    sprintf(UARTWriteBuffer, "%04i %04i %04i %04i\n", front, right, back, left);*/
+    sprintf(UARTWriteBuffer, "%s\n", UARTReadBuffer);
+    SendString(1, UARTWriteBuffer);
 }
 
 void RunEvery5s()
@@ -247,16 +251,28 @@ void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
 
 // UART 2 interrupt handler
 // it is set at priority level 2
-/*void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
+void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
 {
     // Is this an RX interrupt?
     if(mU2RXGetIntFlag())
     {
         // Clear the RX interrupt Flag
         mU2RXClearIntFlag();
-        data = (char)ReadUART2();
-        while(BusyUART2());*/ /* Wait till the UART transmitter is free. */
-        /*SendCharacter(1, data);
+        data = ReadCharacter(2);
+        if(data == '\n')
+        {
+            UARTReadBufferIndex = 0;
+            ReadArduino = 1;
+        }
+        else if(ReadArduino == 1)
+        {
+            UARTReadBuffer[UARTReadBufferIndex++] = data;
+            if(UARTReadBufferIndex >= UART_READ_BUFFER_SIZE)
+            {
+                ReadArduino = 0;
+                UARTReadBufferIndex = 0;
+            }
+        }
     }
 
     // We don't care about TX interrupt
@@ -264,4 +280,4 @@ void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
     {
             mU2TXClearIntFlag();
     }
-}*/
+}

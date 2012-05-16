@@ -12,7 +12,7 @@ void ChangeState(int state)
     SubStateStartTime = 0;
 }
 
-void delegateState(int state)
+void DelegateState(int state)
 {
     switch(state)
     {

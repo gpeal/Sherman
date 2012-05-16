@@ -80,7 +80,7 @@ void initializeUart()
     //uart
     pinMode(UART_ARDUINO_RX, INPUT);
     pinMode(UART_ARDUINO_TX, OUTPUT);
-    setupUart(2, -1);
+    setupUart(2, 1);
 }
 
 void initializeLCD()
