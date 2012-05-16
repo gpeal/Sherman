@@ -76,7 +76,7 @@ int main(void)
 {
     initialize();
     digitalWrite(A5, 1);
-
+    EnqueueMotorAction(MOTOR_ACTION_FORWARD);
     while(1)
     {
         PeriodicFunctions();
