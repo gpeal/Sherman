@@ -18,8 +18,9 @@
 #pragma config FSOSCEN = OFF // to make C13 an IO pin, for the USER switch
 
 //Global Variables
-unsigned int time = 0;
-char timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
+unsigned int Time = 0;
+char TimeFlag_1ms = 0, TimeFlag1ms = 0, TimeFlag2ms = 0, TimeFlag10ms = 0, TimeFlag100ms = 0, TimeFlag200ms = 0, TimeFlag102_4ms = 0, TimeFlag_5s = 0, TimeFlag1s = 0, TimeFlag5s = 0;
+char TimeFlag2_5m;
 char ReadArduino = 0;
 //position variables
 struct Position RobotPosition, DeltaRobotPosition;
@@ -52,7 +53,7 @@ int UARTReadBufferIndex = 0;
 char data;
 
 //Other global variables
-int State = STATE_FIND_CUBES;
+int State = STATE_FIND_CUBES, StateStartTime = 0;
 int SubState = 0, SubStateStartTime = 0;
 int Cubes = 0;
 extern struct MotorAction MotorActionQueue[];
@@ -60,16 +61,10 @@ extern int MotorActionQueueHeadIndex;
 extern int CurrentRightMotorSpeed, CurrentRightMotorDirection;
 extern int CurrentLeftMotorSpeed, CurrentLeftMotorDirection;
 
-//function prototypes
-void PeriodicFunctions();
-void delay_ms(int ms);
-void ParseUartData();
-void ReadRangefinders();
-void UpdatePosition();
-
 int main(void)
 {
     initialize();
+    EnqueueMotorAction(MOTOR_ACTION_FORWARD);
     while(1)
     {
         PeriodicFunctions();
@@ -81,6 +76,7 @@ void ChangeState(int state)
     State = state;
     SubState = 0;
     SubStateStartTime = 0;
+    StateStartTime = Time;
 }
 
 void InitialRoutine()
@@ -90,9 +86,9 @@ void InitialRoutine()
         case 0:
             setMotor(MOTOR_WHEEL_LEFT, 1000, 2);
             setMotor(MOTOR_WHEEL_RIGHT, 1000, 2);
-            if(time - SubStateStartTime > 20000) {
+            if(Time - SubStateStartTime > 20000) {
                 SubState++;
-                SubStateStartTime = time;
+                SubStateStartTime = Time;
             }
             break;
         /*case 1:
@@ -122,7 +118,7 @@ void InitialRoutine()
         default:
             setMotor(MOTOR_WHEEL_LEFT, 1000, 0);
             setMotor(MOTOR_WHEEL_RIGHT, 1000, 0);
-            if(time - SubStateStartTime > 20000) {
+            if(Time - SubStateStartTime > 20000) {
                 ChangeState(STATE_FIND_CUBES);
             }
             break;
@@ -429,7 +425,7 @@ void RunEvery200ms()
         sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", UARTReadBuffer[0]&0xFF, UARTReadBuffer[1]&0xFF, UARTReadBuffer[2]&0xFF, UARTReadBuffer[3]&0xFF);
         //sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
         SendString(3, UARTWriteBuffer);
-        sprintf(UARTWriteBuffer, "%03i%03i%03i%03i\n", RobotPosition.X, RobotPosition.Y, Cube.X, Cube.Y);
+        sprintf(UARTWriteBuffer, "%03i%03i%03i%03i%1i%1i%1i\n", RobotPosition.X, RobotPosition.Y, Cube.X, Cube.Y, Direction, State, CurrentMotorAction);
         SendString(3, UARTWriteBuffer);
 #endif
 }
@@ -446,6 +442,7 @@ void RunEvery_5s()
 
 void RunEvery1s()
 {
+    Direction = (Direction+1)%4;
 }
 
 void RunEvery5s()
@@ -453,94 +450,111 @@ void RunEvery5s()
     togglePin(F3);
 }
 
+void RunEvery2_5m()
+{
+}
+
 void PeriodicFunctions()
 {
-    if(timeFlag_1ms)
+    if(TimeFlag_1ms)
     {
-        timeFlag_1ms = 0;
+        TimeFlag_1ms = 0;
         RunEvery_1ms();
     }
 
-    if(timeFlag1ms)
+    if(TimeFlag1ms)
     {
-        timeFlag1ms = 0;
+        TimeFlag1ms = 0;
         RunEvery1ms();
     }
 
-    if(timeFlag2ms)
+    if(TimeFlag2ms)
     {
-        timeFlag2ms = 0;
+        TimeFlag2ms = 0;
         RunEvery2ms();
     }
 
-    if(timeFlag10ms)
+    if(TimeFlag10ms)
     {
-        timeFlag10ms = 0;
+        TimeFlag10ms = 0;
         RunEvery10ms();
     }
 
-    if(timeFlag102_4ms)
+    if(TimeFlag102_4ms)
     {
-        timeFlag102_4ms = 0;
+        TimeFlag102_4ms = 0;
         RunEvery102_4ms();
     }
 
-    if(timeFlag100ms)
+    if(TimeFlag100ms)
     {
-        timeFlag100ms = 0;
+        TimeFlag100ms = 0;
         RunEvery100ms();
     }
 
-    if(timeFlag200ms)
+    if(TimeFlag200ms)
     {
-        timeFlag200ms = 0;
+        TimeFlag200ms = 0;
         RunEvery200ms();
     }
 
-    if(timeFlag_5s)
+    if(TimeFlag_5s)
     {
-        timeFlag_5s = 0;
+        TimeFlag_5s = 0;
         RunEvery_5s();
     }
-    if(timeFlag1s)
+    if(TimeFlag1s)
     {
-        timeFlag1s = 0;
+        TimeFlag1s = 0;
         RunEvery1s();
     }
 
-    if(timeFlag5s)
+    if(TimeFlag5s)
     {
-        timeFlag5s = 0;
+        TimeFlag5s = 0;
         RunEvery5s();
     }
+    if(TimeFlag2_5m)
+    {
+        TimeFlag2_5m = 0;
+        RunEvery2_5m();
+    }
+}
+
+void delay_ms(int ms)
+{
+    int startTime = Time;
+    while(Time < startTime + ms*10);
 }
 
 void __ISR(_TIMER_1_VECTOR, ipl1) Timer1Isr(void)
 {
-    time++;
-    if(time%1 < 1)
-        timeFlag_1ms = 1;
-    if(time%10 < 1)
-        timeFlag1ms = 1;
-    if(time%20 < 1)
-        timeFlag2ms = 1;
-    if(time%100 < 1)
-        timeFlag10ms = 1;
-    if(time%1000 < 1)
-        timeFlag100ms = 1;
-    if(time%1024 < 1)
-        timeFlag102_4ms = 1;
-    if(time%2000 < 1)
-        timeFlag200ms = 1;
-    if(time%5000 < 1)
+    Time++;
+    if(Time%1 < 1)
+        TimeFlag_1ms = 1;
+    if(Time%10 < 1)
+        TimeFlag1ms = 1;
+    if(Time%20 < 1)
+        TimeFlag2ms = 1;
+    if(Time%100 < 1)
+        TimeFlag10ms = 1;
+    if(Time%1000 < 1)
+        TimeFlag100ms = 1;
+    if(Time%1024 < 1)
+        TimeFlag102_4ms = 1;
+    if(Time%2000 < 1)
+        TimeFlag200ms = 1;
+    if(Time%5000 < 1)
     {
-        timeFlag_5s = 1;
+        TimeFlag_5s = 1;
         togglePin(A4);
     }
-    if(time%10000 < 1)
-        timeFlag1s = 1;
-    if(time%50000 < 1)
-        timeFlag5s = 1;
+    if(Time%10000 < 1)
+        TimeFlag1s = 1;
+    if(Time%50000 < 1)
+        TimeFlag5s = 1;
+    if(Time%1500000)
+        TimeFlag2_5m = 1;
     mT1ClearIntFlag();
 }
 
@@ -577,10 +591,4 @@ void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
     {
             mU2TXClearIntFlag();
     }
-}
-
-void delay_ms(int ms)
-{
-    int startTime = time;
-    while(time < startTime + ms*10);
 }
