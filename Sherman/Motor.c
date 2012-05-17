@@ -3,8 +3,10 @@
 struct MotorAction MotorActionQueue[MOTOR_ACTION_QUEUE_SIZE];
 int MotorActionQueueHeadIndex = 0, MotorActionQueueTailIndex = 0;
 unsigned int CurrentMotorActionEndTime = 0;
+int CurrentLeftMotorSpeed, CurrentLeftMotorDirection;
+int CurrentRightMotorSpeed, CurrentRightMotorDirection;
 //direction the robot is currently driving in
-int Direction = 2;
+int Direction = 0;
 
 void setupMotor(int motor)
 {
@@ -47,12 +49,14 @@ void UpdateMotors()
             movementStop();
             break;
         case MOTOR_ACTION_SLIGHT_LEFT:
-            setMotor(MOTOR_WHEEL_LEFT, CurrentMotorSpeed * 0.8, 2);
-            setMotor(MOTOR_WHEEL_RIGHT, CurrentMotorSpeed, 1);
+            setMotor(MOTOR_WHEEL_LEFT, MOTOR_DEFAULT_SPEED * 0.8, 2);
+            setMotor(MOTOR_WHEEL_RIGHT, MOTOR_DEFAULT_SPEED, 2);
             break;
         case MOTOR_ACTION_SLIGHT_RIGHT:
-            setMotor(MOTOR_WHEEL_LEFT, CurrentMotorSpeed, 2);
-            setMotor(MOTOR_WHEEL_RIGHT, CurrentMotorSpeed * 0.8, 1);
+            setMotor(MOTOR_WHEEL_LEFT, MOTOR_DEFAULT_SPEED , 2);
+            setMotor(MOTOR_WHEEL_RIGHT, MOTOR_DEFAULT_SPEED * 0.8, 2);
+            break;
+        case MOTOR_ACTION_OFF:
             break;
     }
 }
@@ -62,7 +66,7 @@ void EnqueueMotorAction(char action)
     int i;
     struct MotorAction newAction;
     newAction.action = action;
-    newAction.speed = 800;
+    newAction.speed = MOTOR_DEFAULT_SPEED;
     switch(action)
     {
         case MOTOR_ACTION_TURN_LEFT_90:
@@ -71,6 +75,9 @@ void EnqueueMotorAction(char action)
         case MOTOR_ACTION_TURN_RIGHT_90:
             newAction.duration = 81000000;
             break;
+        case MOTOR_ACTION_SLIGHT_RIGHT:
+        case MOTOR_ACTION_SLIGHT_LEFT:
+            newAction.duration = 10000000;
         default:
             newAction.duration = -1;
             break;
@@ -126,7 +133,7 @@ void IncrementMotorActionQueueHeadIndex()
 
 void movementForward(int speed)
 {
-    setMotor(MOTOR_WHEEL_LEFT, speed - 20, 2);
+    setMotor(MOTOR_WHEEL_LEFT, speed, 2);
     setMotor(MOTOR_WHEEL_RIGHT, speed, 2);
 }
 
@@ -156,6 +163,29 @@ void movementStop()
 void setMotor(int motor, int speed, int direction)
 {
     int motorOc1, motorOc2;
+
+    switch(motor)
+    {
+        case MOTOR_WHEEL_LEFT:
+            speed = (int)((double)speed * MOTOR_WHEEL_LEFT_SCALE);
+            break;
+        case MOTOR_WHEEL_RIGHT:
+            speed = (int)((double)speed * MOTOR_WHEEL_RIGHT_SCALE);
+            break;
+    }
+
+    //used for debugging
+    switch(motor)
+    {
+        case MOTOR_WHEEL_LEFT:
+            CurrentLeftMotorSpeed = speed;
+            CurrentLeftMotorDirection = direction;
+            break;
+        case MOTOR_WHEEL_RIGHT:
+            CurrentRightMotorSpeed = speed;
+            CurrentRightMotorDirection = direction;
+            break;
+    }
 
     switch(motor)
     {

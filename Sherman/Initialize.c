@@ -82,6 +82,11 @@ void initializeUart()
     pinMode(UART_ARDUINO_RX, INPUT);
     pinMode(UART_ARDUINO_TX, OUTPUT);
     setupUart(2, 1);
+
+    //Xbee
+    pinMode(UART_XBEE_RX, INPUT);
+    pinMode(UART_XBEE_TX, OUTPUT);
+    setupUart(3, 1);
 }
 
 void initializeLCD()

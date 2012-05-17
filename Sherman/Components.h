@@ -4,14 +4,16 @@
 #include <plib.h>
 #include "Pin.h"
 
-#define MOTOR_WHEEL_LEFT 1
+#define MOTOR_WHEEL_RIGHT 1
 //OC1
-#define MOTOR_WHEEL_LEFT_OC1 3
-#define MOTOR_WHEEL_LEFT_OC2 4
+#define MOTOR_WHEEL_RIGHT_OC1 3
+#define MOTOR_WHEEL_RIGHT_OC2 4
+#define MOTOR_WHEEL_RIGHT_SCALE 1
 
-#define MOTOR_WHEEL_RIGHT 2
-#define MOTOR_WHEEL_RIGHT_OC1 1
-#define MOTOR_WHEEL_RIGHT_OC2 2
+#define MOTOR_WHEEL_LEFT 2
+#define MOTOR_WHEEL_LEFT_OC1 1
+#define MOTOR_WHEEL_LEFT_OC2 2
+#define MOTOR_WHEEL_LEFT_SCALE 0.94
 
 //Map
 #define MAP_EMPTY   0
@@ -26,6 +28,9 @@
 
 #define UART_ARDUINO_RX F4
 #define UART_ARDUINO_TX F5
+
+#define UART_XBEE_RX G7
+#define UART_XBEE_TX G8
 
 
 #endif

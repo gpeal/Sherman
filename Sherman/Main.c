@@ -46,14 +46,14 @@ struct Position {
     int Y;
 };
 struct Position RobotPosition, DeltaRobotPosition;
-struct Position TargetPositions[] = { {12, 0},
+struct Position CubeLocation[] = { {12, 15},
                                       {23, 37},
                                       {23, 15},
                                       {15, 31},
                                       {32, 45},
                                       {45, 36}};
-int TargetPositionsIndex = 0;
-#define TargetPosition TargetPositions[TargetPositionsIndex]
+int CubeIndex = 0;
+#define Cube CubeLocation[CubeIndex]
 //the current coordinate value we are trying to reach
 //0 for X 1 for Y
 int TargetPositionAxis = 0;
@@ -75,11 +75,13 @@ int UARTReadBufferIndex = 0;
 char data;
 
 //Other global variables
-int State = STATE_DRIVE_PARALLEL;
+int State = STATE_FIND_CUBES;
 int SubState = 0, SubStateStartTime = 0;
 int Cubes = 0;
 extern struct MotorAction MotorActionQueue[];
 extern int MotorActionQueueHeadIndex;
+extern int CurrentRightMotorSpeed, CurrentRightMotorDirection;
+extern int CurrentLeftMotorSpeed, CurrentLeftMotorDirection;
 
 char map[240][120];
 
@@ -93,7 +95,6 @@ void UpdatePosition();
 int main(void)
 {
     initialize();
-    EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT);
     while(1)
     {
         PeriodicFunctions();
@@ -355,18 +356,22 @@ void UpdatePosition()
 
 void DriveParallel()
 {
+    int delta = RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-1].value - RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-2].value;
     //don't crash!
-    if(RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-1].value < 4)
+    if(delta > 0)
     {
-        EnqueueMotorAction(MOTOR_ACTION_STOP);
+        EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
         return;
     }
-    if(RobotPosition.X > 8)
+    if(delta < 0)
+    {
         EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
-    else if(RobotPosition.X < 4)
-        EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+    }
     else
         EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+    
+    if(RangefinderData[0][4].value < 4)
+        EnqueueMotorAction(MOTOR_ACTION_STOP);
 }
 
 void NavigateToTarget()
@@ -374,13 +379,13 @@ void NavigateToTarget()
     double robotPositionOnTargetAxis, targetPositionOnTargetAxis, deltaPositionOnTargetAxis;
     double robotPositionOnOtherAxis, targetPositionOnOtherAxis, deltaPositionOnOtherAxis;
     robotPositionOnTargetAxis = TargetPositionAxis == 0 ? RobotPosition.X : RobotPosition.Y;
-    targetPositionOnTargetAxis = TargetPositionAxis == 0 ? TargetPosition.X : TargetPosition.Y;
+    targetPositionOnTargetAxis = TargetPositionAxis == 0 ? Cube.X : Cube.Y;
     deltaPositionOnTargetAxis = targetPositionOnTargetAxis - robotPositionOnTargetAxis;
     //reached goal on current axis
     if(deltaPositionOnTargetAxis < 5)
     {
         robotPositionOnOtherAxis = TargetPositionAxis == 0 ? RobotPosition.Y : RobotPosition.X;
-        targetPositionOnOtherAxis = TargetPositionAxis == 0 ? TargetPosition.Y : TargetPosition.X;
+        targetPositionOnOtherAxis = TargetPositionAxis == 0 ? Cube.Y : Cube.X;
         deltaPositionOnOtherAxis = targetPositionOnTargetAxis - robotPositionOnTargetAxis;
         //reached goal on both axis
         if(deltaPositionOnOtherAxis < 5)
@@ -388,7 +393,7 @@ void NavigateToTarget()
             if(Cubes >= 4)
                 ChangeState(STATE_GOTO_SCORING_ZONE);
             else
-                TargetPositionsIndex++;
+                CubeIndex++;
         }
     }
 }
@@ -439,12 +444,13 @@ void RunEvery200ms()
 
 #ifdef DEBUG
         //optional send motor over uart
-        sprintf(UARTWriteBuffer, "R%03i %03i %03i %03i\n", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
-        SendString(1, UARTWriteBuffer);
-        //sprintf(UARTWriteBuffer, "P%03i %03i\n", RobotPosition.X, RobotPosition.Y);
-        //SendString(1, UARTWriteBuffer);
-        //sprintf(UARTWriteBuffer, "U%03i %03i %03i %03i\n", UARTReadBuffer[0]&0xFF, UARTReadBuffer[1]&0xFF, UARTReadBuffer[2]&0xFF, UARTReadBuffer[3]&0xFF);
-        //SendString(1, UARTWriteBuffer);
+        sprintf(UARTWriteBuffer, "%1i%04i%1i%04i", CurrentLeftMotorDirection, CurrentLeftMotorSpeed, CurrentRightMotorDirection, CurrentRightMotorSpeed);
+        SendString(3, UARTWriteBuffer);
+        sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", UARTReadBuffer[0]&0xFF, UARTReadBuffer[1]&0xFF, UARTReadBuffer[2]&0xFF, UARTReadBuffer[3]&0xFF);
+        //sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
+        SendString(3, UARTWriteBuffer);
+        sprintf(UARTWriteBuffer, "%03i%03i%03i%03i\n", RobotPosition.X, RobotPosition.Y, CubeLocation[CubeIndex].X, CubeLocation[CubeIndex].Y);
+        SendString(3, UARTWriteBuffer);
 #endif
 }
 
@@ -460,7 +466,6 @@ void RunEvery_5s()
 
 void RunEvery1s()
 {
-    
 }
 
 void RunEvery5s()
