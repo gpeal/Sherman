@@ -49,5 +49,10 @@ struct MotorAction
     int speed;
 };
 
+struct Position {
+    int X;
+    int Y;
+};
+
 
 #endif

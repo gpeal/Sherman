@@ -1,4 +1,5 @@
 #include "Motor.h"
+#include "Main.h"
 #include "Uart.h"
 struct MotorAction MotorActionQueue[MOTOR_ACTION_QUEUE_SIZE];
 int MotorActionQueueHeadIndex = 0, MotorActionQueueTailIndex = 0;
@@ -7,6 +8,9 @@ int CurrentLeftMotorSpeed, CurrentLeftMotorDirection;
 int CurrentRightMotorSpeed, CurrentRightMotorDirection;
 //direction the robot is currently driving in
 int Direction = 0;
+
+//position data from main
+extern struct Position RobotPosition, DeltaRobotPosition;
 
 void setupMotor(int motor)
 {

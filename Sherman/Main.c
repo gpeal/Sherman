@@ -1,3 +1,4 @@
+#include "Main.h"
 #include "Initialize.h"
 #include <plib.h>
 #include <limits.h>
@@ -16,35 +17,11 @@
 #pragma config ICESEL = ICS_PGx2, BWP = OFF
 #pragma config FSOSCEN = OFF // to make C13 an IO pin, for the USER switch
 
-#define DEBUG
-#define RANGEFINDER_FRONT 0
-#define RANGEFINDER_RIGHT 1
-#define RANGEFINDER_BACK 2
-#define RANGEFINDER_LEFT 3
-#define RANGEFINDER_ERROR_THRESHOLD 2
-#define ARENA_WIDTH 72
-#define ARENA_LENGTH_0 144
-#define ARENA_LENGTH_1 162
-#define ARENA_LENGTH_2 180
-
-#define STATE_FIND_CUBES 0
-void NavigateToTarget();
-#define STATE_INITIALIZATION_ROUTINE 1
-void InitialRoutine();
-#define STATE_GOTO_SCORING_ZONE 2
-#define STATE_DRIVE_PARALLEL 3
-void DriveParallel();
-
-
 //Global Variables
 unsigned int time = 0;
 char timeFlag_1ms = 0, timeFlag1ms = 0, timeFlag2ms = 0, timeFlag10ms = 0, timeFlag100ms = 0, timeFlag200ms = 0, timeFlag102_4ms = 0, timeFlag_5s = 0, timeFlag1s = 0, timeFlag5s = 0;
 char ReadArduino = 0;
 //position variables
-struct Position {
-    int X;
-    int Y;
-};
 struct Position RobotPosition, DeltaRobotPosition;
 struct Position CubeLocation[] = { {12, 15},
                                       {23, 37},
@@ -82,8 +59,6 @@ extern struct MotorAction MotorActionQueue[];
 extern int MotorActionQueueHeadIndex;
 extern int CurrentRightMotorSpeed, CurrentRightMotorDirection;
 extern int CurrentLeftMotorSpeed, CurrentLeftMotorDirection;
-
-char map[240][120];
 
 //function prototypes
 void PeriodicFunctions();
@@ -170,7 +145,7 @@ void ReadRangefinders()
     rawData[3].valid = 1;
     for(i = 0; i < 4; i++)
     {
-        if(rawData[i].value >= 200)
+        if(rawData[i].value >= 200 || rawData[i].value < 1)
             rawData[i].valid = 0;
         //TODO: mark large deltas invalid
         //if(abs(RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] - rawData[i]) >= 5 && RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] != 0) {}
@@ -384,16 +359,21 @@ void NavigateToTarget()
     //reached goal on current axis
     if(deltaPositionOnTargetAxis < 5)
     {
-        robotPositionOnOtherAxis = TargetPositionAxis == 0 ? RobotPosition.Y : RobotPosition.X;
-        targetPositionOnOtherAxis = TargetPositionAxis == 0 ? Cube.Y : Cube.X;
+        //switch axis
+        TargetPositionAxis = !TargetPositionAxis;
+        robotPositionOnOtherAxis = TargetPositionAxis == 0 ? RobotPosition.X : RobotPosition.Y;
+        targetPositionOnOtherAxis = TargetPositionAxis == 0 ? Cube.X : Cube.Y;
         deltaPositionOnOtherAxis = targetPositionOnTargetAxis - robotPositionOnTargetAxis;
         //reached goal on both axis
-        if(deltaPositionOnOtherAxis < 5)
+        if(abs(deltaPositionOnOtherAxis) < 5)
         {
             if(Cubes >= 4)
                 ChangeState(STATE_GOTO_SCORING_ZONE);
             else
+            {
                 CubeIndex++;
+                TargetPositionAxis = 0;
+            }
         }
     }
 }
@@ -449,7 +429,7 @@ void RunEvery200ms()
         sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", UARTReadBuffer[0]&0xFF, UARTReadBuffer[1]&0xFF, UARTReadBuffer[2]&0xFF, UARTReadBuffer[3]&0xFF);
         //sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
         SendString(3, UARTWriteBuffer);
-        sprintf(UARTWriteBuffer, "%03i%03i%03i%03i\n", RobotPosition.X, RobotPosition.Y, CubeLocation[CubeIndex].X, CubeLocation[CubeIndex].Y);
+        sprintf(UARTWriteBuffer, "%03i%03i%03i%03i\n", RobotPosition.X, RobotPosition.Y, Cube.X, Cube.Y);
         SendString(3, UARTWriteBuffer);
 #endif
 }
