@@ -32,7 +32,8 @@ void NavigateToTarget();
 #define STATE_INITIALIZATION_ROUTINE 1
 void InitialRoutine();
 #define STATE_GOTO_SCORING_ZONE 2
-void state_goto_scoring_zone();
+#define STATE_DRIVE_PARALLEL 3
+void DriveParallel();
 
 
 //Global Variables
@@ -44,7 +45,7 @@ struct Position {
     int X;
     int Y;
 };
-struct Position RobotPosition;
+struct Position RobotPosition, DeltaRobotPosition;
 struct Position TargetPositions[] = { {12, 0},
                                       {23, 37},
                                       {23, 15},
@@ -74,7 +75,7 @@ int UARTReadBufferIndex = 0;
 char data;
 
 //Other global variables
-int State = STATE_FIND_CUBES;
+int State = STATE_DRIVE_PARALLEL;
 int SubState = 0, SubStateStartTime = 0;
 int Cubes = 0;
 extern struct MotorAction MotorActionQueue[];
@@ -92,6 +93,7 @@ void UpdatePosition();
 int main(void)
 {
     initialize();
+    EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT);
     while(1)
     {
         PeriodicFunctions();
@@ -306,29 +308,65 @@ void UpdatePosition()
     if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid && RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
     {
         //offeset the reading to the center of the robot
+        DeltaRobotPosition.Y = -RobotPosition.Y;
         if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value < RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE - 1].value)
             RobotPosition.Y = RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusYOffset;
         else
             RobotPosition.Y = ARENA_LENGTH_0 - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusYOffset;
+        DeltaRobotPosition.Y += RobotPosition.Y;
     }
     else if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+    {
+        DeltaRobotPosition.Y = -RobotPosition.Y;
         RobotPosition.Y = RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusYOffset;
+        DeltaRobotPosition.Y += RobotPosition.Y;
+    }
     else if(RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+    {
+        DeltaRobotPosition.Y = -RobotPosition.Y;
         RobotPosition.Y = ARENA_LENGTH_0 - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusYOffset;
+        DeltaRobotPosition.Y += RobotPosition.Y;
+    }
     
     if(RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid && RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
     {
+        DeltaRobotPosition.X = -RobotPosition.X;
         //offeset the reading to the center of the robot
         if(RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value < RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE - 1].value)
             RobotPosition.X = RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusXOffset;
         else
             RobotPosition.X = ARENA_WIDTH - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusXOffset;
+        DeltaRobotPosition.X += RobotPosition.X;
     }
     else if(RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+    {
+        DeltaRobotPosition.X = -RobotPosition.X;
         RobotPosition.X = RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusXOffset;
+        DeltaRobotPosition.X += RobotPosition.X;
+    }
     else if(RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+    {
+        DeltaRobotPosition.X = -RobotPosition.X;
         RobotPosition.X = ARENA_WIDTH - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusXOffset;
+        DeltaRobotPosition.X += RobotPosition.X;
+    }
 
+}
+
+void DriveParallel()
+{
+    //don't crash!
+    if(RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-1].value < 4)
+    {
+        EnqueueMotorAction(MOTOR_ACTION_STOP);
+        return;
+    }
+    if(RobotPosition.X > 8)
+        EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
+    else if(RobotPosition.X < 4)
+        EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+    else
+        EnqueueMotorAction(MOTOR_ACTION_FORWARD);
 }
 
 void NavigateToTarget()
@@ -396,13 +434,15 @@ void RunEvery200ms()
 {
     ReadRangefinders();
     UpdatePosition();
+    if(State == STATE_DRIVE_PARALLEL)
+        DriveParallel();
 
 #ifdef DEBUG
         //optional send motor over uart
         sprintf(UARTWriteBuffer, "R%03i %03i %03i %03i\n", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
         SendString(1, UARTWriteBuffer);
-        sprintf(UARTWriteBuffer, "P%03i %03i\n", RobotPosition.X, RobotPosition.Y);
-        SendString(1, UARTWriteBuffer);
+        //sprintf(UARTWriteBuffer, "P%03i %03i\n", RobotPosition.X, RobotPosition.Y);
+        //SendString(1, UARTWriteBuffer);
         //sprintf(UARTWriteBuffer, "U%03i %03i %03i %03i\n", UARTReadBuffer[0]&0xFF, UARTReadBuffer[1]&0xFF, UARTReadBuffer[2]&0xFF, UARTReadBuffer[3]&0xFF);
         //SendString(1, UARTWriteBuffer);
 #endif
@@ -420,10 +460,12 @@ void RunEvery_5s()
 
 void RunEvery1s()
 {
+    
 }
 
 void RunEvery5s()
 {
+    togglePin(F3);
 }
 
 void PeriodicFunctions()

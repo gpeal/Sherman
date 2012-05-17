@@ -25,7 +25,7 @@ void setupMotor(int motor)
 void UpdateMotors()
 {
     int time = ReadCoreTimer();
-    if(time > CurrentMotorActionEndTime && CurrentMotorDuration != -1 )
+    if((time > CurrentMotorActionEndTime && CurrentMotorDuration != -1 ) || CurrentMotorDuration == 0)
         DequeueMotorAction();
     switch(CurrentMotorAction)
     {
@@ -79,7 +79,7 @@ void EnqueueMotorAction(char action)
     for(i = MotorActionQueueHeadIndex; i != MotorActionQueueTailIndex; i++)
     {
         if(i >= MOTOR_ACTION_QUEUE_SIZE)
-            i = 0;
+            i = -1;
         if(MotorActionQueue[i].duration == -1)
             MotorActionQueue[i].duration = 0;
     }
@@ -120,7 +120,7 @@ int MotorActionQueueSize()
 void IncrementMotorActionQueueHeadIndex()
 {
     MotorActionQueueHeadIndex++;
-    if(MotorActionQueueHeadIndex > MOTOR_ACTION_QUEUE_SIZE)
+    if(MotorActionQueueHeadIndex >= MOTOR_ACTION_QUEUE_SIZE)
         MotorActionQueueHeadIndex = 0;
 }
 

@@ -35,6 +35,7 @@
  */
 
 /* PORTG
+ * 2  = Arduino drop cube command
  * 12 = LCD
  * 15 = LCD
 */

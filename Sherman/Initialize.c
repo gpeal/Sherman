@@ -33,6 +33,7 @@ void initializePorts()
     pinMode(A4, OUTPUT);
     digitalWrite(A4, 1);
     pinMode(A5, OUTPUT);
+    pinMode(F3, OUTPUT);
 }
 
 void initializeAnalogIn()
