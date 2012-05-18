@@ -64,7 +64,6 @@ extern int CurrentLeftMotorSpeed, CurrentLeftMotorDirection;
 
 int main(void)
 {
-    int i, j;
     initialize();
     // Initilize Data in main for convenience of global variable scope.
     initializeData();
@@ -363,26 +362,6 @@ void UpdatePosition()
         RobotPosition.X = ARENA_WIDTH - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusXOffset;
         DeltaRobotPosition.X += RobotPosition.X;
     }
-}
-
-void DriveParallel()
-{
-    int delta = RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-1].value - RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-2].value;
-    //don't crash!
-    if(delta > 0)
-    {
-        EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
-        return;
-    }
-    if(delta < 0)
-    {
-        EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
-    }
-    else
-        EnqueueMotorAction(MOTOR_ACTION_FORWARD);
-    
-    if(RangefinderData[0][4].value < 4)
-        EnqueueMotorAction(MOTOR_ACTION_STOP);
 }
 
 void RemoteControl()
