@@ -26,11 +26,11 @@ char RemoteCommand = '\0';
 //position variables
 struct Position RobotPosition, DeltaRobotPosition;
 struct Position CubeLocation[] = { {30, 48},
-                                      {23, 37},
-                                      {23, 15},
-                                      {15, 31},
-                                      {32, 45},
-                                      {45, 36}};
+                                   {23, 37},
+                                   {23, 15},
+                                   {15, 31},
+                                   {32, 45},
+                                   {45, 36}};
 int CubeIndex = 0;
 #define Cube CubeLocation[CubeIndex]
 //the current coordinate value we are trying to reach
