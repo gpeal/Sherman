@@ -36,5 +36,6 @@ void ChangeState(int state);
 void RemoteControl();
 int HomeLocationX(float timeInFuture);
 int OpponentHomeLocationX();
+void initializeData();
 
 #endif

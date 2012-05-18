@@ -62,54 +62,13 @@ extern int MotorActionQueueHeadIndex;
 extern int CurrentRightMotorSpeed, CurrentRightMotorDirection;
 extern int CurrentLeftMotorSpeed, CurrentLeftMotorDirection;
 
-int OpponentHomeLocationX()
-{
-    return (ARENA_WIDTH - HomeLocationX(0));
-}
-
-//TOTEST
-int HomeLocationX(float timeInFuture)
-{
-    int startingLocationX = 12;
-    float speed = 12.76;
-    int arenaLimits = ARENA_WIDTH - 24;
-    int distanceTraveled = speed * (Time + timeInFuture);
-    int finalLocationX = startingLocationX;
-    while (1)
-    {
-        if ((distanceTraveled - arenaLimits) > 0)
-        {
-            distanceTraveled -= arenaLimits;
-            finalLocationX += arenaLimits;
-        }
-        else
-        {
-            finalLocationX += distanceTraveled;
-            break;
-        }
-        
-        if ((distanceTraveled - arenaLimits) > 0)
-        {
-            distanceTraveled -= arenaLimits;
-            finalLocationX -= arenaLimits;
-        }
-        else
-        {
-            finalLocationX -= distanceTraveled;
-            break;
-        }
-    }
-    return finalLocationX;
-}
-
 int main(void)
 {
     int i, j;
     initialize();
+    // Initilize Data in main for convenience of global variable scope.
+    initializeData();
     ChangeState(STATE_REMOTE_CONTROL);
-    for(i = 0; i < 4; i++)
-        for(j = 0; j < 5; j++)
-           RangefinderData[i][j].value = 213 ;
     while(1)
     {
         PeriodicFunctions();
@@ -122,6 +81,19 @@ void ChangeState(int state)
     SubState = 0;
     SubStateStartTime = Time;
     StateStartTime = Time;
+}
+
+void initializeData()
+{
+    // RangefinderData
+    int i, j;
+    for(i = 0; i < 4; i++)
+    {
+        for(j = 0; j < 5; j++)
+        {
+           RangefinderData[i][j].value = 213;
+        }
+    }
 }
 
 void InitialRoutine()
@@ -255,6 +227,46 @@ void ReadRangefinders()
     }
     if(!rawData[3].valid)
         RangefinderData[3][RANGEFINDER_DATA_BUFFER_SIZE-1] = RangefinderData[3][RANGEFINDER_DATA_BUFFER_SIZE-2];*/
+}
+
+int OpponentHomeLocationX()
+{
+    return (ARENA_WIDTH - HomeLocationX(0));
+}
+
+//TOTEST
+int HomeLocationX(float timeInFuture)
+{
+    int startingLocationX = 12;
+    float speed = 12.76;
+    int arenaLimits = ARENA_WIDTH - 24;
+    int distanceTraveled = speed * (Time + timeInFuture);
+    int finalLocationX = startingLocationX;
+    while (1)
+    {
+        if ((distanceTraveled - arenaLimits) > 0)
+        {
+            distanceTraveled -= arenaLimits;
+            finalLocationX += arenaLimits;
+        }
+        else
+        {
+            finalLocationX += distanceTraveled;
+            break;
+        }
+
+        if ((distanceTraveled - arenaLimits) > 0)
+        {
+            distanceTraveled -= arenaLimits;
+            finalLocationX -= arenaLimits;
+        }
+        else
+        {
+            finalLocationX -= distanceTraveled;
+            break;
+        }
+    }
+    return finalLocationX;
 }
 
 void UpdatePosition()
