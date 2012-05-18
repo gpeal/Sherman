@@ -25,12 +25,17 @@ char ReadArduino = 0;
 char RemoteCommand = '\0';
 //position variables
 struct Position RobotPosition, DeltaRobotPosition;
-struct Position CubeLocation[] = { {30, 48},
-                                   {23, 37},
-                                   {23, 15},
-                                   {15, 31},
-                                   {32, 45},
-                                   {45, 36}};
+struct Position CubeLocation[] = { {24, 12},
+                                   {48, 12},
+                                   {6, 30},
+                                   {54, 30},
+                                   {30, 48},
+                                   {42, 48},
+                                   {24, 60},
+                                   {36, 60},
+                                   {48, 60},
+                                   {30, 72},
+                                   {42, 72}};
 int CubeIndex = 0;
 #define Cube CubeLocation[CubeIndex]
 //the current coordinate value we are trying to reach
