@@ -12,8 +12,6 @@
 #define ARENA_LENGTH_0 144
 #define ARENA_LENGTH_1 162
 #define ARENA_LENGTH_2 180
-#define OurHomeLocation (((double)Time / 10000) * 0.8) % ARENA_WIDTH
-#define OpponentHomeLocation ARENA_WIDTH - OurHomeLocation
 #define AUTO_BRAKE 0
 
 #define STATE_FIND_CUBES 0
@@ -36,5 +34,7 @@ void ReadRangefinders();
 void UpdatePosition();
 void ChangeState(int state);
 void RemoteControl();
+int HomeLocationX(float timeInFuture);
+int OpponentHomeLocationX();
 
 #endif

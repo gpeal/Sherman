@@ -62,6 +62,46 @@ extern int MotorActionQueueHeadIndex;
 extern int CurrentRightMotorSpeed, CurrentRightMotorDirection;
 extern int CurrentLeftMotorSpeed, CurrentLeftMotorDirection;
 
+int OpponentHomeLocationX()
+{
+    return (ARENA_WIDTH - HomeLocationX(0));
+}
+
+//TOTEST
+int HomeLocationX(float timeInFuture)
+{
+    int startingLocationX = 12;
+    float speed = 12.76;
+    int arenaLimits = ARENA_WIDTH - 24;
+    int distanceTraveled = speed * (Time + timeInFuture);
+    int finalLocationX = startingLocationX;
+    while (1)
+    {
+        if ((distanceTraveled - arenaLimits) > 0)
+        {
+            distanceTraveled -= arenaLimits;
+            finalLocationX += arenaLimits;
+        }
+        else
+        {
+            finalLocationX += distanceTraveled;
+            break;
+        }
+        
+        if ((distanceTraveled - arenaLimits) > 0)
+        {
+            distanceTraveled -= arenaLimits;
+            finalLocationX -= arenaLimits;
+        }
+        else
+        {
+            finalLocationX -= distanceTraveled;
+            break;
+        }
+    }
+    return finalLocationX;
+}
+
 int main(void)
 {
     int i, j;
