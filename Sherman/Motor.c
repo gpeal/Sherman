@@ -12,6 +12,8 @@ int Direction = 0;
 //position data from main
 extern struct Position RobotPosition, DeltaRobotPosition;
 
+extern unsigned int Time;
+
 void setupMotor(int motor)
 {
     switch(motor)
@@ -30,8 +32,7 @@ void setupMotor(int motor)
 
 void UpdateMotors()
 {
-    int time = ReadCoreTimer();
-    if((time > CurrentMotorActionEndTime && CurrentMotorDuration != -1 ) || CurrentMotorDuration == 0)
+    if((Time > CurrentMotorActionEndTime && CurrentMotorDuration != -1 ) || CurrentMotorDuration == 0)
         DequeueMotorAction();
     switch(CurrentMotorAction)
     {
@@ -74,14 +75,14 @@ void EnqueueMotorAction(char action)
     switch(action)
     {
         case MOTOR_ACTION_TURN_LEFT_90:
-            newAction.duration = 81000000;
+            newAction.duration = 10000;
             break;
         case MOTOR_ACTION_TURN_RIGHT_90:
-            newAction.duration = 81000000;
+            newAction.duration = 10000;
             break;
         case MOTOR_ACTION_SLIGHT_RIGHT:
         case MOTOR_ACTION_SLIGHT_LEFT:
-            newAction.duration = 10000000;
+            newAction.duration = 3000;
         default:
             newAction.duration = -1;
             break;
@@ -100,7 +101,7 @@ void EnqueueMotorAction(char action)
     if(MotorActionQueueTailIndex >= MOTOR_ACTION_QUEUE_SIZE)
         MotorActionQueueTailIndex = 0;
     if(MotorActionQueueSize() == 1)
-        CurrentMotorActionEndTime = ReadCoreTimer() + CurrentMotorDuration;
+        CurrentMotorActionEndTime = Time + CurrentMotorDuration;
 }
 
 void DequeueMotorAction()
@@ -139,18 +140,70 @@ void movementForward(int speed)
 {
     setMotor(MOTOR_WHEEL_LEFT, speed, 2);
     setMotor(MOTOR_WHEEL_RIGHT, speed, 2);
+    return;
+    switch(Direction)
+    {
+        case 0:
+            if(DeltaRobotPosition.X > 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            else if(DeltaRobotPosition.X < 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            break;
+        case 1:
+            if(DeltaRobotPosition.Y > 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            else if(DeltaRobotPosition.Y < 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            break;
+        case 2:
+            if(DeltaRobotPosition.X > 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            else if(DeltaRobotPosition.X < 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            break;
+        case 3:
+            if(DeltaRobotPosition.Y > 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            else if(DeltaRobotPosition.Y < 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            break;
+    }
 }
 
 void movementLeft(int speed)
 {
-    setMotor(MOTOR_WHEEL_LEFT, speed, 2);
-    setMotor(MOTOR_WHEEL_RIGHT, speed, 1);
+    setMotor(MOTOR_WHEEL_LEFT, speed, 1);
+    setMotor(MOTOR_WHEEL_RIGHT, speed, 2);
 }
 
 void movementRight(int speed)
 {
-    setMotor(MOTOR_WHEEL_LEFT, speed, 1);
-    setMotor(MOTOR_WHEEL_RIGHT, speed, 2);
+    setMotor(MOTOR_WHEEL_LEFT, speed, 2);
+    setMotor(MOTOR_WHEEL_RIGHT, speed, 1);
 }
 
 void movementBackward(int speed)

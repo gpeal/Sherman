@@ -20,11 +20,12 @@
 //Global Variables
 unsigned int Time = 0;
 char TimeFlag_1ms = 0, TimeFlag1ms = 0, TimeFlag2ms = 0, TimeFlag10ms = 0, TimeFlag100ms = 0, TimeFlag200ms = 0, TimeFlag102_4ms = 0, TimeFlag_5s = 0, TimeFlag1s = 0, TimeFlag5s = 0;
-char TimeFlag2_5m;
+char TimeFlag2_5m = 0;
 char ReadArduino = 0;
+char RemoteCommand = '\0';
 //position variables
 struct Position RobotPosition, DeltaRobotPosition;
-struct Position CubeLocation[] = { {12, 15},
+struct Position CubeLocation[] = { {30, 48},
                                       {23, 37},
                                       {23, 15},
                                       {15, 31},
@@ -39,7 +40,7 @@ int TargetPositionAxis = 0;
 extern int Direction;
 struct RangefinderReading
 {
-    int value;
+    unsigned int value;
     char valid;
 };
 
@@ -53,7 +54,7 @@ int UARTReadBufferIndex = 0;
 char data;
 
 //Other global variables
-int State = STATE_FIND_CUBES, StateStartTime = 0;
+int State, StateStartTime = 0;
 int SubState = 0, SubStateStartTime = 0;
 int Cubes = 0;
 extern struct MotorAction MotorActionQueue[];
@@ -63,8 +64,12 @@ extern int CurrentLeftMotorSpeed, CurrentLeftMotorDirection;
 
 int main(void)
 {
+    int i, j;
     initialize();
-    EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+    ChangeState(STATE_REMOTE_CONTROL);
+    for(i = 0; i < 4; i++)
+        for(j = 0; j < 5; j++)
+           RangefinderData[i][j].value = 213 ;
     while(1)
     {
         PeriodicFunctions();
@@ -75,7 +80,7 @@ void ChangeState(int state)
 {
     State = state;
     SubState = 0;
-    SubStateStartTime = 0;
+    SubStateStartTime = Time;
     StateStartTime = Time;
 }
 
@@ -84,37 +89,14 @@ void InitialRoutine()
     switch(SubState)
     {
         case 0:
-            setMotor(MOTOR_WHEEL_LEFT, 1000, 2);
-            setMotor(MOTOR_WHEEL_RIGHT, 1000, 2);
-            if(Time - SubStateStartTime > 20000) {
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            SubState++;
+        case 1:
+            if(0) { //Time - SubStateStartTime > 20000) {
                 SubState++;
                 SubStateStartTime = Time;
             }
             break;
-        /*case 1:
-            setMotor(MOTOR_WHEEL_LEFT, 1000, 2);
-            setMotor(MOTOR_WHEEL_RIGHT, 1000, 1);
-            if(time - SubStateStartTime > 20000) {
-                SubState++;
-                SubStateStartTime = time;
-            }
-            break;
-        case 2:
-            setMotor(MOTOR_WHEEL_LEFT, 1000, 1);
-            setMotor(MOTOR_WHEEL_RIGHT, 1000, 2);
-            if(time - SubStateStartTime > 20000) {
-                SubState++;
-                SubStateStartTime = time;
-            }
-            break;
-        case 3:
-            setMotor(MOTOR_WHEEL_LEFT, 1000, 1);
-            setMotor(MOTOR_WHEEL_RIGHT, 1000, 1);
-            if(time - SubStateStartTime > 20000) {
-                SubState++;
-                SubStateStartTime = time;
-            }
-            break;*/
         default:
             setMotor(MOTOR_WHEEL_LEFT, 1000, 0);
             setMotor(MOTOR_WHEEL_RIGHT, 1000, 0);
@@ -171,9 +153,16 @@ void ReadRangefinders()
     {
         if(rawData[i].valid)
             RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[i];
+        else
+            RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] = RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-2];
     }
-    
-    if(!rawData[0].valid)
+
+
+    if(AUTO_BRAKE)
+        if((unsigned int)(RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-1].value) < 8)
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+
+    /*if(!rawData[0].valid)
     {
         //the back ragefinder was valid, add the opposite of the rear rangefinder delta
         if(rawData[2].valid)
@@ -193,7 +182,7 @@ void ReadRangefinders()
             {
                 rawData[0].value += 5/5;
                 RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[0];
-            }5;
+            };
         }
 
     }
@@ -225,7 +214,7 @@ void ReadRangefinders()
         }
     }
     if(!rawData[3].valid)
-        RangefinderData[3][RANGEFINDER_DATA_BUFFER_SIZE-1] = RangefinderData[3][RANGEFINDER_DATA_BUFFER_SIZE-2];
+        RangefinderData[3][RANGEFINDER_DATA_BUFFER_SIZE-1] = RangefinderData[3][RANGEFINDER_DATA_BUFFER_SIZE-2];*/
 }
 
 void UpdatePosition()
@@ -322,7 +311,6 @@ void UpdatePosition()
         RobotPosition.X = ARENA_WIDTH - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusXOffset;
         DeltaRobotPosition.X += RobotPosition.X;
     }
-
 }
 
 void DriveParallel()
@@ -345,6 +333,35 @@ void DriveParallel()
         EnqueueMotorAction(MOTOR_ACTION_STOP);
 }
 
+void RemoteControl()
+{
+    switch(RemoteCommand)
+    {
+        case 'w':
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            break;
+        case 's':
+            EnqueueMotorAction(MOTOR_ACTION_BACKWARD);
+            break;
+        case 'a':
+            EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT);
+            break;
+        case 'd':
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT);
+            break;
+        case 'e':
+            EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+            break;
+        case 'q':
+            EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
+            break;
+        case ' ':
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            break;
+    }
+    RemoteCommand = '\0';
+}
+
 void NavigateToTarget()
 {
     double robotPositionOnTargetAxis, targetPositionOnTargetAxis, deltaPositionOnTargetAxis;
@@ -353,15 +370,16 @@ void NavigateToTarget()
     targetPositionOnTargetAxis = TargetPositionAxis == 0 ? Cube.X : Cube.Y;
     deltaPositionOnTargetAxis = targetPositionOnTargetAxis - robotPositionOnTargetAxis;
     //reached goal on current axis
-    if(deltaPositionOnTargetAxis < 5)
+    if(abs(deltaPositionOnTargetAxis) < 3)
     {
         //switch axis
         TargetPositionAxis = !TargetPositionAxis;
+        
         robotPositionOnOtherAxis = TargetPositionAxis == 0 ? RobotPosition.X : RobotPosition.Y;
         targetPositionOnOtherAxis = TargetPositionAxis == 0 ? Cube.X : Cube.Y;
         deltaPositionOnOtherAxis = targetPositionOnTargetAxis - robotPositionOnTargetAxis;
         //reached goal on both axis
-        if(abs(deltaPositionOnOtherAxis) < 5)
+        if(abs(deltaPositionOnOtherAxis) < 3)
         {
             if(Cubes >= 4)
                 ChangeState(STATE_GOTO_SCORING_ZONE);
@@ -378,7 +396,7 @@ void RunEvery_1ms()
 {
     switch(State)
     {
-        case STATE_INITIALIZATION_ROUTINE:
+        case STATE_INITIAL_ROUTINE:
             InitialRoutine();
             break;
         case STATE_FIND_CUBES:
@@ -388,7 +406,7 @@ void RunEvery_1ms()
 
 void RunEvery1ms()
 {
-    if(State != STATE_INITIALIZATION_ROUTINE)
+    //if(State != STATE_INITIAL_ROUTINE)
         UpdateMotors();
 }
 
@@ -404,6 +422,10 @@ void RunEvery10ms()
 
 void RunEvery100ms()
 {
+    if(State == STATE_REMOTE_CONTROL)
+        RemoteControl();
+    else if(RemoteCommand == '`')
+        ChangeState(STATE_REMOTE_CONTROL);
 }
 
 void RunEvery102_4ms()
@@ -422,8 +444,8 @@ void RunEvery200ms()
         //optional send motor over uart
         sprintf(UARTWriteBuffer, "%1i%04i%1i%04i", CurrentLeftMotorDirection, CurrentLeftMotorSpeed, CurrentRightMotorDirection, CurrentRightMotorSpeed);
         SendString(3, UARTWriteBuffer);
-        sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", UARTReadBuffer[0]&0xFF, UARTReadBuffer[1]&0xFF, UARTReadBuffer[2]&0xFF, UARTReadBuffer[3]&0xFF);
-        //sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
+        //sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", UARTReadBuffer[0]&0xFF, UARTReadBuffer[1]&0xFF, UARTReadBuffer[2]&0xFF, UARTReadBuffer[3]&0xFF);
+        sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
         SendString(3, UARTWriteBuffer);
         sprintf(UARTWriteBuffer, "%03i%03i%03i%03i%1i%1i%1i\n", RobotPosition.X, RobotPosition.Y, Cube.X, Cube.Y, Direction, State, CurrentMotorAction);
         SendString(3, UARTWriteBuffer);
@@ -442,7 +464,6 @@ void RunEvery_5s()
 
 void RunEvery1s()
 {
-    Direction = (Direction+1)%4;
 }
 
 void RunEvery5s()
@@ -452,6 +473,7 @@ void RunEvery5s()
 
 void RunEvery2_5m()
 {
+    //ChangeState(STATE_GOTO_SCORING_ZONE);
 }
 
 void PeriodicFunctions()
@@ -590,5 +612,24 @@ void __ISR(_UART2_VECTOR, ipl2) IntUart2Handler(void)
     if ( mU2TXGetIntFlag() )
     {
             mU2TXClearIntFlag();
+    }
+}
+
+// UART 3 interrupt handler
+// it is set at priority level 2
+void __ISR(_UART_3_VECTOR, ipl1) IntUart3Handler(void)
+{
+    // Is this an RX interrupt?
+    if(INTGetFlag(INT_SOURCE_UART_RX(UART3)))
+    {
+        RemoteCommand = ReadCharacter(3);
+        togglePin(A5);
+        // Clear the RX interrupt Flag
+       INTClearFlag(INT_SOURCE_UART_RX(UART3)); 
+    }
+
+    // We don't care about TX interrupt
+    if(INTGetFlag(INT_SOURCE_UART_TX(UART3))) {
+        INTClearFlag(INT_SOURCE_UART_TX(UART3));
     }
 }

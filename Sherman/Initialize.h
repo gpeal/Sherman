@@ -25,5 +25,6 @@ void initializeLCD();
 void initializeMotor();
 void initializeSPI();
 void initializeServo();
+void initializeData();
 
 #endif

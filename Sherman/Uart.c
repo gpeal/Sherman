@@ -151,6 +151,9 @@ char ReadCharacter(int id)
             data = (char)ReadUART2();
             while(BusyUART2()) {}
             break;
+        case 3:
+            data = (char)UARTGetDataByte(UART3);
+            break;
     }
     return data;
 }
