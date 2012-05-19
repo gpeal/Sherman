@@ -396,6 +396,10 @@ void UpdatePosition()
     int rangefinderPlusY, rangefinderMinusY, rangefinderPlusX, rangefinderMinusX;
     //offset used to offset the position to the front center of the robot
     int plusXOffset, minusXOffset, plusYOffset, minusYOffset;
+    plusXOffset = -6;
+    minusXOffset = 6;
+    plusYOffset = -6;
+    minusYOffset = 6;
     switch(Direction)
     {
         case 0:
@@ -403,40 +407,24 @@ void UpdatePosition()
             rangefinderMinusY = RANGEFINDER_BACK;
             rangefinderPlusX = RANGEFINDER_RIGHT;
             rangefinderMinusX = RANGEFINDER_LEFT;
-            plusXOffset = -6;
-            minusXOffset = 6;
-            plusYOffset = 0;
-            minusYOffset = 12;
             break;
         case 1:
             rangefinderPlusY = RANGEFINDER_LEFT;
             rangefinderMinusY = RANGEFINDER_RIGHT;
             rangefinderPlusX = RANGEFINDER_FRONT;
             rangefinderMinusX = RANGEFINDER_BACK;
-            plusXOffset = 0;
-            minusXOffset = 12;
-            plusYOffset = -6;
-            minusYOffset = 6;
             break;
         case 2:
             rangefinderPlusY = RANGEFINDER_BACK;
             rangefinderMinusY = RANGEFINDER_FRONT;
             rangefinderPlusX = RANGEFINDER_LEFT;
             rangefinderMinusX = RANGEFINDER_RIGHT;
-            plusXOffset = -6;
-            minusXOffset = 6;
-            plusYOffset = -12;
-            minusYOffset = 0;
             break;
         case 3:
             rangefinderPlusY = RANGEFINDER_RIGHT;
             rangefinderMinusY = RANGEFINDER_LEFT;
             rangefinderPlusX = RANGEFINDER_BACK;
             rangefinderMinusX = RANGEFINDER_FRONT;
-            plusXOffset = -12;
-            minusXOffset = 0;
-            plusYOffset = -6;
-            minusYOffset = 6;
             break;
     }
     if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid && RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
