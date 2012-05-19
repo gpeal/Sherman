@@ -31,6 +31,7 @@ void PeriodicFunctions();
 void delay_ms(int ms);
 void ParseUartData();
 void ReadAndValidateRangefinders();
+void SetStartPosition();
 void UpdatePosition();
 void ChangeState(int state);
 void RemoteControl();
