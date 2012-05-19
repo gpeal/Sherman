@@ -123,11 +123,8 @@ void InitialRoutine()
     }
 }
 
-void ReadRangefinders()
+void ReadAndValidateRangefinders()
 {
-    int i, length, width;
-    //used if there is no valid data and we have to interpolate it
-    int interpolationDirection, interpolationIndex;
     struct RangefinderReading rawData[4];
     rawData[0].value = UARTReadBuffer[0] & 0xFF;
     rawData[0].valid = 1;
@@ -137,100 +134,123 @@ void ReadRangefinders()
     rawData[2].valid = 1;
     rawData[3].value = UARTReadBuffer[3] & 0xFF;
     rawData[3].valid = 1;
+    int i;
     for(i = 0; i < 4; i++)
     {
         if(rawData[i].value >= 200 || rawData[i].value < 1)
             rawData[i].valid = 0;
-        //TODO: mark large deltas invalid
-        //if(abs(RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] - rawData[i]) >= 5 && RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] != 0) {}
-
-        //TODO: uncomment width and height checks
-        //move lengthwise
-        if(Direction == 0 || Direction == 2)
+    }
+    // Direction Agnosticity code.
+    int rangefinderPlusY, rangefinderMinusY, rangefinderPlusX, rangefinderMinusX;
+    switch(Direction)
+    {
+        case 0:
+            rangefinderPlusY = RANGEFINDER_FRONT;
+            rangefinderMinusY = RANGEFINDER_BACK;
+            rangefinderPlusX = RANGEFINDER_RIGHT;
+            rangefinderMinusX = RANGEFINDER_LEFT;
+            break;
+        case 1:
+            rangefinderPlusY = RANGEFINDER_LEFT;
+            rangefinderMinusY = RANGEFINDER_RIGHT;
+            rangefinderPlusX = RANGEFINDER_FRONT;
+            rangefinderMinusX = RANGEFINDER_BACK;
+            break;
+        case 2:
+            rangefinderPlusY = RANGEFINDER_BACK;
+            rangefinderMinusY = RANGEFINDER_FRONT;
+            rangefinderPlusX = RANGEFINDER_LEFT;
+            rangefinderMinusX = RANGEFINDER_RIGHT;
+            break;
+        case 3:
+            rangefinderPlusY = RANGEFINDER_RIGHT;
+            rangefinderMinusY = RANGEFINDER_LEFT;
+            rangefinderPlusX = RANGEFINDER_BACK;
+            rangefinderMinusX = RANGEFINDER_FRONT;
+            break;
+    }
+    // No valid data
+    if (!rawData[rangefinderPlusY].valid && !rawData[rangefinderMinusY].valid)
+    {
+        rawData[rangefinderPlusY] = RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1];
+        rawData[rangefinderMinusY] = RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1];
+    }
+    // 1 valid data
+    else if (rawData[rangefinderPlusY].valid ^ rawData[rangefinderMinusY].valid)
+    {
+        if(rawData[rangefinderPlusY].valid)
         {
-            if(rawData[RANGEFINDER_FRONT].valid && rawData[RANGEFINDER_BACK].valid)
+            int delta = abs(rawData[rangefinderPlusY] - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE - 1]);
+            if (delta < 4 || abs(delta - 24) < 3 || abs(delta - 48) < 6)
             {
-                length = rawData[RANGEFINDER_FRONT].value + rawData[RANGEFINDER_BACK].value + 12;
-                if(abs(length-ARENA_LENGTH_0) > 10 && abs(length-ARENA_LENGTH_1) > 10 && abs(length-ARENA_LENGTH_2) > 10)
-                {
-                    //TODO: check if one of the values might be valid
-                }
             }
+            else
+            {
+                rawData[rangefinderPlusY].valid = 0;
+            }
+        }
+        else if(rawData[rangefinderMinusY].valid)
+        {
+            int delta = abs(rawData[rangefinderMinusY] - RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE - 1]);
+            if (delta < 4 || abs(delta - 24) < 3 || abs(delta - 48) < 6)
+            {
+            }
+            else
+            {
+                rawData[rangefinderMinusY].valid = 0;
+            }
+        }
+    }
+    // All valid Data
+    else if (rawData[rangefinderPlusY].valid && rawData[rangefinderMinusY].valid)
+    {
+        int length = rawData[rangefinderPlusY].value + rawData[rangefinderMinusY].value + 12;
+        if(abs(length-ARENA_LENGTH_0) < 10 || abs(length-ARENA_LENGTH_1) < 10 || abs(length-ARENA_LENGTH_2) < 10)
+        {
+            if (rawData[rangefinderPlusY].value < rawData[rangefinderMinusY].value)
+            {
+                rawData[rangefinderMinusY].valid = 0;
+            }
+            else
+            {
+                rawData[rangefinderPlusY].valid = 0;
+            }
+        }
+        else
+        {
+            int meanIndex;
+            float meanPlusY = 0;
+            float meanMinusY = 0;
+            for(meanIndex=RANGEFINDER_DATA_BUFFER_SIZE - 1; meanIndex >= RANGEFINDER_DATA_BUFFER_SIZE - 3; meanIndex--)
+            {
+                meanPlusY += RangefinderData[rangefinderPlusY][meanIndex];
+                meanMinusY += RangefinderData[rangefinderMinusY][meanIndex];
+            }
+            meanPlusY = meanPlusY/3;
+            meanMinusY = meanMinusY/3;
+
+            if(abs(meanPlusY - rawData[rangefinderPlusY].value) < abs(meanMinusY - rawData[rangefinderMinusY].value))
+            {
+                rawData[rangefinderMinusY].valid = 0;
+            }
+            else
+            {
+                rawData[rangefinderPlusY].valid = 0;
+            }
+        }
+    }
+    int shiftIndex;
+    for(i = 0; i < 4; i++)
+    {
+        for (shiftIndex = 0; shiftIndex < RANGEFINDER_DATA_BUFFER_SIZE - 1; shiftIndex++)
+        {
+            RangefinderData[i][shiftIndex] = RangefinderData[i][shiftIndex + 1];
         }
     }
     for(i = 0; i < 4; i++)
     {
-        RangefinderData[i][0] = RangefinderData[i][1];
-        RangefinderData[i][1] = RangefinderData[i][2];
-        RangefinderData[i][2] = RangefinderData[i][3];
-        RangefinderData[i][3] = RangefinderData[i][4];
+        RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[i];
     }
-    for(i = 0; i < 4; i++)
-    {
-        if(rawData[i].valid)
-            RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[i];
-        else
-            RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-1] = RangefinderData[i][RANGEFINDER_DATA_BUFFER_SIZE-2];
-    }
-
-
-    if(AUTO_BRAKE)
-        if((unsigned int)(RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-1].value) < 8)
-            EnqueueMotorAction(MOTOR_ACTION_STOP);
-
-    /*if(!rawData[0].valid)
-    {
-        //the back ragefinder was valid, add the opposite of the rear rangefinder delta
-        if(rawData[2].valid)
-        {
-            rawData[0].value = RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-2].value
-                    - ( RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-2].value -  RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-3].value );
-            RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[0];
-        }
-        else
-        {
-            if(CurrentMotorAction == MOTOR_ACTION_FORWARD)
-            {
-                rawData[0].value -= 5/5;
-                RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[0];
-            }
-            else if(CurrentMotorAction == MOTOR_ACTION_BACKWARD)
-            {
-                rawData[0].value += 5/5;
-                RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[0];
-            };
-        }
-
-    }
-
-    if(!rawData[1].valid)
-        RangefinderData[1][RANGEFINDER_DATA_BUFFER_SIZE-1] = RangefinderData[1][RANGEFINDER_DATA_BUFFER_SIZE-2];
-
-    if(!rawData[2].valid)
-    {
-        //the front ragefinder was valid, add the opposite of the front rangefinder delta
-        if(rawData[0].valid)
-        {
-            rawData[2].value = RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-2].value
-                    - ( RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-2].value -  RangefinderData[0][RANGEFINDER_DATA_BUFFER_SIZE-3].value );
-            RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[2];
-        }
-        else
-        {
-            if(CurrentMotorAction == MOTOR_ACTION_FORWARD)
-            {
-                rawData[2].value += 5/5;
-                RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[2];
-            }
-            else if(CurrentMotorAction == MOTOR_ACTION_BACKWARD)
-            {
-                rawData[2].value -= 5/5;
-                RangefinderData[2][RANGEFINDER_DATA_BUFFER_SIZE-1] = rawData[2];
-            }
-        }
-    }
-    if(!rawData[3].valid)
-        RangefinderData[3][RANGEFINDER_DATA_BUFFER_SIZE-1] = RangefinderData[3][RANGEFINDER_DATA_BUFFER_SIZE-2];*/
 }
 
 int OpponentHomeLocationX()
@@ -471,10 +491,12 @@ void RunEvery102_4ms()
 
 void RunEvery200ms()
 {
-    ReadRangefinders();
+    ReadAndValidateRangefinders();
     UpdatePosition();
-    if(State == STATE_DRIVE_PARALLEL)
-        DriveParallel();
+    
+    if(AUTO_BRAKE)
+        if((unsigned int)(RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-1].value) < 8)
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
 
 #ifdef DEBUG
         //optional send motor over uart
