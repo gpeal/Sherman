@@ -555,6 +555,12 @@ void RemoteControl()
         case ' ':
             EnqueueMotorAction(MOTOR_ACTION_STOP);
             break;
+        case '[':
+            StartDumpCubes();
+            break;
+        case ']':
+            EndDumpCubes();
+            break;
         case '0':
             ChangeState(STATE_FIND_CUBES);
             break;
@@ -655,12 +661,12 @@ void FindCubes()
 
 void StartDumpCubes()
 {
-    digitalWrite(F3, 0);
+    digitalWrite(F3, 1);
 }
 
 void EndDumpCubes()
 {
-    digitalWrite(F3, 1);
+    digitalWrite(F3, 0);
 }
 
 void DumpCubes()
