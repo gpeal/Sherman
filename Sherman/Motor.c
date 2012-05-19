@@ -41,6 +41,7 @@ void UpdateMotors()
             movementForward(CurrentMotorSpeed);
             break;
         case MOTOR_ACTION_BACKWARD:
+        case MOTOR_ACTION_BACKWARD_SUPER:
             movementBackward(CurrentMotorSpeed);
             break;
         case MOTOR_ACTION_TURN_LEFT:
@@ -109,6 +110,9 @@ void EnqueueMotorAction(char action)
             newAction.duration = 100000;
             newAction.speed = 400;
             break;
+        case MOTOR_ACTION_FORWARD_SUPER:
+        case MOTOR_ACTION_BACKWARD_SUPER:
+            newAction.speed = 1024;
         default:
             newAction.duration = -1;
             break;

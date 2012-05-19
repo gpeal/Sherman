@@ -73,10 +73,13 @@ int main(void)
 {
     initialize();
     // Initilize Data in main for convenience of global variable scope.
-    initializeData();
-    ChangeState(STATE_INITIALIZE_NAVIGATION);
+    //initializeData();
+    //ChangeState(STATE_REMOTE_CONTROL);
+    SubState = 0;
+    SubStateStartTime = Time;
     while(1)
     {
+        InitialRoutine();
         PeriodicFunctions();
     }
 }
@@ -127,20 +130,326 @@ void InitialRoutine()
     {
         case 0:
             EnqueueMotorAction(MOTOR_ACTION_FORWARD);
-            SubState++;
-        case 1:
-            if(0) { //Time - SubStateStartTime > 20000) {
+            if(Time > SubStateStartTime + 54000)
+            {
                 SubState++;
                 SubStateStartTime = Time;
             }
             break;
-        default:
-            setMotor(MOTOR_WHEEL_LEFT, 1000, 0);
-            setMotor(MOTOR_WHEEL_RIGHT, 1000, 0);
-            if(Time - SubStateStartTime > 20000) {
-                ChangeState(STATE_FIND_CUBES);
+        case 1:
+            EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+            if(Time > SubStateStartTime + 0)
+            {
+                SubState++;
+                SubStateStartTime = Time;
             }
             break;
+        case 2:
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 3:
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            if(Time > SubStateStartTime + 2000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 4:
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            if(Time > SubStateStartTime + 66340)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 5:
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            if(Time > SubStateStartTime + 8000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 6:
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT);
+            if(Time > SubStateStartTime + 15000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 7:
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            if(Time > SubStateStartTime + 80000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 8:
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            if(Time > SubStateStartTime + 46000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 9:
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 10:
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT);
+            if(Time > SubStateStartTime + 6000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 11:
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            if(Time > SubStateStartTime + 4000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 12:
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            if(Time > SubStateStartTime + 22300)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 13:
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 14:
+            EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT);
+            if(Time > SubStateStartTime + 3000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 15:
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            if(Time > SubStateStartTime + 16000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 16:
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            if(Time > SubStateStartTime + 24333)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 17:
+            //EnqueueMotorAction(MOTOR_ACTION_STOP);
+            SubState++;
+            SubStateStartTime = Time;
+            break;
+        case 18:
+            StartDumpCubes();
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 19:
+            EndDumpCubes();
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 20:
+            StartDumpCubes();
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+       case 21:
+            EndDumpCubes();
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState = 39;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 22:
+            EnqueueMotorAction(MOTOR_ACTION_BACKWARD);
+            if(Time > SubStateStartTime + 80000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 23:
+            EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT_90);
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 24:
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 25:
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 26:
+            EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT_90);
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            if(Time > SubStateStartTime + 100000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 27:
+            StartDumpCubes();
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 28:
+            EndDumpCubes();
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 29:
+            StartDumpCubes();
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+       case 30:
+            EndDumpCubes();
+            if(Time > SubStateStartTime + 30000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 31:
+            EnqueueMotorAction(MOTOR_ACTION_BACKWARD);
+            if(Time > SubStateStartTime + 100000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 32:
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD_SUPER);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 33:
+            EnqueueMotorAction(MOTOR_ACTION_BACKWARD_SUPER);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 34:
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD_SUPER);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 35:
+            EnqueueMotorAction(MOTOR_ACTION_BACKWARD_SUPER);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 36:
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD_SUPER);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 37:
+            EnqueueMotorAction(MOTOR_ACTION_BACKWARD_SUPER);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 38:
+            EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState = 0;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 39:
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            if(Time > SubStateStartTime + 10000)
+            {
+                SubState = 0;
+                SubStateStartTime = Time;
+            }
+            break;
+
     }
 }
 
@@ -711,9 +1020,6 @@ void RunEvery200ms()
 
     if(State == STATE_FIND_CUBES)
             FindCubes();
-
-    if(State == STATE_GO_HOME)
-
     
     SendDebugInformation();
 
@@ -737,7 +1043,9 @@ void RunEvery2ms(){}
 void RunEvery10ms(){}
 void RunEvery102_4ms(){}
 void RunEvery_5s(){}
-void RunEvery1s(){}
+void RunEvery1s(){
+    togglePin(F3);
+}
 void RunEvery5s(){}
 void RunEvery_1ms(){}
 void RunEvery100ms() {}
