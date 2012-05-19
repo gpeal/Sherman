@@ -549,6 +549,23 @@ void NavigateToTarget()
             }
         }
     }
+    if(deltaPositionOnTargetAxis < 0)
+    {
+        //went too far
+        if(Direction == 0 || Direction == 1)
+        {
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
+        }
+    }
+    else if(deltaPositionOnTargetAxis > 0)
+    {
+        if(Direction == 2 || Direction == 3)
+        {
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
+        }
+    }
 }
 
 void RunEvery_1ms()
