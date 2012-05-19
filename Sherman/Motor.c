@@ -37,6 +37,7 @@ void UpdateMotors()
     switch(CurrentMotorAction)
     {
         case MOTOR_ACTION_FORWARD:
+        case MOTOR_ACTION_DRIVE_OVER_CUBE:
             movementForward(CurrentMotorSpeed);
             break;
         case MOTOR_ACTION_BACKWARD:
@@ -63,6 +64,14 @@ void UpdateMotors()
             break;
         case MOTOR_ACTION_OFF:
             break;
+        case MOTOR_ACTION_SLIGHT_RIGHT_BACKWARD:
+            setMotor(MOTOR_WHEEL_LEFT, MOTOR_DEFAULT_SPEED * 0.4, 1);
+            setMotor(MOTOR_WHEEL_RIGHT, MOTOR_DEFAULT_SPEED, 1);
+            break;
+        case MOTOR_ACTION_SLIGHT_LEFT_BACKWARD:
+            setMotor(MOTOR_WHEEL_LEFT, MOTOR_DEFAULT_SPEED, 1);
+            setMotor(MOTOR_WHEEL_RIGHT, MOTOR_DEFAULT_SPEED * 0.4, 1);
+            break;
     }
 }
 
@@ -82,7 +91,24 @@ void EnqueueMotorAction(char action)
             break;
         case MOTOR_ACTION_SLIGHT_RIGHT:
         case MOTOR_ACTION_SLIGHT_LEFT:
+        case MOTOR_ACTION_SLIGHT_RIGHT_BACKWARD:
+            case MOTOR_ACTION_SLIGHT_LEFT_BACKWARD:
             newAction.duration = 1900 ;
+            break;
+        case MOTOR_ACTION_DRIVE_OVER_CUBE:
+            newAction.duration = 50000;
+            break;
+        case MOTOR_ACTION_DRIVE_INTO_SCORING_ZONE:
+            EnqueueMotorAction(MOTOR_ACTION_DRIVE_INTO_SCORING_ZONE_P1);
+            EnqueueMotorAction(MOTOR_ACTION_DRIVE_INTO_SCORING_ZONE_P2);
+            break;
+        case MOTOR_ACTION_DRIVE_INTO_SCORING_ZONE_P1:
+            newAction.duration = 30000;
+            break;
+        case MOTOR_ACTION_DRIVE_INTO_SCORING_ZONE_P2:
+            newAction.duration = 100000;
+            newAction.speed = 400;
+            break;
         default:
             newAction.duration = -1;
             break;
@@ -217,6 +243,57 @@ void movementBackward(int speed)
 {
     setMotor(MOTOR_WHEEL_LEFT, speed, 1);
     setMotor(MOTOR_WHEEL_RIGHT, speed, 1);
+    switch(Direction)
+    {
+        case 0:
+            if(DeltaRobotPosition.X > 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT_BACKWARD);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            else if(DeltaRobotPosition.X < 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT_BACKWARD);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            break;
+        case 1:
+            if(DeltaRobotPosition.Y > 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            else if(DeltaRobotPosition.Y < 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            break;
+        case 2:
+            if(DeltaRobotPosition.X > 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            else if(DeltaRobotPosition.X < 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            break;
+        case 3:
+            if(DeltaRobotPosition.Y > 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            else if(DeltaRobotPosition.Y < 0)
+            {
+                EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+                EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            }
+            break;
+    }
 }
 
 void movementStop()

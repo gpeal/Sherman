@@ -36,11 +36,12 @@ struct Position CubeLocation[] = { {24, 12},
                                    {48, 60},
                                    {30, 72},
                                    {42, 72}};
+struct Position HomeLocation;
 int CubeIndex = 0;
 #define Cube CubeLocation[CubeIndex]
 //the current coordinate value we are trying to reach
 //0 for X 1 for Y
-int TargetPositionAxis = 0;
+int TargetNavigationAxis = 0;
 //the direction we are facing
 extern int Direction;
 struct RangefinderReading
@@ -561,55 +562,95 @@ void RemoteControl()
     RemoteCommand = '\0';
 }
 
-void NavigateToTarget()
+void GoHome()
+{
+    switch(SubState)
+    {
+        case 0:
+            HomeLocation.X = HomeLocationX(300000);
+            HomeLocation.Y = 12;
+            SubState++;
+            break;
+        case 1:
+            NavigateToTarget(HomeLocation);
+            if(abs(RobotPosition.X - HomeLocation.X) < 3 && abs(RobotPosition.Y - HomeLocation.Y < 3))
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 2:
+            if(abs(RobotPosition.X - HomeLocationX(Time)) < 6)
+                EnqueueMotorAction(MOTOR_ACTION_DRIVE_INTO_SCORING_ZONE);
+            if(SubStateStartTime + 400000 > Time)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 3:
+            StartDumpCubes();
+            delay_ms(30000);
+            EndDumpCubes();
+            delay_ms(200000);
+            StartDumpCubes();
+            delay_ms(30000);
+            EndDumpCubes();
+            delay_ms(200000);
+            StartDumpCubes();
+            delay_ms(30000);
+            EndDumpCubes();
+            delay_ms(200000);
+            SubState++;
+            SubStateStartTime = Time;
+        case 4:
+            EnqueueMotorAction(MOTOR_ACTION_BACK_OUT_OF_SCORING_ZONE);
+            EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT_90);
+            EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT_90);
+            ChangeState(STATE_FIND_CUBES);
+            break;
+    }
+}
+
+void SendDebugInformation()
+{
+#ifdef DEBUG
+    //optional send motor over uart
+    sprintf(UARTWriteBuffer, "%1i%04i%1i%04i", CurrentLeftMotorDirection, CurrentLeftMotorSpeed, CurrentRightMotorDirection, CurrentRightMotorSpeed);
+    SendString(3, UARTWriteBuffer);
+    //sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", UARTReadBuffer[0]&0xFF, UARTReadBuffer[1]&0xFF, UARTReadBuffer[2]&0xFF, UARTReadBuffer[3]&0xFF);
+    sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
+    SendString(3, UARTWriteBuffer);
+    sprintf(UARTWriteBuffer, "%03i%03i%03i%03i%1i%1i%1i\n", RobotPosition.X, RobotPosition.Y, Cube.X, Cube.Y, Direction, State, CurrentMotorAction);
+    SendString(3, UARTWriteBuffer);
+#endif
+}
+
+void NavigateToTarget(struct Position target)
 {
     double robotPositionOnTargetAxis, targetPositionOnTargetAxis, deltaPositionOnTargetAxis;
-    double robotPositionOnOtherAxis, targetPositionOnOtherAxis, deltaPositionOnOtherAxis;
-    robotPositionOnTargetAxis = TargetPositionAxis == 0 ? RobotPosition.X : RobotPosition.Y;
-    targetPositionOnTargetAxis = TargetPositionAxis == 0 ? Cube.X : Cube.Y;
+    robotPositionOnTargetAxis = TargetNavigationAxis == 0 ? RobotPosition.X : RobotPosition.Y;
+    targetPositionOnTargetAxis = TargetNavigationAxis == 0 ? target.X : target.Y;
     deltaPositionOnTargetAxis = targetPositionOnTargetAxis - robotPositionOnTargetAxis;
     //reached goal on current axis
     if(abs(deltaPositionOnTargetAxis) < 3)
     {
         //switch axis
-        TargetPositionAxis = !TargetPositionAxis;
+        TargetNavigationAxis = !TargetNavigationAxis;
+    }
+}
 
-        robotPositionOnOtherAxis = TargetPositionAxis == 0 ? RobotPosition.X : RobotPosition.Y;
-        targetPositionOnOtherAxis = TargetPositionAxis == 0 ? Cube.X : Cube.Y;
-        deltaPositionOnOtherAxis = targetPositionOnTargetAxis - robotPositionOnTargetAxis;
-        //reached goal on both axis
-        if(abs(deltaPositionOnOtherAxis) < 3)
-        {
-            if(Cubes >= 4)
-                ChangeState(STATE_GOTO_SCORING_ZONE);
-            else
-            {
-                CubeIndex++;
-                TargetPositionAxis = 0;
-            }
-        }
-    }
-    if(deltaPositionOnTargetAxis < 0)
+void FindCubes()
+{
+    
+    NavigateToTarget(Cube);
+    if(abs(RobotPosition.X - Cube.X) < 3 || abs(RobotPosition.Y - Cube.Y) < 3)
     {
-        //went too far
-        if(Direction == 0 || Direction == 1)
-        {
-            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
-            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
-        }
-        else
-            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+        EnqueueMotorAction(MOTOR_ACTION_DRIVE_OVER_CUBE);
+        Cubes++;
     }
-    else if(deltaPositionOnTargetAxis > 0)
-    {
-        if(Direction == 2 || Direction == 3)
-        {
-            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
-            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
-        }
-        else
-            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
-    }
+    if(Cubes >= 3)
+        ChangeState(STATE_GO_HOME);
 }
 
 void StartDumpCubes()
@@ -641,54 +682,34 @@ void DumpCubes()
     }
 }
 
-void RunEvery_1ms()
-{
-    switch(State)
-    {
-        case STATE_INITIAL_ROUTINE:
-            InitialRoutine();
-            break;
-        case STATE_FIND_CUBES:
-            break;
-    }
-}
-
 void RunEvery1ms()
 {
-    //if(State != STATE_INITIAL_ROUTINE)
+    if(State != STATE_INITIAL_ROUTINE)
         UpdateMotors();
-}
-
-void RunEvery2ms()
-{
-
-}
-
-void RunEvery10ms()
-{
-
-}
-
-void RunEvery100ms()
-{
-    if(State == STATE_REMOTE_CONTROL)
-        RemoteControl();
-    else if(RemoteCommand == '`')
-        ChangeState(STATE_REMOTE_CONTROL);
-}
-
-void RunEvery102_4ms()
-{
-
+    if(State == STATE_INITIAL_ROUTINE)
+        InitialRoutine();
 }
 
 void RunEvery200ms()
 {
-    ReadAndValidateRangefinders();
+    ReadAndValidateRangefinders(); 
     if(State != STATE_INITIALIZE_NAVIGATION)
         UpdatePosition();
     else
         InitializeNavigation();
+    
+    if(State == STATE_REMOTE_CONTROL)
+        RemoteControl();
+    else if(RemoteCommand == '`')
+        ChangeState(STATE_REMOTE_CONTROL);
+
+    if(State == STATE_FIND_CUBES)
+            FindCubes();
+
+    if(State == STATE_GO_HOME)
+
+    
+    SendDebugInformation();
 
     if(AUTO_BRAKE)
     {
@@ -703,43 +724,18 @@ void RunEvery200ms()
             DequeueMotorAction();
         }
     }
-
-
-#ifdef DEBUG
-        //optional send motor over uart
-        sprintf(UARTWriteBuffer, "%1i%04i%1i%04i", CurrentLeftMotorDirection, CurrentLeftMotorSpeed, CurrentRightMotorDirection, CurrentRightMotorSpeed);
-        SendString(3, UARTWriteBuffer);
-        //sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", UARTReadBuffer[0]&0xFF, UARTReadBuffer[1]&0xFF, UARTReadBuffer[2]&0xFF, UARTReadBuffer[3]&0xFF);
-        sprintf(UARTWriteBuffer, "%03i%03i%03i%03i", RangefinderData[0][4].value, RangefinderData[1][4].value, RangefinderData[2][4].value, RangefinderData[3][4].value);
-        SendString(3, UARTWriteBuffer);
-        sprintf(UARTWriteBuffer, "%03i%03i%03i%03i%1i%1i%1i\n", RobotPosition.X, RobotPosition.Y, Cube.X, Cube.Y, Direction, State, CurrentMotorAction);
-        SendString(3, UARTWriteBuffer);
-#endif
+    
 }
 
-void RunEvery_5s()
-{
-    switch(State)
-    {
-        case STATE_FIND_CUBES:
-            NavigateToTarget();
-            break;
-    }
-}
-
-void RunEvery1s()
-{
-}
-
-void RunEvery5s()
-{
-}
-
-void RunEvery2_5m()
-{
-    //ChangeState(STATE_GOTO_SCORING_ZONE);
-}
-
+void RunEvery2ms(){}
+void RunEvery10ms(){}
+void RunEvery102_4ms(){}
+void RunEvery_5s(){}
+void RunEvery1s(){}
+void RunEvery5s(){}
+void RunEvery_1ms(){}
+void RunEvery100ms() {}
+void RunEvery2_5m() {}
 void PeriodicFunctions()
 {
     if(TimeFlag_1ms)

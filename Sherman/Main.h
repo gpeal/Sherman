@@ -15,13 +15,13 @@
 #define AUTO_BRAKE 0
 
 #define STATE_FIND_CUBES 0
-void NavigateToTarget();
 #define STATE_INITIAL_ROUTINE 1
 void InitialRoutine();
-#define STATE_GOTO_SCORING_ZONE 2
+#define STATE_GO_HOME 2
 #define STATE_REMOTE_CONTROL 4
 #define STATE_INITIALIZE_NAVIGATION 5
 #define STATE_DUMP_CUBES 6
+#define STATE_LEAVE_SCORING_ZONE 7
 
 extern struct Position RobotPosition, DeltaRobotPosition;
 extern unsigned int Time;
@@ -38,7 +38,13 @@ void RemoteControl();
 int HomeLocationX(float timeInFuture);
 int OpponentHomeLocationX();
 void initializeData();
-void DumpCubes();
 void Initialization();
+void StartDumpCubes();
+void EndDumpCubes();
+void SendDebugInformation();
+void NavigateToTarget(struct Position);
+void FindCubes();
+
+
 
 #endif
