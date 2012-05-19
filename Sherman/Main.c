@@ -535,6 +535,11 @@ void RemoteControl()
     RemoteCommand = '\0';
 }
 
+void DumpCubes()
+{
+    digitalWrite(F3, 1);
+}
+
 void NavigateToTarget()
 {
     double robotPositionOnTargetAxis, targetPositionOnTargetAxis, deltaPositionOnTargetAxis;
@@ -634,7 +639,7 @@ void RunEvery200ms()
     {
         if((unsigned int)(RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-1].value) < 8)
         {
-            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            PushMotorAction(MOTOR_ACTION_STOP);
             CrashState = 1;
         }
         if(CrashState)
@@ -664,6 +669,9 @@ void RunEvery_5s()
         case STATE_FIND_CUBES:
             NavigateToTarget();
             break;
+        case STATE_INITIALIZATION:
+            ChangeState(STATE_FIND_CUBES);
+            break;
     }
 }
 
@@ -673,7 +681,6 @@ void RunEvery1s()
 
 void RunEvery5s()
 {
-    togglePin(F3);
 }
 
 void RunEvery2_5m()

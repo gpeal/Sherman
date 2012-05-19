@@ -37,5 +37,6 @@ void RemoteControl();
 int HomeLocationX(float timeInFuture);
 int OpponentHomeLocationX();
 void initializeData();
+void DumpCubes();
 
 #endif
