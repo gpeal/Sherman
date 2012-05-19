@@ -54,12 +54,12 @@ void UpdateMotors()
             movementStop();
             break;
         case MOTOR_ACTION_SLIGHT_LEFT:
-            setMotor(MOTOR_WHEEL_LEFT, MOTOR_DEFAULT_SPEED * 0.8, 2);
+            setMotor(MOTOR_WHEEL_LEFT, MOTOR_DEFAULT_SPEED * 0.4, 2);
             setMotor(MOTOR_WHEEL_RIGHT, MOTOR_DEFAULT_SPEED, 2);
             break;
         case MOTOR_ACTION_SLIGHT_RIGHT:
             setMotor(MOTOR_WHEEL_LEFT, MOTOR_DEFAULT_SPEED , 2);
-            setMotor(MOTOR_WHEEL_RIGHT, MOTOR_DEFAULT_SPEED * 0.8, 2);
+            setMotor(MOTOR_WHEEL_RIGHT, MOTOR_DEFAULT_SPEED * 0.4, 2);
             break;
         case MOTOR_ACTION_OFF:
             break;
@@ -82,7 +82,7 @@ void EnqueueMotorAction(char action)
             break;
         case MOTOR_ACTION_SLIGHT_RIGHT:
         case MOTOR_ACTION_SLIGHT_LEFT:
-            newAction.duration = 1000;
+            newAction.duration = 1900 ;
         default:
             newAction.duration = -1;
             break;
@@ -117,7 +117,7 @@ void DequeueMotorAction()
     IncrementMotorActionQueueHeadIndex();
     if(MotorActionQueueSize() == 0)
             EnqueueMotorAction(MOTOR_ACTION_STOP);
-    CurrentMotorActionEndTime = ReadCoreTimer() + CurrentMotorDuration;
+    CurrentMotorActionEndTime = Time + CurrentMotorDuration;
     if(CurrentMotorAction == MOTOR_ACTION_TURN_LEFT_90)
         Direction = (Direction-1);
     if(CurrentMotorAction == MOTOR_ACTION_TURN_RIGHT_90)
@@ -148,7 +148,6 @@ void movementForward(int speed)
 {
     setMotor(MOTOR_WHEEL_LEFT, speed, 2);
     setMotor(MOTOR_WHEEL_RIGHT, speed, 2);
-    return;
     switch(Direction)
     {
         case 0:

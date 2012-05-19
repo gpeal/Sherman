@@ -93,7 +93,7 @@ void InitializeNavigation()
             break;
         case 1:
             SetStartPosition();
-            ChangeState(STATE_FIND_CUBES);
+            ChangeState(STATE_REMOTE_CONTROL);
             break;
     }
 }
@@ -193,7 +193,7 @@ void ReadAndValidateRangefinders()
     //VALIDATE Y
 
     // No valid data
-    if (!rawData[rangefinderPlusY].valid && !rawData[rangefinderMinusY].valid)
+    /*if (!rawData[rangefinderPlusY].valid && !rawData[rangefinderMinusY].valid)
     {
     }
     // 1 valid data
@@ -353,7 +353,7 @@ void ReadAndValidateRangefinders()
                 rawData[rangefinderPlusX].valid = 0;
             }
         }
-    }
+    }*/
 
 
     int shiftIndex;
@@ -379,7 +379,7 @@ int OpponentHomeLocationX()
 int HomeLocationX(float timeInFuture)
 {
     int startingLocationX = 12;
-    float speed = 12.76;
+    float speed = 0.8;
     int arenaLimits = ARENA_WIDTH - 24;
     int distanceTraveled = speed * (Time + timeInFuture);
     int finalLocationX = startingLocationX;
@@ -452,59 +452,75 @@ void UpdatePosition()
             rangefinderMinusX = RANGEFINDER_FRONT;
             break;
     }
-    //TODO: take into account the farther value
 
-    //Recieve current valid readings
-    //Look at current position
-    //Decide how to update position
-    //
+    struct Position newPosition;
+    if(RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+    {
+        newPosition.X = RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + 6;
+    }
 
-    //TODO: take into account the farther value
-//    if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid && RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
-//    {
-//        //offeset the reading to the center of the robot
-//        DeltaRobotPosition.Y = -RobotPosition.Y;
-//        if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value < RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE - 1].value)
-//            RobotPosition.Y = RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusYOffset;
-//        else
-//            RobotPosition.Y = ARENA_LENGTH_0 - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusYOffset;
-//        DeltaRobotPosition.Y += RobotPosition.Y;
-//    }
-//    else if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
-//    {
-//        DeltaRobotPosition.Y = -RobotPosition.Y;
-//        RobotPosition.Y = RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusYOffset;
-//        DeltaRobotPosition.Y += RobotPosition.Y;
-//    }
-//    else if(RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
-//    {
-//        DeltaRobotPosition.Y = -RobotPosition.Y;
-//        RobotPosition.Y = ARENA_LENGTH_0 - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusYOffset;
-//        DeltaRobotPosition.Y += RobotPosition.Y;
-//    }
-//
-//    if(RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid && RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
-//    {
-//        DeltaRobotPosition.X = -RobotPosition.X;
-//        //offeset the reading to the center of the robot
-//        if(RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value < RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE - 1].value)
-//            RobotPosition.X = RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusXOffset;
-//        else
-//            RobotPosition.X = ARENA_WIDTH - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusXOffset;
-//        DeltaRobotPosition.X += RobotPosition.X;
-//    }
-//    else if(RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
-//    {
-//        DeltaRobotPosition.X = -RobotPosition.X;
-//        RobotPosition.X = RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + minusXOffset;
-//        DeltaRobotPosition.X += RobotPosition.X;
-//    }
-//    else if(RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
-//    {
-//        DeltaRobotPosition.X = -RobotPosition.X;
-//        RobotPosition.X = ARENA_WIDTH - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value + plusXOffset;
-//        DeltaRobotPosition.X += RobotPosition.X;
-//    }
+    else if(RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+    {
+        newPosition.X = (ARENA_WIDTH - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE-1].value) - 6;
+    }
+
+    if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+    {
+        newPosition.Y = RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value + 6;
+        //if(abs(newPosition.X - HomeLocationX(0)) <= 12)
+        //    newPosition.Y -= 12;
+    }
+    else if(RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
+    {
+        newPosition.Y = (ARENA_LENGTH_0 - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].value) - 6;
+        //if(abs(newPosition.X - OpponentHomeLocationX()) <= 12)
+        //    newPosition.Y += 12;
+    }
+
+    DeltaRobotPosition.X = -RobotPosition.X;
+    DeltaRobotPosition.Y = -RobotPosition.Y;
+    RobotPosition.X = newPosition.X;
+    RobotPosition.Y = newPosition.Y;
+    DeltaRobotPosition.X += RobotPosition.X;
+    DeltaRobotPosition.Y += RobotPosition.Y;
+
+    /*struct Position deltaPosition;
+    deltaPosition.X = RobotPosition.X - newPosition.X;
+    deltaPosition.Y = RobotPosition.Y - newPosition.Y;
+
+    if((Direction == 1 || Direction == 3) && abs(deltaPosition.X) < 10)
+    {
+        RobotPosition.X = newPosition.X;
+    }
+    else if((Direction == 1 || Direction == 3) && abs(deltaPosition.X) >= 10)
+    {
+        RobotPosition.X = (int)((double)(2 * RobotPosition.X + newPosition.X)/3);
+    }
+    else if((Direction == 0 || Direction == 2) && abs(deltaPosition.X) < 3)
+    {
+        RobotPosition.X = newPosition.X;
+    }
+    else if((Direction == 0 || Direction == 2) && abs(deltaPosition.X) >= 3)
+    {
+        RobotPosition.X = (int)((double)(2 * RobotPosition.X + newPosition.X) / 3);
+    }
+
+    if((Direction == 1 || Direction == 3) && abs(deltaPosition.Y) < 3)
+    {
+        RobotPosition.Y = newPosition.Y;
+    }
+    else if((Direction == 1 || Direction == 3) && abs(deltaPosition.Y) >= 3)
+    {
+        RobotPosition.Y = (int)((double)(2 * RobotPosition.Y + newPosition.Y) / 3);
+    }
+    else if((Direction == 0 || Direction == 2) && abs(deltaPosition.Y) < 10)
+    {
+        RobotPosition.Y = newPosition.Y;
+    }
+    else if((Direction == 0 || Direction == 2) && abs(deltaPosition.Y) >= 10)
+    {
+        RobotPosition.Y = (int)((double)(2 * RobotPosition.Y + newPosition.Y) / 3);
+    }*/
 }
 
 void RemoteControl()
