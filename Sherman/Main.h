@@ -20,7 +20,7 @@ void NavigateToTarget();
 void InitialRoutine();
 #define STATE_GOTO_SCORING_ZONE 2
 #define STATE_REMOTE_CONTROL 4
-#define STATE_INITIALIZATION 5
+#define STATE_INITIALIZE_NAVIGATION 5
 #define STATE_DUMP_CUBES 6
 
 extern struct Position RobotPosition, DeltaRobotPosition;
@@ -39,5 +39,6 @@ int HomeLocationX(float timeInFuture);
 int OpponentHomeLocationX();
 void initializeData();
 void DumpCubes();
+void Initialization();
 
 #endif

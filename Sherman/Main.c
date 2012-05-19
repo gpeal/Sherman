@@ -73,10 +73,28 @@ int main(void)
     initialize();
     // Initilize Data in main for convenience of global variable scope.
     initializeData();
-    ChangeState(STATE_REMOTE_CONTROL);
+    ChangeState(STATE_INITIALIZE_NAVIGATION);
     while(1)
     {
         PeriodicFunctions();
+    }
+}
+
+void InitializeNavigation()
+{
+    switch(SubState)
+    {
+        case 0:
+            if(UARTReadBuffer[3] != 0)
+            {
+                SubState++;
+                SubStateStartTime = Time;
+            }
+            break;
+        case 1:
+            SetStartPosition();
+            ChangeState(STATE_FIND_CUBES);
+            break;
     }
 }
 
@@ -90,6 +108,7 @@ void ChangeState(int state)
 
 void initializeData()
 {
+    memset(UARTReadBuffer, 0, ARDUINO_BUFFER_SIZE);
     // RangefinderData
     int i, j;
     for(i = 0; i < 4; i++)
@@ -526,11 +545,6 @@ void RemoteControl()
     RemoteCommand = '\0';
 }
 
-void DumpCubes()
-{
-    digitalWrite(F3, 1);
-}
-
 void NavigateToTarget()
 {
     double robotPositionOnTargetAxis, targetPositionOnTargetAxis, deltaPositionOnTargetAxis;
@@ -655,9 +669,10 @@ void RunEvery102_4ms()
 void RunEvery200ms()
 {
     ReadAndValidateRangefinders();
-    if(State == STATE_INITIALIZATION)
-        SetStartPosition();
-    UpdatePosition();
+    if(State != STATE_INITIALIZE_NAVIGATION)
+        UpdatePosition();
+    else
+        InitializeNavigation();
 
     if(AUTO_BRAKE)
     {
@@ -692,9 +707,6 @@ void RunEvery_5s()
     {
         case STATE_FIND_CUBES:
             NavigateToTarget();
-            break;
-        case STATE_INITIALIZATION:
-            ChangeState(STATE_FIND_CUBES);
             break;
     }
 }
