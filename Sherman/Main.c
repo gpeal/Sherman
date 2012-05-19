@@ -499,6 +499,12 @@ void RemoteControl()
         case 'a':
             EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT);
             break;
+        case 'z':
+            EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT_90);
+            break;
+        case 'c':
+            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
+            break;
         case 'd':
             EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT);
             break;
