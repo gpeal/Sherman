@@ -73,7 +73,7 @@ int main(void)
     initialize();
     // Initilize Data in main for convenience of global variable scope.
     initializeData();
-    ChangeState(STATE_INITIALIZATION);
+    ChangeState(STATE_REMOTE_CONTROL);
     while(1)
     {
         PeriodicFunctions();
@@ -517,6 +517,9 @@ void RemoteControl()
         case ' ':
             EnqueueMotorAction(MOTOR_ACTION_STOP);
             break;
+        case '0':
+            ChangeState(STATE_FIND_CUBES);
+            break;
     }
     RemoteCommand = '\0';
 }
@@ -557,6 +560,8 @@ void NavigateToTarget()
             EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
             EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
         }
+        else
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
     }
     else if(deltaPositionOnTargetAxis > 0)
     {
@@ -564,6 +569,37 @@ void NavigateToTarget()
         {
             EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
             EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT_90);
+        }
+        else
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+    }
+}
+
+void StartDumpCubes()
+{
+    digitalWrite(F3, 0);
+}
+
+void EndDumpCubes()
+{
+    digitalWrite(F3, 1);
+}
+
+void DumpCubes()
+{
+    switch(SubState)
+    {
+    case 0:
+        StartDumpCubes();
+        if(Time - SubStateStartTime > 30000) {
+            SubState++;
+            SubStateStartTime = Time;
+        }
+        break;
+    case 1:
+        EndDumpCubes();
+        if(Time - SubStateStartTime > 30000) {
+            ChangeState(STATE_FIND_CUBES); //STATE_LEAVE_SCORING_ZONE
         }
     }
 }
