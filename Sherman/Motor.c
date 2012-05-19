@@ -82,7 +82,7 @@ void EnqueueMotorAction(char action)
             break;
         case MOTOR_ACTION_SLIGHT_RIGHT:
         case MOTOR_ACTION_SLIGHT_LEFT:
-            newAction.duration = 3000;
+            newAction.duration = 1000;
         default:
             newAction.duration = -1;
             break;
@@ -102,6 +102,14 @@ void EnqueueMotorAction(char action)
         MotorActionQueueTailIndex = 0;
     if(MotorActionQueueSize() == 1)
         CurrentMotorActionEndTime = Time + CurrentMotorDuration;
+}
+
+void PushMotorAction(char action)
+{
+    MotorActionQueueHeadIndex--;
+    if(MotorActionQueueHeadIndex < 0)
+        MotorActionQueueHeadIndex = MOTOR_ACTION_QUEUE_SIZE-1;
+    EnqueueMotorAction(action);
 }
 
 void DequeueMotorAction()

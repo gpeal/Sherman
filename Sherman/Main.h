@@ -20,6 +20,7 @@ void NavigateToTarget();
 void InitialRoutine();
 #define STATE_GOTO_SCORING_ZONE 2
 #define STATE_REMOTE_CONTROL 4
+#define STATE_INITIALIZATION 5
 
 extern struct Position RobotPosition, DeltaRobotPosition;
 extern unsigned int Time;
