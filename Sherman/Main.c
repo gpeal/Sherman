@@ -468,8 +468,6 @@ void RunEvery200ms()
 {
     ReadRangefinders();
     UpdatePosition();
-    if(State == STATE_DRIVE_PARALLEL)
-        DriveParallel();
 
 #ifdef DEBUG
         //optional send motor over uart

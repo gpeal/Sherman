@@ -19,8 +19,6 @@ void NavigateToTarget();
 #define STATE_INITIAL_ROUTINE 1
 void InitialRoutine();
 #define STATE_GOTO_SCORING_ZONE 2
-#define STATE_DRIVE_PARALLEL 3
-void DriveParallel();
 #define STATE_REMOTE_CONTROL 4
 
 extern struct Position RobotPosition, DeltaRobotPosition;
