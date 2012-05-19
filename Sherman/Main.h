@@ -28,7 +28,7 @@ extern unsigned int Time;
 void PeriodicFunctions();
 void delay_ms(int ms);
 void ParseUartData();
-void ReadRangefinders();
+void ReadAndValidateRangefinders();
 void UpdatePosition();
 void ChangeState(int state);
 void RemoteControl();
