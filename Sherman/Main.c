@@ -169,18 +169,19 @@ void ReadAndValidateRangefinders()
             rangefinderMinusX = RANGEFINDER_FRONT;
             break;
     }
+
+    //VALIDATE Y
+
     // No valid data
     if (!rawData[rangefinderPlusY].valid && !rawData[rangefinderMinusY].valid)
     {
-        rawData[rangefinderPlusY] = RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1];
-        rawData[rangefinderMinusY] = RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1];
     }
     // 1 valid data
     else if (rawData[rangefinderPlusY].valid ^ rawData[rangefinderMinusY].valid)
     {
         if(rawData[rangefinderPlusY].valid)
         {
-            int delta = abs(rawData[rangefinderPlusY] - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE - 1]);
+            int delta = abs(rawData[rangefinderPlusY].value - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE - 1].value);
             if (delta < 4 || abs(delta - 24) < 3 || abs(delta - 48) < 6)
             {
             }
@@ -191,7 +192,7 @@ void ReadAndValidateRangefinders()
         }
         else if(rawData[rangefinderMinusY].valid)
         {
-            int delta = abs(rawData[rangefinderMinusY] - RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE - 1]);
+            int delta = abs(rawData[rangefinderMinusY].value - RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE - 1].value);
             if (delta < 4 || abs(delta - 24) < 3 || abs(delta - 48) < 6)
             {
             }
@@ -205,8 +206,10 @@ void ReadAndValidateRangefinders()
     else if (rawData[rangefinderPlusY].valid && rawData[rangefinderMinusY].valid)
     {
         int length = rawData[rangefinderPlusY].value + rawData[rangefinderMinusY].value + 12;
+        //the length of the arena adds up correctly
         if(abs(length-ARENA_LENGTH_0) < 10 || abs(length-ARENA_LENGTH_1) < 10 || abs(length-ARENA_LENGTH_2) < 10)
         {
+            //mark the further one invalid
             if (rawData[rangefinderPlusY].value < rawData[rangefinderMinusY].value)
             {
                 rawData[rangefinderMinusY].valid = 0;
@@ -214,6 +217,18 @@ void ReadAndValidateRangefinders()
             else
             {
                 rawData[rangefinderPlusY].valid = 0;
+            }
+            //basically check if the delta was small or the size of one or both scoring zones
+            //if it is, set the other one to invalid
+            int plusDelta = abs(rawData[rangefinderPlusY].value - RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE - 1].value);
+            int minusDelta = abs(rawData[rangefinderMinusY].valid - RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE - 1].value);
+            if (plusDelta < 4 || abs(plusDelta - 24) < 3 || abs(plusDelta - 48) < 6)
+            {
+                rawData[rangefinderMinusY].valid =0;
+            }
+            else if (minusDelta < 4 || abs(minusDelta - 24) < 3 || abs(minusDelta - 48) < 6)
+            {
+                rawData[rangefinderPlusY].valid =0;
             }
         }
         else
@@ -223,8 +238,8 @@ void ReadAndValidateRangefinders()
             float meanMinusY = 0;
             for(meanIndex=RANGEFINDER_DATA_BUFFER_SIZE - 1; meanIndex >= RANGEFINDER_DATA_BUFFER_SIZE - 3; meanIndex--)
             {
-                meanPlusY += RangefinderData[rangefinderPlusY][meanIndex];
-                meanMinusY += RangefinderData[rangefinderMinusY][meanIndex];
+                meanPlusY += RangefinderData[rangefinderPlusY][meanIndex].value;
+                meanMinusY += RangefinderData[rangefinderMinusY][meanIndex].value;
             }
             meanPlusY = meanPlusY/3;
             meanMinusY = meanMinusY/3;
@@ -239,6 +254,88 @@ void ReadAndValidateRangefinders()
             }
         }
     }
+
+
+    //VALIDATE X
+
+    // No valid data
+    if (!rawData[rangefinderPlusX].valid && !rawData[rangefinderMinusX].valid)
+    {
+    }
+    // 1 valid data
+    else if (rawData[rangefinderPlusX].valid ^ rawData[rangefinderMinusX].valid)
+    {
+        if(rawData[rangefinderPlusX].valid)
+        {
+            int delta = abs(rawData[rangefinderPlusX].value - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE - 1].value);
+            if (delta > 4)
+            {
+                rawData[rangefinderPlusX].valid = 0;
+            }
+        }
+        else if(rawData[rangefinderMinusX].valid)
+        {
+            int delta = abs(rawData[rangefinderMinusX].value - RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE - 1].value);
+            if (delta > 4)
+            {
+                rawData[rangefinderMinusX].valid = 0;
+            }
+        }
+    }
+    // All valid Data
+    else if (rawData[rangefinderPlusX].valid && rawData[rangefinderMinusX].valid)
+    {
+        int width = rawData[rangefinderPlusX].value + rawData[rangefinderMinusX].value + 10;
+        //the length of the arena adds up correctly
+        if(abs(width-ARENA_WIDTH) < 10)
+        {
+            //mark the further one invalid
+            if (rawData[rangefinderPlusX].value < rawData[rangefinderMinusX].value)
+            {
+                rawData[rangefinderMinusX].valid = 0;
+            }
+            else
+            {
+                rawData[rangefinderPlusX].valid = 0;
+            }
+            //basically check if the delta was small or the size of one or both scoring zones
+            //if it is, set the other one to invalid
+            int plusDelta = abs(rawData[rangefinderPlusX].value - RangefinderData[rangefinderPlusX][RANGEFINDER_DATA_BUFFER_SIZE - 1].value);
+            int minusDelta = abs(rawData[rangefinderMinusX].value - RangefinderData[rangefinderMinusX][RANGEFINDER_DATA_BUFFER_SIZE - 1].value);
+            if (plusDelta < 4)
+            {
+                rawData[rangefinderMinusX].valid =0;
+            }
+            else if (minusDelta < 4 || abs(minusDelta - 24) < 3 || abs(minusDelta - 48) < 6)
+            {
+                rawData[rangefinderPlusX].valid =0;
+            }
+        }
+        else
+        {
+            int meanIndex;
+            float meanPlusX = 0;
+            float meanMinusX = 0;
+            for(meanIndex=RANGEFINDER_DATA_BUFFER_SIZE - 1; meanIndex >= RANGEFINDER_DATA_BUFFER_SIZE - 3; meanIndex--)
+            {
+                meanPlusX += RangefinderData[rangefinderPlusX][meanIndex].value;
+                meanMinusX += RangefinderData[rangefinderMinusX][meanIndex].value;
+            }
+            meanPlusX = meanPlusX/3;
+            meanMinusX = meanMinusX/3;
+
+            if(abs(meanPlusX - rawData[rangefinderPlusX].value) < abs(meanMinusX - rawData[rangefinderMinusX].value))
+            {
+                rawData[rangefinderMinusX].valid = 0;
+            }
+            else
+            {
+                rawData[rangefinderPlusX].valid = 0;
+            }
+        }
+    }
+
+
     int shiftIndex;
     for(i = 0; i < 4; i++)
     {
