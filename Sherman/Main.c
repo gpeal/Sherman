@@ -62,6 +62,7 @@ char data;
 int State, StateStartTime = 0;
 int SubState = 0, SubStateStartTime = 0;
 int Cubes = 0;
+int CrashState = 0;
 extern struct MotorAction MotorActionQueue[];
 extern int MotorActionQueueHeadIndex;
 extern int CurrentRightMotorSpeed, CurrentRightMotorDirection;
@@ -72,7 +73,7 @@ int main(void)
     initialize();
     // Initilize Data in main for convenience of global variable scope.
     initializeData();
-    ChangeState(STATE_REMOTE_CONTROL);
+    ChangeState(STATE_INITIALIZATION);
     while(1)
     {
         PeriodicFunctions();
@@ -438,7 +439,6 @@ void UpdatePosition()
             minusYOffset = 6;
             break;
     }
-    //TODO: take into account the farther value
     if(RangefinderData[rangefinderMinusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid && RangefinderData[rangefinderPlusY][RANGEFINDER_DATA_BUFFER_SIZE-1].valid)
     {
         //offeset the reading to the center of the robot
@@ -615,8 +615,19 @@ void RunEvery200ms()
     UpdatePosition();
     
     if(AUTO_BRAKE)
+    {
         if((unsigned int)(RangefinderData[RANGEFINDER_FRONT][RANGEFINDER_DATA_BUFFER_SIZE-1].value) < 8)
+        {
             EnqueueMotorAction(MOTOR_ACTION_STOP);
+            CrashState = 1;
+        }
+        if(CrashState)
+        {
+            CrashState = 0;
+            DequeueMotorAction();
+        }
+    }
+
 
 #ifdef DEBUG
         //optional send motor over uart

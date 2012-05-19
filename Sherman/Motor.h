@@ -32,6 +32,7 @@ void setMotor(int motor, int dutyCycle, int direction);
 
 void UpdateMotors();
 void EnqueueMotorAction(char action);
+void PushMotorAction(char action);
 void DequeueMotorAction();
 int MotorActionQueueSize();
 void IncrementMotorActionQueueHeadIndex();
