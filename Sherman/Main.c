@@ -130,14 +130,14 @@ void InitialRoutine()
     {
         case 0:
             EnqueueMotorAction(MOTOR_ACTION_FORWARD);
-            if(Time > SubStateStartTime + 54000)
+            if(Time > SubStateStartTime + 60000)
             {
                 SubState++;
                 SubStateStartTime = Time;
             }
             break;
         case 1:
-            EnqueueMotorAction(MOTOR_ACTION_SLIGHT_RIGHT);
+            EnqueueMotorAction(MOTOR_ACTION_SLIGHT_LEFT);
             if(Time > SubStateStartTime + 0)
             {
                 SubState++;
@@ -145,24 +145,24 @@ void InitialRoutine()
             }
             break;
         case 2:
-            EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT);
-            if(Time > SubStateStartTime + 10000)
+            EnqueueMotorAction(MOTOR_ACTION_TURN_LEFT);
+            if(Time > SubStateStartTime + 800)
             {
                 SubState++;
                 SubStateStartTime = Time;
             }
             break;
         case 3:
-            EnqueueMotorAction(MOTOR_ACTION_STOP);
-            if(Time > SubStateStartTime + 2000)
+            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
+            if(Time > SubStateStartTime + 30000)
             {
                 SubState++;
                 SubStateStartTime = Time;
             }
             break;
         case 4:
-            EnqueueMotorAction(MOTOR_ACTION_FORWARD);
-            if(Time > SubStateStartTime + 66340)
+            EnqueueMotorAction(MOTOR_ACTION_STOP);
+            if(Time > SubStateStartTime + 9999999)
             {
                 SubState++;
                 SubStateStartTime = Time;
@@ -170,7 +170,7 @@ void InitialRoutine()
             break;
         case 5:
             EnqueueMotorAction(MOTOR_ACTION_STOP);
-            if(Time > SubStateStartTime + 8000)
+            if(Time > SubStateStartTime + 10000)
             {
                 SubState++;
                 SubStateStartTime = Time;
@@ -178,7 +178,7 @@ void InitialRoutine()
             break;
         case 6:
             EnqueueMotorAction(MOTOR_ACTION_TURN_RIGHT);
-            if(Time > SubStateStartTime + 15000)
+            if(Time > SubStateStartTime + 8500)
             {
                 SubState++;
                 SubStateStartTime = Time;
@@ -186,7 +186,7 @@ void InitialRoutine()
             break;
         case 7:
             EnqueueMotorAction(MOTOR_ACTION_STOP);
-            if(Time > SubStateStartTime + 80000)
+            if(Time > SubStateStartTime + 00000)
             {
                 SubState++;
                 SubStateStartTime = Time;
@@ -194,7 +194,7 @@ void InitialRoutine()
             break;
         case 8:
             EnqueueMotorAction(MOTOR_ACTION_FORWARD);
-            if(Time > SubStateStartTime + 46000)
+            if(Time > SubStateStartTime + 90000)
             {
                 SubState++;
                 SubStateStartTime = Time;
@@ -445,7 +445,7 @@ void InitialRoutine()
             EnqueueMotorAction(MOTOR_ACTION_STOP);
             if(Time > SubStateStartTime + 10000)
             {
-                SubState = 0;
+                SubState ++;
                 SubStateStartTime = Time;
             }
             break;
