@@ -1,3 +1,9 @@
 *.o
 *.hex
 *.elf
+*.d
+*.mk
+*.properties
+Makefile-default.mk
+makefile-genesis.properties
+Makefile-impl.mk

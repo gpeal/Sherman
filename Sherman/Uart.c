@@ -1,6 +1,6 @@
 #include "Uart.h"
 
-int setupUart(int id, int int_priotity_level_X) {
+int setupUart(int id, int int_priority_level_X) {
   unsigned int pbClk;
   INT_SOURCE int_uXrx;
   INT_VECTOR int_uart_X_vector;
@@ -37,34 +37,34 @@ int setupUart(int id, int int_priotity_level_X) {
           break;
   }
 
-  switch(int_priotity_level_X)
+  switch(int_priority_level_X)
   {
       case 0:
-        int_priotity_level_X = INT_PRIORITY_DISABLED;
+        int_priority_level_X = INT_PRIORITY_DISABLED;
         break;
       case 1:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_1;
+          int_priority_level_X = INT_PRIORITY_LEVEL_1;
           break;
       case 2:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_2;
+          int_priority_level_X = INT_PRIORITY_LEVEL_2;
           break;
       case 3:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_3;
+          int_priority_level_X = INT_PRIORITY_LEVEL_3;
           break;
       case 4:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_4;
+          int_priority_level_X = INT_PRIORITY_LEVEL_4;
           break;
       case 5:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_5;
+          int_priority_level_X = INT_PRIORITY_LEVEL_5;
           break;
       case 6:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_6;
+          int_priority_level_X = INT_PRIORITY_LEVEL_6;
           break;
       case 7:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_6;
+          int_priority_level_X = INT_PRIORITY_LEVEL_6;
           break;
       default:
-          int_priotity_level_X = INT_PRIORITY_LEVEL_1;
+          int_priority_level_X = INT_PRIORITY_LEVEL_1;
           break;
   }
 
@@ -76,7 +76,7 @@ int setupUart(int id, int int_priotity_level_X) {
 
   // Configure UART1 RX Interrupt
   INTEnable(int_uXrx, INT_ENABLED);
-  INTSetVectorPriority(int_uart_X_vector, int_priotity_level_X);
+  INTSetVectorPriority(int_uart_X_vector, int_priority_level_X);
   INTSetVectorSubPriority(int_uart_X_vector, INT_SUB_PRIORITY_LEVEL_0);
   return 1;
 }
@@ -138,9 +138,49 @@ int SendString(int id, const char *string)
     return 1;
 }
 
+char ReadCharacter(int id)
+{
+    char data;
+    switch(id)
+    {
+        case 1:
+            data = (char)ReadUART1();
+            while(BusyUART1()) {}
+            break;
+        case 2:
+            data = (char)ReadUART2();
+            while(BusyUART2()) {}
+            break;
+        case 3:
+            data = (char)UARTGetDataByte(UART3);
+            break;
+    }
+    return data;
+}
 
-
-
+void ReadString(int id)
+{
+    int i = 0;
+    memset(UARTReadBuffer, 0, ARDUINO_BUFFER_SIZE);
+    switch(id)
+    {
+        case 1:
+            while(DataRdyUART1())
+            {
+                UARTReadBuffer[i++] = (char)ReadCharacter(id);
+                if(i >= 255)
+                    return;
+            }
+        case 2:
+            while(DataRdyUART2())
+            {
+                UARTReadBuffer[i++] = (char)ReadCharacter(id);
+                i++;
+                if(i >= 255)
+                    return;
+            }
+    }
+}
 
 
 

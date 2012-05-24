@@ -8,8 +8,7 @@
  * 5 = L2 LED
 */
 
-/* PORTB -- PWM
- *
+/* PORTB -- Analog In
 */
 
 /* PORT C
@@ -17,9 +16,11 @@
 */
 
 /* PORT D
- * 0 = Left Motor OC/OC1
- * 1 = Right Motor OC/OC1
- * 2-4 Reserved for PWM
+ * 0 = Left Motor OC1
+ * 1 = Left Motor OC2
+ * 2 = Right Motor OC3
+ * 3 = Right Motor OC4
+ * 5 Reserved for PWM
  * 5 = Left Motor Direction
  * 6-9 Reserved for PWM Direction Control
 */
@@ -28,7 +29,13 @@
  * 0-7 = LCD
 */
 
+/*
+ * 0 Rangefinder 1 Trigger
+ * 1 Rangefiner 1 Echo
+ */
+
 /* PORTG
+ * 2  = Arduino drop cube command
  * 12 = LCD
  * 15 = LCD
 */

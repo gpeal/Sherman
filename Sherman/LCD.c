@@ -1,41 +1,41 @@
 #include "LCD.h"
 #include <plib.h>
 
-#define RS LATGbits.LATG12
-#define RW LATGbits.LATG13
-#define EN LATGbits.LATG15
+#define RS G12
+#define RW G13
+#define EN G15
 
-#define DB0 LATEbits.LATE0
-#define DB1 LATEbits.LATE1
-#define DB2 LATEbits.LATE2
-#define DB3 LATEbits.LATE3
-#define DB4 LATEbits.LATE4
-#define DB5 LATEbits.LATE5
-#define DB6 LATEbits.LATE6
-#define DB7 LATEbits.LATE7
+#define DB0 E0
+#define DB1 E1
+#define DB2 E2
+#define DB3 E3
+#define DB4 E4
+#define DB5 E5
+#define DB6 E6
+#define DB7 E7
 
 void setupLCD()
 {
 
     //Register pins
-    TRISGbits.TRISG12 = 0;
-    TRISGbits.TRISG13 = 0;
-    TRISGbits.TRISG15 = 0;
+    pinMode(RS, OUTPUT);
+    pinMode(RW, OUTPUT);
+    pinMode(EN, OUTPUT);
 
     //Data pins
-    TRISEbits.TRISE0 = 0;
-    TRISEbits.TRISE1 = 0;
-    TRISEbits.TRISE2 = 0;
-    TRISEbits.TRISE3 = 0;
-    TRISEbits.TRISE4 = 0;
-    TRISEbits.TRISE5 = 0;
-    TRISEbits.TRISE6 = 0;
-    TRISEbits.TRISE7 = 0;
+    pinMode(DB0, OUTPUT);
+    pinMode(DB1, OUTPUT);
+    pinMode(DB2, OUTPUT);
+    pinMode(DB3, OUTPUT);
+    pinMode(DB4, OUTPUT);
+    pinMode(DB5, OUTPUT);
+    pinMode(DB6, OUTPUT);
+    pinMode(DB7, OUTPUT);
 
     //WAIT 20ns
     wait();
 
-    EN = 0;
+    digitalWrite(EN, 0);
 
     LCDcommand(0, 0,0,1,1,1,0,0,0); //initialize 2 lines
 
@@ -86,22 +86,23 @@ void LCDClear(int line)
 void LCDcommand(int command, int d7, int d6, int d5, int d4, int d3, int d2, int d1, int d0)
 {
     //0 for command, 1 for data.
-    RS = command;
+    digitalWrite(RS, command);
 
-    DB0 = d0;
-    DB1 = d1;
-    DB2 = d2;
-    DB3 = d3;
-    DB4 = d4;
-    DB5 = d5;
-    DB6 = d6;
-    DB7 = d7;
+    digitalWrite(DB0, d0);
+    digitalWrite(DB1, d1);
+    digitalWrite(DB2, d2);
+    digitalWrite(DB3, d3);
+    digitalWrite(DB4, d4);
+    digitalWrite(DB5, d5);
+    digitalWrite(DB6, d6);
+    digitalWrite(DB7, d7);
 
-    EN = 1;
+    digitalWrite(EN, 1);
+
 
     wait();
 
-    EN = 0;
+    digitalWrite(EN, 0);
 
     wait();
 
